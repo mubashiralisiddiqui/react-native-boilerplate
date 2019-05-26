@@ -3,9 +3,11 @@
  */
 
 import Login from './Login';
-import LoginHoc from './LoginHoc'
+import LoginHoc from './LoginHoc';
+import AuthLoading from './AuthLoading'
 
 export {
     Login,
-    LoginHoc
+    LoginHoc,
+    AuthLoading
 }

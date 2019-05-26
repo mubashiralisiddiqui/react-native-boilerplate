@@ -10,7 +10,7 @@ import {
 
 // All views 
 
-import { Login } from '../containers';
+import { Login, AuthLoading } from '../containers';
 
 
 
@@ -26,9 +26,11 @@ const AuthStack = createStackNavigator({
 export default createAppContainer(createSwitchNavigator(
     {
         App: AppStack,
-        Auth: AuthStack
+        Auth: AuthStack,
+        AuthLoading: AuthLoading,
+
     },
     {
-        initialRouteName: 'App'
+        initialRouteName: 'AuthLoading'
     }
 ))
