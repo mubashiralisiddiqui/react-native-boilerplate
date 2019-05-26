@@ -1,13 +1,36 @@
 import React from 'react';
-import { View, Text, TextInput } from 'react-native';
+import { View, Text, TextInput, } from 'react-native';
 
+import { styles } from './style'
+const InputText = (
+    {
+        placeholder = "username",
+        keyboardType = "default",
+        handleChange = () => ({}),
+        underlineColor = "",
+        secureTextEntry = false,
+        text,
+        icon
 
-const InputText = ({ }) => {
+    }
+) => {
     return (
-        <View>
-            <TextInput
-                placeholder="username"
-            />
+        <View style={styles.outerContainer}>
+            <View
+                style={styles.inputContainer}
+            >
+                {icon}
+                <TextInput
+                    style={styles.input}
+                    placeholder={placeholder}
+                    secureTextEntry={secureTextEntry}
+                    placeholderTextColor='lightgray'
+                    keyboardType={keyboardType}
+                    onChangeText={() => handleChange()}
+                    value={text}
+                    secureTextEntry={secureTextEntry}
+                />
+            </View>
         </View>
     )
 }
