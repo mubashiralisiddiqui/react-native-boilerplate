@@ -14,7 +14,7 @@ const ImageHeader = () => {
 
             </ImageBackground> */}
             <Image
-                source={require('../../assets/images/logo.jpeg')}
+                source={require('../../assets/images/HPLogo.png')}
             />
 
         </View>
@@ -25,8 +25,8 @@ const styles = {
     container: {
         display: 'flex',
         justifyContent: 'center',
-        marginHorizontal:20,
-        marginVertical:10
-
-    }
+        marginHorizontal:30,
+        marginVertical:50,
+        alignItems: 'center',
+    },
 }

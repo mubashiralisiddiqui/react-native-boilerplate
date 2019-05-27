@@ -4,7 +4,7 @@ import { View, Text, TextInput, } from 'react-native';
 import { styles } from './style'
 const InputText = (
     {
-        placeholder = "username",
+        placeholder = "Login ID",
         keyboardType = "default",
         handleChange = () => ({}),
         underlineColor = "",

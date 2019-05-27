@@ -7,7 +7,8 @@ const LoginHOC = (WrappedComponent) => (
         state = {
             email: '',
             password: '',
-            loading: false
+            rememberMe: false,
+            loading: false,
         };
         static navigationOptions = {
             // header: null,
@@ -18,13 +19,16 @@ const LoginHOC = (WrappedComponent) => (
         onChange = (name, value) => {
             this.setState({ [name]: value });
         }
+        onSubmit = (e) => {
+            console.warn(e, this.state)
+        }
 
         render() {
-            const { email, password, loading } = this.state;
+            const { email, password, loading, rememberMe } = this.state;
             return (
-
                 <WrappedComponent
                     email={email}
+                    onSubmit={this.onSubmit}
                     {...this.props}
                 />
             )

@@ -1,8 +1,10 @@
 
 import { StyleSheet } from 'react-native';
-
-
-
+const brandColors = {
+    darkBrown: '#514835',
+    green: '#11B14C',
+    lightGreen: '92C83E'
+}
 export const styles = StyleSheet.create({
     outerContainer: {
         display: 'flex',
@@ -17,7 +19,7 @@ export const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 33,
         borderWidth: 1,
-        borderColor: '#B43528',
+        borderColor: brandColors.darkBrown,
         width: '80%',
         marginVertical: 12,
 

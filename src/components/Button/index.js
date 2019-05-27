@@ -17,7 +17,7 @@ const Button = (props) => {
             borderRadius: rounded ? 30 : 0,
             width: '80%',
             height: 50,
-            backgroundColor: backgroundColor || '#fd6500',
+            backgroundColor: backgroundColor || '#8dc23c',
             justifyContent: 'center',
             alignItems: 'center',
             flexDirection: 'row',
@@ -69,7 +69,7 @@ const styles = new StyleSheet.create({
         borderRadius: 30,
         width: '80%',
         height: 50,
-        backgroundColor: '#fd6500',
+        backgroundColor: '#8dc23c',
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'row'
