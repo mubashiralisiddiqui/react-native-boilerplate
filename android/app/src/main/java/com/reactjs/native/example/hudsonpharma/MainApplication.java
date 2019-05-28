@@ -1,4 +1,4 @@
-package com.testproject;
+package com.reactjs.native.example.hudsonpharma;
 
 import android.app.Application;
 
