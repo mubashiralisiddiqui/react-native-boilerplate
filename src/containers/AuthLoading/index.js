@@ -28,7 +28,7 @@ export default class AuthLoadingScreen extends React.Component {
         return (
             <View style={{ justifyContent: 'center', display: 'flex', flex: 1 }}>
                 <ActivityIndicator
-                    size={40}
+                    size={0}
                 />
                 <StatusBar hidden={false} backgroundColor="blue" barStyle="light-content" />
             </View>
