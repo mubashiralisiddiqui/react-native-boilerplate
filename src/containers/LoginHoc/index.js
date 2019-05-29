@@ -20,7 +20,7 @@ const LoginHOC = (WrappedComponent) => (
             this.setState({ [name]: value });
         }
         onSubmit = (e) => {
-            console.warn(e, this.state)
+            console.warn(this.state.email)
         }
 
         render() {
