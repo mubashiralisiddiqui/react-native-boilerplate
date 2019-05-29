@@ -21,11 +21,8 @@ class Login extends Component {
         return (
             <View style={styles.InputContainer}>
                 <KeyboardAwareScrollView contentContainerStyle={{ justifyContent: 'center', display: 'flex' }}>
-
                     <ImageHeader
-
                     />
-
                     <LoginForm />
 
 
