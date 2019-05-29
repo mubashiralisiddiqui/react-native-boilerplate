@@ -1,4 +1,4 @@
-package com.reactjs.native.example.hudsonpharma;
+package com.hudsonpharma;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
