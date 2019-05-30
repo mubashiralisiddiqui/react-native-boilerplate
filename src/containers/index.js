@@ -5,9 +5,11 @@
 import Login from './Login';
 import LoginHoc from './LoginHoc';
 import AuthLoading from './AuthLoading'
+import CallPlans from './CallPlans'
 
 export {
     Login,
     LoginHoc,
-    AuthLoading
+    AuthLoading,
+    CallPlans
 }

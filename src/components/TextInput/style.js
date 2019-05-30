@@ -1,10 +1,6 @@
 
 import { StyleSheet } from 'react-native';
-const brandColors = {
-    darkBrown: '#514835',
-    green: '#11B14C',
-    lightGreen: '92C83E'
-}
+import { brandColors } from '../../constants'
 export const styles = StyleSheet.create({
     outerContainer: {
         display: 'flex',

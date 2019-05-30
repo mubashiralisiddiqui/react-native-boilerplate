@@ -9,14 +9,18 @@ import {
 } from 'react-navigation';
 
 // All views 
-
-import { Login, AuthLoading } from '../containers';
-
-
+import { Login, AuthLoading, CallPlans} from '../containers';
 
 const AppStack = createDrawerNavigator({
     Home: {
         screen: Login
+    },
+    CallPlans: {
+        screen: CallPlans,
+        navigationOptions: {
+            title: 'Daily Calls',
+            drawerLabel: "Daily Calls"
+        },
     }
 })
 const AuthStack = createStackNavigator({
@@ -28,7 +32,7 @@ export default createAppContainer(createSwitchNavigator(
         App: AppStack,
         Auth: AuthStack,
         AuthLoading: AuthLoading,
-
+        CallPlans
     },
     {
         initialRouteName: 'AuthLoading'

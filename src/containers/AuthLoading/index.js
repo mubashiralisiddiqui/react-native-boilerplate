@@ -19,7 +19,7 @@ export default class AuthLoadingScreen extends React.Component {
 
         setTimeout(() => {
             this.props.navigation.navigate('App');
-        }, 4000)
+        }, 1500)
         // this.props.navigation.navigate(userToken ? 'App' : 'Auth');
     };
 
