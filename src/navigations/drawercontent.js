@@ -35,6 +35,7 @@ class NavigationMenu extends Component {
     render() {
 
         const { navigate } = this.props.navigation;
+        console.warn(navigate)
         return (
             <View style={styles.container}>
                 <ScrollView style={{ marginTop: 0, width: '100%' }}>
@@ -54,12 +55,12 @@ class NavigationMenu extends Component {
                     </View>
 
                     <TouchableOpacity
-
+                        onPress={() => navigate('CallPlans')}
                         style={this.state.activeTab === 1 ? styles.active : styles.tabName}
                     >
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
 
-                            <Text style={styles.sectionHeadingStyle}>Home</Text>
+                            <Text style={styles.sectionHeadingStyle}>Call Plans</Text>
                         </View>
                         <Icon name="chevron-right" color="#666666" size={20} />
                     </TouchableOpacity>
