@@ -2,8 +2,8 @@
  * all headers will be imported here
  */
 
-import CallPlans from './CallPlans';
+import CallPlanHeader from './CallPlanHeader';
 
 export {
-    CallPlans,
+    CallPlanHeader,
 }

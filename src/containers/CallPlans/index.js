@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import { View } from 'react-native'
 import { ListItem, Divider, Icon } from 'react-native-elements';
-import {CallPlans as CallPlansHeader} from '../../components/Headers'
+import { CallPlanHeader } from '../../components/Headers'
 import { brandColors } from '../../constants'
 
 class CallPlans extends Component {
@@ -43,7 +43,7 @@ class CallPlans extends Component {
           ];
         return (
             <View style={styles.InputContainer}>
-            <CallPlansHeader />
+            <CallPlanHeader />
             <Divider style={{ backgroundColor: brandColors.darkBrown }} />
                 {
                     list.map((l, i) => (

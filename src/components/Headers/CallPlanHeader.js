@@ -7,11 +7,12 @@ const ImageHeader = () => {
     return (
         <View style={styles.container}>
             <Image
-                containerStyle={{width: '180'}}
+                style={{
+                    resizeMode: 'contain' }}
                 source={require('../../assets/images/HPLogo.png')}
             />
-            <Text h4>Muhamma Nauman</Text>
-            <Text h5>muhammad.nauman@hudsonpharma.com</Text>
+            <Text h4 style={{ fontWeight: 'bold'}}>Muhamma Nauman</Text>
+            <Text h5 style={{ fontWeight: 'bold'}}>muhammad.nauman@hudsonpharma.com</Text>
         </View>
     )
 }
