@@ -10,7 +10,7 @@ import {
 
 // All views 
 
-import { Login, AuthLoading, Home } from '../containers';
+import { Login, AuthLoading, Home,CallPlans } from '../containers';
 import DrawerContent from './drawercontent'
 
 
@@ -21,6 +21,13 @@ import DrawerContent from './drawercontent'
 const AppStack = createStackNavigator({
     Home: Home,
     // all other routes
+    CallPlans: {
+        screen: CallPlans,
+        navigationOptions: {
+            title: 'Daily Calls',
+            drawerLabel: "Daily Calls"
+        },
+    }
 
 })
 // drawer stack passing Appstack in drawe so that all can be accessible in our  drawerstack

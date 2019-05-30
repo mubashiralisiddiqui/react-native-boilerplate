@@ -1,13 +1,18 @@
 
-import React from 'react';
+import React, { Fragment } from 'react';
 import { View, Image } from 'react-native';
+import { Text } from 'react-native-elements';
 
 const ImageHeader = () => {
     return (
         <View style={styles.container}>
             <Image
+                style={{
+                    resizeMode: 'contain' }}
                 source={require('../../assets/images/HPLogo.png')}
             />
+            <Text h4 style={{ fontWeight: 'bold'}}>Muhamma Nauman</Text>
+            <Text h5 style={{ fontWeight: 'bold'}}>muhammad.nauman@hudsonpharma.com</Text>
         </View>
     )
 }
@@ -17,7 +22,7 @@ const styles = {
         display: 'flex',
         justifyContent: 'center',
         marginHorizontal:30,
-        marginVertical:50,
+        marginVertical:20,
         alignItems: 'center',
     },
 }
