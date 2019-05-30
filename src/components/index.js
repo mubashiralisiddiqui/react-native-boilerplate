@@ -7,12 +7,14 @@ import TextInput from './TextInput';
 import LoginForm from './LoginForm';
 import ImageHeader from './ImageHeader';
 import Button from './Button';
-import Header from './Header'
+import Header from './Header';
+import Itemcard from './Itemcard'
 
 export {
     TextInput,
     LoginForm,
     ImageHeader,
     Button,
-    Header
+    Header,
+    Itemcard
 }

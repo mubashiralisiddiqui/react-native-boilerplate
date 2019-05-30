@@ -7,12 +7,14 @@ import { ListItem, Divider, Icon } from 'react-native-elements';
 import { CallPlanHeader } from '../../components/Headers'
 import { brandColors } from '../../constants'
 
+
 class CallPlans extends Component {
     static navigationOptions = ({ navigation }) => ({
         title: 'TolkNu',
         headerStyle: {
-            backgroundColor: '#103c84',
+            backgroundColor: brandColors.lightGreen,
         },
+
         headerTintColor: '#fff',
         headerTitleStyle: {
             fontWeight: 'normal',
@@ -30,29 +32,29 @@ class CallPlans extends Component {
     render() {
         const list = [
             {
-              name: 'Amy Farha',
-              avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-              subtitle: 'Vice President'
+                name: 'Amy Farha',
+                avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
+                subtitle: 'Vice President'
             },
             {
-              name: 'Chris Jackson',
-              avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
-              subtitle: 'Vice Chairman'
+                name: 'Chris Jackson',
+                avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
+                subtitle: 'Vice Chairman'
             },
-             // more items
-          ];
+            // more items
+        ];
         return (
             <View style={styles.InputContainer}>
-            <CallPlanHeader />
-            <Divider style={{ backgroundColor: brandColors.darkBrown }} />
+                <CallPlanHeader />
+                <Divider style={{ backgroundColor: brandColors.darkBrown }} />
                 {
                     list.map((l, i) => (
-                    <ListItem
-                        key={i}
-                        rightAvatar={{ source: { uri: l.avatar_url } }}
-                        title={l.name}
-                        subtitle={l.subtitle}
-                    />
+                        <ListItem
+                            key={i}
+                            rightAvatar={{ source: { uri: l.avatar_url } }}
+                            title={l.name}
+                            subtitle={l.subtitle}
+                        />
                     ))
                 }
             </View >

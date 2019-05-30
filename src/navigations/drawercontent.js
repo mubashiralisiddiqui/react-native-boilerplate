@@ -8,12 +8,12 @@ import {
     ImageBackground,
     TouchableOpacity,
     AsyncStorage,
-    Share,
+
     ScrollView,
 } from 'react-native';
 import { Avatar, Button, Icon } from 'react-native-elements';
 
-
+import { ImageHeader } from '../components'
 
 class NavigationMenu extends Component {
     state = {
@@ -35,23 +35,16 @@ class NavigationMenu extends Component {
     render() {
 
         const { navigate } = this.props.navigation;
-        console.warn(navigate)
+        // console.warn(navigate)
         return (
             <View style={styles.container}>
                 <ScrollView style={{ marginTop: 0, width: '100%' }}>
                     <View style={{ alignItems: 'center', marginBottom: 20 }}>
-                        <Avatar
-                            size={'large'}
-                            rounded
-                            source={{
-                                uri:
-                                    'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-                            }}
-                            onPress={() => console.log('Works!')}
-                            activeOpacity={0.7}
+                        <ImageHeader
+                            verticalHeight={0}
                         />
-                        <Text style={{ fontSize: 16, color: '#000', marginTop: 5 }}>firstName</Text>
-                        <Text>email</Text>
+                        {/* <Text style={{ fontSize: 16, color: '#000', marginTop: 5 }}>firstName</Text>
+                        <Text>email</Text> */}
                     </View>
 
                     <TouchableOpacity
@@ -65,6 +58,8 @@ class NavigationMenu extends Component {
                         <Icon name="chevron-right" color="#666666" size={20} />
                     </TouchableOpacity>
                     <TouchableOpacity
+                        onPress={() => navigate('Itemcard')}
+
 
                         style={this.state.activeTab === 2 ? styles.active : styles.tabName}
                     >

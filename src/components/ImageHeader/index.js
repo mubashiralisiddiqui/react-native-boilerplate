@@ -2,22 +2,33 @@
 import React from 'react';
 import { View, Image } from 'react-native';
 
-const ImageHeader = () => {
+
+const ImageHeader = ({ verticalHeight = 30 }) => {
     return (
-        <View style={styles.container}>
+        <View style={containerStyle(verticalHeight)}>
             <Image
                 source={require('../../assets/images/HPLogo.png')}
             />
         </View>
     )
 }
-export default ImageHeader;
-const styles = {
-    container: {
+const containerStyle = (height) => {
+    console.warn(height)
+    return {
         display: 'flex',
         justifyContent: 'center',
-        marginHorizontal:30,
-        marginVertical:50,
+        marginHorizontal: 30,
+        marginVertical: height,
         alignItems: 'center',
-    },
+    }
 }
+export default ImageHeader;
+// const styles = {
+//     container: {
+//         display: 'flex',
+//         justifyContent: 'center',
+//         marginHorizontal: 30,
+//         marginVertical: 50,
+//         alignItems: 'center',
+//     },
+// }

@@ -20,9 +20,9 @@ class Login extends Component {
                     <LoginForm />
                 </KeyboardAwareScrollView >
             </View >
-        )
+        )                                                                                                                                                                           
     }
-}
+}                                                                                                                                   
 export default Login
 
 // end of Login container
