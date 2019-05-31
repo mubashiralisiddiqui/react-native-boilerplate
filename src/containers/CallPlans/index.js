@@ -2,7 +2,7 @@
  *  start of Login container
  */
 import React, { Component } from 'react';
-import { View } from 'react-native'
+import { View, ScrollView } from 'react-native'
 import { ListItem, Divider, Icon } from 'react-native-elements';
 import { CallPlanHeader } from '../../components/Headers'
 import { brandColors } from '../../constants'
@@ -51,18 +51,20 @@ class CallPlans extends Component {
         ];
         return (
             <View style={styles.InputContainer}>
-                <CallPlanHeader />
-                <Divider style={{ backgroundColor: brandColors.darkBrown }} />
-                {
-                    list.map((a, i) => {
-                        return (<ItemCard
-                            key={i}
-                            name={a.name}
-                            type={a.type}
-                            category={a.category}
-                        />)
-                    })
-                }
+                <ScrollView>
+                    <CallPlanHeader />
+                    <Divider style={{ backgroundColor: brandColors.darkBrown }} />
+                    {
+                        list.map((a, i) => {
+                            return (<ItemCard
+                                key={i}
+                                name={a.name}
+                                type={a.type}
+                                category={a.category}
+                            />)
+                        })
+                    }
+                </ScrollView>
             </View >
         )
     }

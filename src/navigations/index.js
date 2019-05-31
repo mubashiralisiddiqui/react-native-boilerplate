@@ -20,10 +20,11 @@ import { Itemcard } from '../components'
 
 
 const AppStack = createStackNavigator({
+    Itemcard: Itemcard,
     Home: CallPlans,
     // all other routes
     CallPlans: CallPlans,
-    Itemcard: Itemcard
+
 })
 // drawer stack passing Appstack in drawe so that all can be accessible in our  drawerstack
 const RootStack = createDrawerNavigator({
