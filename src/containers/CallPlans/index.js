@@ -6,25 +6,31 @@ import { View } from 'react-native'
 import { ListItem, Divider, Icon } from 'react-native-elements';
 import { CallPlanHeader } from '../../components/Headers'
 import { brandColors } from '../../constants'
-
+import ItemCard from '../../components/Itemcard';
 
 class CallPlans extends Component {
     static navigationOptions = ({ navigation }) => ({
-        title: 'TolkNu',
+        title: 'Daily Calls',
         headerStyle: {
             backgroundColor: brandColors.lightGreen,
         },
-
-        headerTintColor: '#fff',
-        headerTitleStyle: {
-            fontWeight: 'normal',
-            fontSize: 15
+        headerTintColor: brandColors.darkBrown,
+        titleStyle: {
+            textAlign: 'center',
+            alignSelf: 'center'
         },
-        headerRight: <Icon
-            name="menu"
+        headerTitleStyle: {
+            fontWeight: 'bold',
+            fontSize: 15,
+            textAlign: 'center',
+            flex: 1,
+        },
+        headerLeft: <Icon
+            name="more-vertical"
+            type="feather"
             size={25}
-            color="#000"
-            iconStyle={{ marginRight: 10 }}
+            color={brandColors.darkBrown}
+            iconStyle={{ paddingLeft: 10 }}
             onPress={() => { navigation.openDrawer(); }}
         />,
     });
@@ -33,13 +39,13 @@ class CallPlans extends Component {
         const list = [
             {
                 name: 'Amy Farha',
-                avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-                subtitle: 'Vice President'
+                type: 'A',
+                category: 'Opthalmic'
             },
             {
                 name: 'Chris Jackson',
-                avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
-                subtitle: 'Vice Chairman'
+                type: 'A',
+                category: 'Respiratory'
             },
             // more items
         ];
@@ -48,14 +54,14 @@ class CallPlans extends Component {
                 <CallPlanHeader />
                 <Divider style={{ backgroundColor: brandColors.darkBrown }} />
                 {
-                    list.map((l, i) => (
-                        <ListItem
+                    list.map((a, i) => {
+                        return (<ItemCard
                             key={i}
-                            rightAvatar={{ source: { uri: l.avatar_url } }}
-                            title={l.name}
-                            subtitle={l.subtitle}
-                        />
-                    ))
+                            name={a.name}
+                            type={a.type}
+                            category={a.category}
+                        />)
+                    })
                 }
             </View >
         )

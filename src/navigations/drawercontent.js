@@ -8,12 +8,11 @@ import {
     ImageBackground,
     TouchableOpacity,
     AsyncStorage,
-
     ScrollView,
 } from 'react-native';
 import { Avatar, Button, Icon } from 'react-native-elements';
-
-import { ImageHeader } from '../components'
+import { ImageHeader } from '../components';
+import { navigationOptions, brandColors } from '../constants'
 
 class NavigationMenu extends Component {
     state = {
@@ -46,49 +45,19 @@ class NavigationMenu extends Component {
                         {/* <Text style={{ fontSize: 16, color: '#000', marginTop: 5 }}>firstName</Text>
                         <Text>email</Text> */}
                     </View>
-
-                    <TouchableOpacity
-                        onPress={() => navigate('CallPlans')}
-                        style={this.state.activeTab === 1 ? styles.active : styles.tabName}
-                    >
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-
-                            <Text style={styles.sectionHeadingStyle}>Call Plans</Text>
-                        </View>
-                        <Icon name="chevron-right" color="#666666" size={20} />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() => navigate('Itemcard')}
-
-
-                        style={this.state.activeTab === 2 ? styles.active : styles.tabName}
-                    >
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-
-                            <Text style={styles.sectionHeadingStyle}>Profile</Text>
-                        </View>
-                        <Icon name="chevron-right" color="#666666" size={20} />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-
-                        style={this.state.activeTab === 3 ? styles.active : styles.tabName}
-                    >
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-
-                            <Text style={styles.sectionHeadingStyle}>Notifications</Text>
-                        </View>
-                        <Icon name="chevron-right" color="#666666" size={20} />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-
-                        style={this.state.activeTab === 4 ? styles.active : styles.tabName}
-                    >
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-
-                            <Text style={styles.sectionHeadingStyle}>Settings</Text>
-                        </View>
-                        <Icon name="chevron-right" color="#666666" size={20} />
-                    </TouchableOpacity>
+                    {
+                        navigationOptions.map((option, index) => {
+                            return (<TouchableOpacity
+                                onPress={() => option.navigateTo ? navigate(option.navigateTo) : ''}
+                                style={this.state.activeTab === 1 ? styles.active : styles.tabName}
+                            >
+                            <Icon name='schedule' color={brandColors.darkBrown}/>
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <Text style={styles.sectionHeadingStyle}>{ option.label }</Text>
+                            </View>
+                            </TouchableOpacity>)
+                        })
+                    }
                 </ScrollView>
                 <TouchableOpacity
                     style={{ width: '90%', marginTop: 10 }}>
@@ -109,20 +78,22 @@ const styles = new StyleSheet.create({
 
     sectionHeadingStyle: {
         paddingHorizontal: 5,
-        fontFamily: 'SFProDisplay-Regular',
-        color: '#666666',
-        fontSize: 14,
-        textAlignVertical: 'center'
+        // fontFamily: 'SFProDisplay-Regular',
+        color: brandColors.darkBrown,
+        fontSize: 16,
+        textAlignVertical: 'center',
+        textAlign: 'left',
+        fontWeight: 'bold'
     },
 
     tabName: {
         paddingVertical: 20,
-        alignItems: 'center',
-        fontFamily: 'SFProDisplay-Regular',
+        // alignItems: 'center',
+        // fontFamily: 'SFProDisplay-Regular',
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        // justifyContent: 'space-between',
         borderBottomWidth: 1,
-        borderBottomColor: '#d3d3d3'
+        borderBottomColor: brandColors.darkBrown
     },
     active: {
         backgroundColor: 'rgba(255, 255, 255, 0.5)',

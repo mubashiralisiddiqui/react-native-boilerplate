@@ -20,13 +20,10 @@ import { Itemcard } from '../components'
 
 
 const AppStack = createStackNavigator({
-    Home: Home,
+    Home: CallPlans,
     // all other routes
     CallPlans: CallPlans,
     Itemcard: Itemcard
-
-
-
 })
 // drawer stack passing Appstack in drawe so that all can be accessible in our  drawerstack
 const RootStack = createDrawerNavigator({
@@ -53,7 +50,6 @@ export default createAppContainer(createSwitchNavigator(
         App: RootStack, // the whole app routes
         Auth: AuthStack, // when user logout
         AuthLoading: AuthLoading // where we decid where to switch app or auth
-
     },
     {
         initialRouteName: 'App'

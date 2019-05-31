@@ -1,39 +1,38 @@
-
-
-
-import React from 'react';
-
+import React, { Component } from 'react';
 import { View, Text, Dimensions } from 'react-native';
 import { Card, Button } from 'react-native-elements'
+import { brandColors } from '../../constants';
 
-const ItemCard = (props) => {
-    return (
+class ItemCard extends Component {
+   render() {
+       const { name, type, category } = this.props
+        return (   
+            <Card
+                containerStyle={{ paddingLeft: 2, paddingRight: 5 }}
+            >
+                <View style={styles.cardcontainer}>
+                    <View style={styles.itemFirst}>
+                        <Text> { name }</Text>
+                    </View>
+                    <View style={styles.itemSecond}>
+                        <Text>{ type }</Text>
+                    </View>
+                    <View style={styles.item}>
+                        <Text>{ category }</Text>
+                    </View>
+                    <Button
 
-        <Card
-            containerStyle={{ paddingLeft: 2, paddingRight: 5 }}
-        >
-            <View style={styles.cardcontainer}>
-                <View style={styles.itemFirst}>
-                    <Text> Dr Nauaman</Text>
+                        buttonStyle={{
+                            marginLeft: 8,
+                            backgroundColor: brandColors.lightGreen
+                        }}
+                        title='Submit'
+                        containerStyle={{ padding: 5, marginRight: 5, }}
+                    />
                 </View>
-                <View style={styles.itemSecond}>
-                    <Text> A</Text>
-                </View>
-                <View style={styles.item}>
-                    <Text> OPHT</Text>
-                </View>
-                <Button
-
-                    buttonStyle={{
-                        marginLeft: 8,
-                        backgroundColor: 'gray'
-                    }}
-                    title='Submit'
-                    containerStyle={{ padding: 5, marginRight: 5, }}
-                />
-            </View>
-        </Card>
-    )
+            </Card>
+        )
+   }
 }
 export default ItemCard;
 const { width } = Dimensions.get('window');
@@ -50,7 +49,7 @@ const styles = {
         justifyContent: 'center',
         marginLeft: 0,
         alignItems: 'center',
-        padding: 10
+        width: width/5
     },
     itemSecond: {
         height: 50,
@@ -58,7 +57,8 @@ const styles = {
         justifyContent: 'center',
         marginLeft: 10,
         alignItems: 'center',
-        padding: 10
+        padding: 10,
+        width: width/10
     },
     item: {
         height: 50,
@@ -66,6 +66,7 @@ const styles = {
         flexGrow: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 7
+        padding: 7,
+        width: width/6
     }
 }

@@ -20,3 +20,35 @@ export const  RandomInteger = (min = 1, max = 9999) => {
    max = floor(max);
    return floor(random() * (max - min + 1)) + min;
 }
+
+export const navigationOptions = [
+    {
+        name: 'call_plans',
+        label: 'Call Plans',
+        navigateTo: 'CallPlans'
+    },{
+        name: 'unplanned_visits',
+        label: 'Unplanned Visits'
+    },{
+        name: 'add_doctor',
+        label: 'Add New Doctor'
+    },{
+        name: 'downloads',
+        label: 'Downloads'
+    },{
+        name: 'sample_detaisl',
+        label: 'Sample Details'
+    },{
+        name: 'change_doctor_location',
+        label: 'Change Dr Location'
+    },{
+        name: 'profile',
+        label: 'Profile'
+    },{
+        name: 'saved_data',
+        label: 'Saved Data'
+    },{
+        name: 'logout',
+        label: 'Logout'
+    },
+];
