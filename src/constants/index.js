@@ -49,6 +49,7 @@ export const navigationOptions = [
         label: 'Saved Data'
     },{
         name: 'logout',
-        label: 'Logout'
+        label: 'Logout',
+        navigateTo: 'Login'
     },
 ];
