@@ -12,21 +12,21 @@ class ItemCard extends Component {
             >
                 <View style={styles.cardcontainer}>
                     <View style={styles.itemFirst}>
-                        <Text> { name }</Text>
+                        <Text style={styles.text}> { name }</Text>
                     </View>
                     <View style={styles.itemSecond}>
-                        <Text>{ type }</Text>
+                        <Text style={styles.text}>{ type }</Text>
                     </View>
                     <View style={styles.item}>
-                        <Text>{ category }</Text>
+                        <Text style={styles.text}>{ category }</Text>
                     </View>
                     <Button
-
                         buttonStyle={{
                             marginLeft: 8,
-                            backgroundColor: brandColors.lightGreen
+                            backgroundColor: brandColors.lightGreen,
+                            fontWeight: 'bold'
                         }}
-                        title='Submit'
+                        title='Execute'
                         containerStyle={{ padding: 5, marginRight: 5, }}
                     />
                 </View>
@@ -68,5 +68,9 @@ const styles = {
         alignItems: 'center',
         padding: 7,
         width: width/6
+    },
+    text: {
+        fontWeight: 'bold',
+        fontSize: 14
     }
 }
