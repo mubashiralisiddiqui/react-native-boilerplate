@@ -5,36 +5,11 @@ import React, { Component } from 'react';
 import { View, ScrollView } from 'react-native'
 import { ListItem, Divider, Icon } from 'react-native-elements';
 import { CallPlanHeader } from '../../components/Headers'
-import { brandColors } from '../../constants'
+import { brandColors, navigationOption } from '../../constants'
 import ItemCard from '../../components/Itemcard';
 
 class CallPlans extends Component {
-    static navigationOptions = ({ navigation }) => ({
-        title: 'Daily Calls',
-        headerStyle: {
-            backgroundColor: brandColors.lightGreen,
-        },
-        headerTintColor: brandColors.darkBrown,
-        titleStyle: {
-            textAlign: 'center',
-            alignSelf: 'center'
-        },
-        headerTitleStyle: {
-            fontWeight: 'bold',
-            fontSize: 15,
-            textAlign: 'center',
-            flex: 1,
-        },
-        headerLeft: <Icon
-            name="more-vertical"
-            type="feather"
-            size={25}
-            color={brandColors.darkBrown}
-            iconStyle={{ paddingLeft: 10 }}
-            onPress={() => { navigation.openDrawer(); }}
-        />,
-    });
-
+    static navigationOptions = ({ navigation }) => (navigationOption(navigation, 'Daily Calls'))
     render() {
         const list = [
             {

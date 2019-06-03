@@ -7,11 +7,13 @@ import LoginHoc from './LoginHoc';
 import AuthLoading from './AuthLoading'
 import CallPlans from './CallPlans'
 import Home from './Home'
+import CallDetails from './CallDetails'
 
 export {
     Login,
     LoginHoc,
     AuthLoading,
     Home,
-    CallPlans
+    CallPlans,
+    CallDetails,
 }

@@ -11,7 +11,7 @@ import {
 // All views 
 
 
-import { Login, AuthLoading, Home, CallPlans } from '../containers';
+import { Login, AuthLoading, Home, CallPlans, CallDetails } from '../containers';
 import DrawerContent from './drawercontent'
 import { Itemcard } from '../components'
 
@@ -24,7 +24,7 @@ const AppStack = createStackNavigator({
     Home: CallPlans,
     // all other routes
     CallPlans: CallPlans,
-
+    CallDetails: CallDetails,
 })
 // drawer stack passing Appstack in drawe so that all can be accessible in our  drawerstack
 const RootStack = createDrawerNavigator({

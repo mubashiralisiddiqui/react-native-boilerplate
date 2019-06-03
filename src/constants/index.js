@@ -1,3 +1,5 @@
+import React from 'react'
+import {Icon} from 'react-native-elements';
 export const brandColors = {
     darkBrown: '#514835',
     green: '#11B14C',
@@ -53,3 +55,31 @@ export const navigationOptions = [
         navigateTo: 'Login'
     },
 ];
+
+export const navigationOption = (navigation, title) => {
+    return {
+        title: title,
+        headerStyle: {
+            backgroundColor: brandColors.lightGreen,
+        },
+        headerTintColor: brandColors.darkBrown,
+        titleStyle: {
+            textAlign: 'center',
+            alignSelf: 'center'
+        },
+        headerTitleStyle: {
+            fontWeight: 'bold',
+            fontSize: 15,
+            textAlign: 'center',
+            flex: 1,
+        },
+        headerLeft: <Icon
+            name="more-vertical"
+            type="feather"
+            size={25}
+            color={brandColors.darkBrown}
+            iconStyle={{ paddingLeft: 10 }}
+            onPress={() => { navigation.openDrawer(); }}
+        />,
+    }
+}
