@@ -42,7 +42,8 @@ export const navigationOptions = [
         label: 'Sample Details'
     },{
         name: 'change_doctor_location',
-        label: 'Change Dr Location'
+        label: 'Change Dr Location',
+        navigateTo: 'DoctorLocation'
     },{
         name: 'profile',
         label: 'Profile'

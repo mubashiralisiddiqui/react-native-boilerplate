@@ -8,6 +8,7 @@ import AuthLoading from './AuthLoading'
 import CallPlans from './CallPlans'
 import Home from './Home'
 import CallDetails from './CallDetails'
+import DoctorLocation from './DoctorLocation'
 
 export {
     Login,
@@ -16,4 +17,5 @@ export {
     Home,
     CallPlans,
     CallDetails,
+    DoctorLocation,
 }
