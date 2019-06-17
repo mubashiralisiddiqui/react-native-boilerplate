@@ -16,12 +16,12 @@ class LoginForm extends Component {
                     <Text h1 style={styles.heading}>Login</Text>
                     <TextInput
                         placeholder="Login ID"
-                        keyboardType="default"
+                        keyboardType="email-address"
                         handleChange={onChange}
                         underlineColor="black"
                         secureTextEntry={false}
                         value={email}
-                        icon={<Icon
+                        leftIcon={<Icon
                             size={20}
                             name="user"
                             color={brandColors.darkBrown} />}
@@ -33,7 +33,7 @@ class LoginForm extends Component {
                         underlineColor="black"
                         secureTextEntry={true}
                         value={password}
-                        icon={
+                        leftIcon={
                             <Icon
                                 size={20}
                                 name="key"

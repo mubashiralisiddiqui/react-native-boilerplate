@@ -38,7 +38,7 @@ export const navigationOptions = [
         name: 'downloads',
         label: 'Downloads'
     },{
-        name: 'sample_detaisl',
+        name: 'sample_details',
         label: 'Sample Details'
     },{
         name: 'change_doctor_location',

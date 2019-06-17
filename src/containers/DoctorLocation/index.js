@@ -2,14 +2,35 @@
  *  start of Login container
  */
 import React, { Component } from 'react';
-import { View, ScrollView } from 'react-native'
-import { ListItem, Divider, Icon } from 'react-native-elements';
+import { View, ScrollView, PermissionsAndroid } from 'react-native'
+import { ListItem, Divider, Icon, Text, Button } from 'react-native-elements';
 import { CallPlanHeader } from '../../components/Headers'
 import { brandColors, navigationOption } from '../../constants'
-import ItemCard from '../../components/Itemcard';
+import Modal from "react-native-modal";
 
 export default class DoctorLocation extends Component {
+    state = {
+        isModalVisible: false
+    }
+     permision = async () => {
+
+    }
+    toggleModal = () => {
+        this.setState({ isModalVisible: !this.state.isModalVisible });
+    };
     static navigationOptions = ({ navigation }) => (navigationOption(navigation, 'Change Doctor Location'))
+
+    componentDidMount() {
+
+        const granted = await PermissionsAndroid.check( PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION );
+        if (granted) {
+          console.log( "You can use the ACCESS_FINE_LOCATION" )
+        } 
+        else {
+          console.log( "ACCESS_FINE_LOCATION permission denied" )
+        }
+    }
+
     render() {
         const list = [
             {
@@ -31,11 +52,21 @@ export default class DoctorLocation extends Component {
                                 <ListItem
                                     key={i}
                                     title={a.name}
-                                    onPress={() => alert(33)}
+                                    onPress={this.toggleModal}
                                 />
                             )
                         })
                     }
+                    <Modal 
+                    isVisible={this.state.isModalVisible}
+                    onBackdropPress={() => this.setState({ isModalVisible: false })}
+                    hideModalContentWhileAnimating={true}
+                    >
+                        <View style={{ flex: 1, backgroundColor: 'white', height: 'auto' }}>
+                            <Text>Hello!</Text>
+                            <Button title="Submit" onPress={this.toggleModal} />
+                        </View>
+                    </Modal>
                 </ScrollView>
             </View >
         )

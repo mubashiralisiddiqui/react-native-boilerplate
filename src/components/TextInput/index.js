@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TextInput, } from 'react-native';
+import { Input } from 'react-native-elements';
 
 import { styles } from './style'
 const InputText = (
@@ -10,7 +11,7 @@ const InputText = (
         underlineColor = "",
         secureTextEntry = false,
         text,
-        icon
+        leftIcon
 
     }
 ) => {
@@ -19,8 +20,8 @@ const InputText = (
             <View
                 style={styles.inputContainer}
             >
-                {icon}
-                <TextInput
+                {/* {icon} */}
+                <Input
                     style={styles.input}
                     placeholder={placeholder}
                     secureTextEntry={secureTextEntry}
@@ -28,8 +29,9 @@ const InputText = (
                     keyboardType={keyboardType}
                     onChangeText={() => handleChange()}
                     value={text}
-                    secureTextEntry={secureTextEntry}
-                />
+                    // leftIcon={leftIcon}
+                    rightIcon={leftIcon}
+                    />
             </View>
         </View>
     )
