@@ -13,7 +13,13 @@ export default class DoctorLocation extends Component {
         isModalVisible: false
     }
      permision = async () => {
-
+        const granted = await PermissionsAndroid.check( PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION );
+        if (granted) {
+          console.log( "You can use the ACCESS_FINE_LOCATION" )
+        } 
+        else {
+          console.log( "ACCESS_FINE_LOCATION permission denied" )
+        }
     }
     toggleModal = () => {
         this.setState({ isModalVisible: !this.state.isModalVisible });
@@ -22,13 +28,7 @@ export default class DoctorLocation extends Component {
 
     componentDidMount() {
 
-        const granted = await PermissionsAndroid.check( PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION );
-        if (granted) {
-          console.log( "You can use the ACCESS_FINE_LOCATION" )
-        } 
-        else {
-          console.log( "ACCESS_FINE_LOCATION permission denied" )
-        }
+        this.permision();
     }
 
     render() {

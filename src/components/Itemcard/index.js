@@ -5,12 +5,12 @@ import { brandColors } from '../../constants';
 
 class ItemCard extends Component {
    render() {
-       const { name, type, category } = this.props
+       const { name, type, category, onPressHandler } = this.props
         return (   
             <Card
                 containerStyle={{ paddingLeft: 2, paddingRight: 5 }}
             >
-                <View style={styles.cardcontainer}>
+                <View style={styles.cardcontainer}> 
                     <View style={styles.itemFirst}>
                         <Text style={styles.text}> { name }</Text>
                     </View>
@@ -28,6 +28,7 @@ class ItemCard extends Component {
                         }}
                         title='Execute'
                         containerStyle={{ padding: 5, marginRight: 5, }}
+                        onPress={onPressHandler}
                     />
                 </View>
             </Card>

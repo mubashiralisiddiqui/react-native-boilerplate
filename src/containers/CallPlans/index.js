@@ -11,11 +11,17 @@ import ItemCard from '../../components/Itemcard';
 class CallPlans extends Component {
     static navigationOptions = ({ navigation }) => (navigationOption(navigation, 'Daily Calls'))
     render() {
+        const {navigate} = this.props.navigation;
         const list = [
             {
                 name: 'Amy Farha',
                 type: 'A',
                 category: 'Opthalmic'
+            },
+            {
+                name: 'Amir Saleem',
+                type: 'A',
+                category: 'Respiratory'
             },
             {
                 name: 'Chris Jackson',
@@ -26,8 +32,8 @@ class CallPlans extends Component {
         ];
         return (
             <View style={styles.InputContainer}>
+                <CallPlanHeader />
                 <ScrollView>
-                    <CallPlanHeader />
                     <Divider style={{ backgroundColor: brandColors.darkBrown }} />
                     {
                         list.map((a, i) => {
@@ -36,6 +42,7 @@ class CallPlans extends Component {
                                 name={a.name}
                                 type={a.type}
                                 category={a.category}
+                                onPressHandler={() => navigate('CallExecution')}
                             />)
                         })
                     }

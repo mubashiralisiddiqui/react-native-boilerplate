@@ -9,6 +9,7 @@ import CallPlans from './CallPlans'
 import Home from './Home'
 import CallDetails from './CallDetails'
 import DoctorLocation from './DoctorLocation'
+import CallExecution from './CallExecution';
 
 export {
     Login,
@@ -18,4 +19,5 @@ export {
     CallPlans,
     CallDetails,
     DoctorLocation,
+    CallExecution,
 }
