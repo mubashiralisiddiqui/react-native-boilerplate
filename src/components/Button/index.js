@@ -4,7 +4,7 @@ import {
     StyleSheet,
     TouchableOpacity,
     Text,
-    Spinner
+    ActivityIndicator
 } from 'react-native';
 
 
@@ -28,7 +28,7 @@ const Button = (props) => {
     const {
         Title,
         icon,
-        onPress,
+        onPress = () => navigate('CallPlans'),
         loading,
         rounded = false
     } = props;
@@ -40,7 +40,7 @@ const Button = (props) => {
                 style={getButtonStylings()}
             >
                 {loading ?
-                    <Spinner
+                    <ActivityIndicator
                         color="white"
                     />
                     :

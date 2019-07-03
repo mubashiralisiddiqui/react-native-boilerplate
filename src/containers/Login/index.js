@@ -4,22 +4,39 @@
 import React, { Component } from 'react';
 import { View } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { LoginForm, ImageHeader } from '../../components'
+import { LoginForm, ImageHeader, ImageBackgroundWrapper } from '../../components'
 
 class Login extends Component {
     static navigationOptions = {
         header: null,
         // drawerLockMode: 'locked-closed'
     }
+    state = {
+        email: '',
+        password: '',
+        loading: false,
+    }
+    onChange = (key, value) => {
+        this.setState({[key] : value})
+    }
+    onSubmit = () => {
+        this.setState({
+            loading: true,
+        })
+        setTimeout(() => this.props.navigation.navigate('CallPlans'), 1500)
+        
+    }
     render() {
         return (
-            <View style={styles.InputContainer}>
-                <KeyboardAwareScrollView contentContainerStyle={{ justifyContent: 'center', display: 'flex' }}>
-                    <ImageHeader
-                    />
-                    <LoginForm />
-                </KeyboardAwareScrollView >
-            </View >
+            <ImageBackgroundWrapper>
+                {/* <View style={styles.InputContainer}> */}
+                    <KeyboardAwareScrollView contentContainerStyle={styles.InputContainer}>
+                        <ImageHeader
+                        />
+                        <LoginForm loading={this.state.loading} onSubmit={this.onSubmit}/>
+                    </KeyboardAwareScrollView >
+                {/* </View > */}
+            </ImageBackgroundWrapper>
         )                                                                                                                                                                           
     }
 }                                                                                                                                   
@@ -29,8 +46,6 @@ export default Login
 const styles = {
     InputContainer: {
         display: 'flex',
-        flex: 1,
         justifyContent: 'center',
-        backgroundColor: 'white',
     }
 }

@@ -11,7 +11,7 @@ import {
 // All views 
 
 
-import { Login, AuthLoading, Home, CallPlans, CallDetails, DoctorLocation, CallExecution } from '../containers';
+import { Login, AuthLoading, CallPlans, CallDetails, DoctorLocation, CallExecution } from '../containers';
 import DrawerContent from './drawercontent'
 import { Itemcard } from '../components'
 
@@ -20,8 +20,7 @@ import { Itemcard } from '../components'
 
 
 const AppStack = createStackNavigator({
-    Itemcard: Itemcard,
-    Home: CallPlans,
+    Home: Login,
     // all other routes
     CallPlans: CallPlans,
     CallDetails: CallDetails,

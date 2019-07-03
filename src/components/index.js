@@ -8,7 +8,13 @@ import LoginForm from './LoginForm';
 import ImageHeader from './ImageHeader';
 import Button from './Button';
 import Header from './Header';
-import Itemcard from './Itemcard'
+import Itemcard from './Itemcard';
+import Collapse from './Collapsable';
+import KeyCallInfo from './KeyCallInfo';
+import AdditionalInfo from './AdditionalInfo';
+import DoctorHistory from './DoctorHistory';
+import FloatingButton from './FloatingButton';
+import ImageBackgroundWrapper from './ImageBackground';
 
 export {
     TextInput,
@@ -16,5 +22,11 @@ export {
     ImageHeader,
     Button,
     Header,
-    Itemcard
+    Itemcard,
+    Collapse,
+    KeyCallInfo,
+    AdditionalInfo,
+    DoctorHistory,
+    FloatingButton,
+    ImageBackgroundWrapper,
 }

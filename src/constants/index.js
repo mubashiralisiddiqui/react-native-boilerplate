@@ -1,9 +1,12 @@
 import React from 'react'
-import {Icon} from 'react-native-elements';
+import { Icon } from 'react-native-elements';
+import { StyleSheet } from 'react-native';
+
 export const brandColors = {
     darkBrown: '#514835',
     green: '#11B14C',
-    lightGreen: '#92C83E'
+    lightGreen: '#92C83E',
+    overlayColor: 'rgba(81,72,53,.7)',
 }
 
 export const ceil = value => Math.ceil(value);
@@ -30,7 +33,8 @@ export const navigationOptions = [
         navigateTo: 'CallPlans'
     },{
         name: 'unplanned_visits',
-        label: 'Unplanned Visits'
+        label: 'Unplanned Visits',
+        navigateTo: 'CallExecution',
     },{
         name: 'add_doctor',
         label: 'Add New Doctor'
@@ -75,12 +79,29 @@ export const navigationOption = (navigation, title) => {
             flex: 1,
         },
         headerLeft: <Icon
-            name="more-vertical"
-            type="feather"
-            size={25}
+            name="align-left"
+            type="font-awesome"
+            size={20}
             color={brandColors.darkBrown}
             iconStyle={{ paddingLeft: 10 }}
             onPress={() => { navigation.openDrawer(); }}
         />,
     }
 }
+
+// export const styles = new StyleSheet.create({
+export const styles = {
+    container: {
+        justifyContent: 'center',
+        width: '100%',
+        alignItems: 'center',
+        paddingVertical: 10,
+    },
+    labelStyle: {
+        fontWeight: 'bold',
+        fontSize: 14,
+        color: brandColors.darkBrown,
+    }, 
+}
+
+export const rangeArray = times => new Array(times).fill(times)

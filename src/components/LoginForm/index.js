@@ -10,7 +10,7 @@ import { styles } from './styles';
 
 class LoginForm extends Component {
     render() {
-            const {email, password, onChange, onSubmit} = this.props;
+            const {email, password, onChange, loading, onSubmit} = this.props;
             return (
                 <Fragment>
                     <Text h1 style={styles.heading}>Login</Text>
@@ -46,7 +46,7 @@ class LoginForm extends Component {
                         textStyle={styles.checkboxText}
                     /> */}
                     <Button
-                        loading={false}
+                        loading={loading}
                         Title="Login"
                         onPress={(e) => onSubmit(e)}
                         rounded={true}

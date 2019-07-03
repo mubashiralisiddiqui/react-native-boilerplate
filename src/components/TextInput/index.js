@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, TextInput, } from 'react-native';
+import { View } from 'react-native';
 import { Input } from 'react-native-elements';
+import { brandColors } from '../../constants';
 
 import { styles } from './style'
 const InputText = (
@@ -20,17 +21,17 @@ const InputText = (
             <View
                 style={styles.inputContainer}
             >
-                {/* {icon} */}
                 <Input
                     style={styles.input}
                     placeholder={placeholder}
                     secureTextEntry={secureTextEntry}
-                    placeholderTextColor='lightgray'
+                    placeholderTextColor={brandColors.darkBrown}
                     keyboardType={keyboardType}
-                    onChangeText={() => handleChange()}
+                    onChangeText={handleChange}
                     value={text}
-                    // leftIcon={leftIcon}
                     rightIcon={leftIcon}
+                    inputContainerStyle={{ borderBottomWidth: 0 }}
+                    autoCapitalize={'none'}
                     />
             </View>
         </View>

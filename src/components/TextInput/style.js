@@ -13,6 +13,10 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
         height: 50,
         alignItems: 'center',
+        // borderTopLeftRadius: 5,
+        // borderTopRightRadius: 10,
+        // borderBottomLeftRadius: 15,
+        // borderBottomRightRadius: 10,
         borderRadius: 33,
         borderWidth: 1,
         borderColor: brandColors.darkBrown,
@@ -27,6 +31,7 @@ export const styles = StyleSheet.create({
         paddingRight: 20,
         paddingBottom: 10,
         paddingLeft: 20,
-        color: 'black',
+        color: 'white',
+        borderBottomWidth: 0
     }
 })

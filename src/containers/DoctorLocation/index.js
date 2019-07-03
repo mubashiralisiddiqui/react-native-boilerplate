@@ -3,26 +3,36 @@
  */
 import React, { Component } from 'react';
 import { View, ScrollView, PermissionsAndroid } from 'react-native'
-import { ListItem, Divider, Icon, Text, Button } from 'react-native-elements';
+import { ListItem, Divider, Overlay, Text, Input } from 'react-native-elements';
 import { CallPlanHeader } from '../../components/Headers'
 import { brandColors, navigationOption } from '../../constants'
-import Modal from "react-native-modal";
+import { Button as Button, ImageBackgroundWrapper } from '../../components';
+import { DoctorLocationOverlay, LocationOverlayContent } from '../../components/Overlays/'
 
 export default class DoctorLocation extends Component {
     state = {
         isModalVisible: false
     }
-     permision = async () => {
-        const granted = await PermissionsAndroid.check( PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION );
-        if (granted) {
+    permision = async () => {
+        const granted = await PermissionsAndroid.check( PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, {
+            title: 'Location Permission',
+            message:
+            'Cool Photo App needs access to your camera ' +
+            'so you can take awesome pictures.',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+        } );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
           console.log( "You can use the ACCESS_FINE_LOCATION" )
         } 
         else {
           console.log( "ACCESS_FINE_LOCATION permission denied" )
         }
     }
-    toggleModal = () => {
-        this.setState({ isModalVisible: !this.state.isModalVisible });
+    toggleModal = (isBackdrop = false) => {
+        isBackdrop ? this.setState({ isModalVisible: false })
+        : this.setState({ isModalVisible: ! this.state.isModalVisible })
     };
     static navigationOptions = ({ navigation }) => (navigationOption(navigation, 'Change Doctor Location'))
 
@@ -30,8 +40,12 @@ export default class DoctorLocation extends Component {
 
         this.permision();
     }
+    async componentWillMount() {
+        await this.permision();
+    }
 
     render() {
+        // this.permision();
         const list = [
             {
                 name: 'Amy Farha',
@@ -42,33 +56,28 @@ export default class DoctorLocation extends Component {
             // more items
         ];
         return (
+            <ImageBackgroundWrapper>
             <View style={styles.InputContainer}>
+                <CallPlanHeader />
                 <ScrollView>
-                    <CallPlanHeader />
-                    <Divider style={{ backgroundColor: brandColors.darkBrown }} />
                     {
                         list.map((a, i) => {
                             return (
                                 <ListItem
                                     key={i}
                                     title={a.name}
-                                    onPress={this.toggleModal}
-                                />
+                                    onPress={() => this.toggleModal(false)}
+                                    containerStyle={{backgroundColor: 'transparent'}}
+                                    bottomDivider={true}
+                                    topDivider={true}
+                                    />
                             )
                         })
                     }
-                    <Modal 
-                    isVisible={this.state.isModalVisible}
-                    onBackdropPress={() => this.setState({ isModalVisible: false })}
-                    hideModalContentWhileAnimating={true}
-                    >
-                        <View style={{ flex: 1, backgroundColor: 'white', height: 'auto' }}>
-                            <Text>Hello!</Text>
-                            <Button title="Submit" onPress={this.toggleModal} />
-                        </View>
-                    </Modal>
+                    <DoctorLocationOverlay isVisible={this.state.isModalVisible} onChange={this.toggleModal} />
                 </ScrollView>
             </View >
+            </ImageBackgroundWrapper>
         )
     }
 }
@@ -78,6 +87,5 @@ const styles = {
     InputContainer: {
         display: 'flex',
         flex: 1,
-        backgroundColor: 'white',
     }
 }
