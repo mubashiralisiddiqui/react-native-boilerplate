@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { View, Text, Dimensions } from 'react-native';
 import { Card, Button } from 'react-native-elements'
 import { brandColors, RandomInteger } from '../../constants';
@@ -9,9 +9,16 @@ const ItemCard = ({
     type,
     category,
     status,
-    loading,
     onPressHandler
 }) => {
+    const [loading, setLoading] = useState(false);
+    const onPress = () => {
+        setLoading(true);
+        setTimeout(() => {
+            onPressHandler();
+            setLoading(false)
+        }, 1000)
+    }
     const styles = getStyles(status);
     return (   
         <Card key={RandomInteger()}
@@ -34,7 +41,7 @@ const ItemCard = ({
                     }}
                     title={<Text style={{color: brandColors.darkBrown}}>Execute</Text>}
                     containerStyle={{ marginRight: 5, }}
-                    onPress={onPressHandler}
+                    onPress={onPress}
                     disabled={!status}
                     raised
                     loading={loading}
@@ -82,15 +89,11 @@ const getStyles = (status) => {
             width: width/6
         },
         text: {
-            // fontWeight: 'bold',
             fontSize: 18,
-            // color: status === 1 ? brandColors.darkBrown : '#fff',
             color: status === 1 ? brandColors.darkBrown : '#aaa',
-            // fontFamily: 'Lato-Bold'
         },
         cardContainer: {
-            // backgroundColor: status === 1 ? brandColors.lightGreen : brandColors.darkBrown,
-            backgroundColor: status === 1 ? 'transparent' : 'transparent    ',
+            backgroundColor: 'transparent',
             paddingLeft: 2,
             paddingRight: 5,
             shadowColor: brandColors.lightGreen,

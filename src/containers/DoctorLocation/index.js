@@ -3,11 +3,11 @@
  */
 import React, { Component } from 'react';
 import { View, ScrollView, PermissionsAndroid } from 'react-native'
-import { ListItem, Divider, Overlay, Text, Input } from 'react-native-elements';
+import { ListItem } from 'react-native-elements';
 import { CallPlanHeader } from '../../components/Headers'
-import { brandColors, navigationOption } from '../../constants'
+import { navigationOption } from '../../constants'
 import { Button as Button, ImageBackgroundWrapper } from '../../components';
-import { DoctorLocationOverlay, LocationOverlayContent } from '../../components/Overlays/'
+import { DoctorLocationOverlay } from '../../components/Overlays/'
 
 export default class DoctorLocation extends Component {
     state = {

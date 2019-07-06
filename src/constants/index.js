@@ -37,13 +37,15 @@ export const navigationOptions = [
         navigateTo: 'CallExecution',
     },{
         name: 'add_doctor',
-        label: 'Add New Doctor'
+        label: 'Add New Doctor',
+        navigateTo: 'NewDoctor',
     },{
         name: 'downloads',
         label: 'Downloads'
     },{
         name: 'sample_details',
-        label: 'Sample Details'
+        label: 'Sample Details',
+        navigateTo: 'Samples',
     },{
         name: 'change_doctor_location',
         label: 'Change Dr Location',

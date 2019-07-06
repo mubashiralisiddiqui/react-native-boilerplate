@@ -11,21 +11,29 @@ import {
 // All views 
 
 
-import { Login, AuthLoading, CallPlans, CallDetails, DoctorLocation, CallExecution } from '../containers';
+import {
+    Login,
+    AuthLoading,
+    CallPlans,
+    DoctorLocation,
+    CallExecution,
+    NewDoctor,
+    Samples,
+} from '../containers';
 import DrawerContent from './drawercontent'
-import { Itemcard } from '../components'
 
 // this is the Application stack which is wrapped in createstackNavigator
 // and it shuold be a stacknavigator  there can be different ways but I use like this
 
 
 const AppStack = createStackNavigator({
-    Home: Login,
+    Home: Samples,
     // all other routes
-    CallPlans: CallPlans,
-    CallDetails: CallDetails,
-    DoctorLocation: DoctorLocation,
-    CallExecution: CallExecution,
+    CallPlans,
+    DoctorLocation,
+    CallExecution,
+    NewDoctor,
+    Samples,
 })
 // drawer stack passing Appstack in drawe so that all can be accessible in our  drawerstack
 const RootStack = createDrawerNavigator({

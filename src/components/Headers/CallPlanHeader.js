@@ -22,6 +22,7 @@ const ImageHeader = () => {
 export default ImageHeader;
 const styles = {
     container: {
+        width: '100%',
         display: 'flex',
         justifyContent: 'center',
         marginVertical:20,

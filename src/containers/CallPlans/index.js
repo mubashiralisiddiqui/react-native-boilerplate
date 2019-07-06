@@ -2,7 +2,7 @@
  *  start of Login container
  */
 import React, { Component } from 'react';
-import { View, ScrollView, ActivityIndicator, Animated } from 'react-native';
+import { View, ActivityIndicator, Animated } from 'react-native';
 import { CallPlanHeader } from '../../components/Headers';
 import { ImageBackgroundWrapper } from '../../components';
 import { navigationOption, brandColors } from '../../constants'
@@ -28,20 +28,9 @@ class CallPlans extends Component {
         }, 2000)
     }
 
-    onPress = () => {
-        this.setState({
-            loadingButton: true
-        }),
-        setTimeout(() => {
-            this.setState({
-                loadingButton: false
-            })
-            this.props.navigation.navigate('CallExecution')
-        })
-    }
+    onPress = () => this.props.navigation.navigate('CallExecution')
+
     render() {
-        // const {navigate} = this.props.navigation;
-        
         const list = [
             {
                 name: 'Amy Farha',
@@ -78,10 +67,8 @@ class CallPlans extends Component {
                 category: 'Respiratory',
                 status: 1,
             },
-            // more items
         ];
         return (
-            
             <View style={styles.InputContainer}>
                 <ImageBackgroundWrapper>
                     <CallPlanHeader />

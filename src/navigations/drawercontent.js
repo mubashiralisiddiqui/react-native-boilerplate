@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { ImageHeader } from '../components';
-import { navigationOptions, brandColors } from '../constants'
+import { navigationOptions, brandColors, RandomInteger } from '../constants'
 
 class NavigationMenu extends Component {
     state = {
@@ -37,13 +37,13 @@ class NavigationMenu extends Component {
                     </View>
                     {
                         navigationOptions.map((option, index) => {
-                            return (<TouchableOpacity
-                                onPress={() => option.navigateTo ? navigate(option.navigateTo) : ''}
+                            return (<TouchableOpacity key={RandomInteger()}
+                                onPress={() => option.navigateTo && navigate(option.navigateTo)}
                                 style={styles.section}
                             >
-                                <Icon name='schedule' color={brandColors.darkBrown} />
-                                <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 5 }}>
-                                    <Text style={styles.sectionHeadingStyle}>{option.label}</Text>
+                                <Icon key={RandomInteger()} name='schedule' color={brandColors.darkBrown} />
+                                <View key={RandomInteger()} style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 5 }}>
+                                    <Text key={RandomInteger()} style={styles.sectionHeadingStyle}>{option.label}</Text>
                                 </View>
                             </TouchableOpacity>)
                         })

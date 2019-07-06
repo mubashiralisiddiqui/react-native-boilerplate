@@ -15,6 +15,9 @@ import AdditionalInfo from './AdditionalInfo';
 import DoctorHistory from './DoctorHistory';
 import FloatingButton from './FloatingButton';
 import ImageBackgroundWrapper from './ImageBackground';
+import NewDoctorForm from './NewDoctorForm';
+import SearchDoctor from './SearchDoctor';
+import ListView from './Listing';
 
 export {
     TextInput,
@@ -29,4 +32,7 @@ export {
     DoctorHistory,
     FloatingButton,
     ImageBackgroundWrapper,
+    NewDoctorForm,
+    SearchDoctor,
+    ListView,
 }

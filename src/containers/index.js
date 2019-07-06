@@ -7,9 +7,10 @@ import LoginHoc from './LoginHoc';
 import AuthLoading from './AuthLoading'
 import CallPlans from './CallPlans'
 import Home from './Home'
-import CallDetails from './CallDetails'
 import DoctorLocation from './DoctorLocation'
 import CallExecution from './CallExecution';
+import NewDoctor from './NewDoctor';
+import Samples from './Samples'
 
 export {
     Login,
@@ -17,7 +18,8 @@ export {
     AuthLoading,
     Home,
     CallPlans,
-    CallDetails,
     DoctorLocation,
     CallExecution,
+    NewDoctor,
+    Samples,
 }
