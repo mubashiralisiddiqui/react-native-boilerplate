@@ -15,13 +15,21 @@ export default class CallExecution extends Component {
     constructor(props) {
         super(props)
         let height = Dimensions.get('screen').height;
+        console.log(props.navigation.getParam('call_info', {}))
         this.state = {
             isKeyInfoCollapsed: false,
             isAdditionalInfoCollapsed: false,
             isDocHistoryCollapsed: false,
             buttonPositionFromTop: height,
+            call_info: {},
+            existingCall: props.navigation.getParam('existing_call', false),
         }
 
+    }
+    componentWillReceiveProps(props) {
+        this.setState({
+            call_info: props.navigation.getParam('call_info'),
+        })
     }
 
     onToggle = (section) => {
@@ -45,6 +53,7 @@ export default class CallExecution extends Component {
     }
  
     componentDidMount() {
+        console.log("From DidMount => ", this.state.call_info)
         // this.getOrientation();
         // Dimensions.addEventListener( 'change', this.getOrientation);
     }
@@ -54,7 +63,9 @@ export default class CallExecution extends Component {
             isKeyInfoCollapsed,
             isAdditionalInfoCollapsed,
             isDocHistoryCollapsed,
+            call_info
         } = this.state;
+        // debugger;
         return (
             <ImageBackgroundWrapper>
                 <View style={styles.InputContainer}>
@@ -79,7 +90,7 @@ export default class CallExecution extends Component {
                                 isCollapsed={isKeyInfoCollapsed}
                                 toggler={() => this.onToggle('isKeyInfoCollapsed')}
                                 title="Key Call Information"
-                                Body={<KeyCallInfo />}  
+                                Body={<KeyCallInfo  />}  
                                 HeaderIcon={<Icon name="info-circle" size={40} color="#fff" />} />
                             <Collapse
                                 isCollapsed={isAdditionalInfoCollapsed}
@@ -87,12 +98,16 @@ export default class CallExecution extends Component {
                                 title="Additional Information"
                                 Body={<AdditionalInfo />}
                                 HeaderIcon={<Icon name="plus-square" size={40} color="#fff" />} />
-                            <Collapse
-                                isCollapsed={isDocHistoryCollapsed}
-                                toggler={() => this.onToggle('isDocHistoryCollapsed')}
-                                title="Doctor Visit History"
-                                Body={ <DoctorHistory /> }
-                                HeaderIcon={<Icon name="history" size={40} color="#fff" />}/>
+                                {
+                                    this.state.existingCall ?
+                                    <Collapse
+                                        isCollapsed={isDocHistoryCollapsed}
+                                        toggler={() => this.onToggle('isDocHistoryCollapsed')}
+                                        title="Doctor Visit History"
+                                        Body={ <DoctorHistory /> }
+                                        HeaderIcon={<Icon name="history" size={40} color="#fff" />}/>
+                                        : null
+                                }
                         </View>
                     </KeyboardAwareScrollView>
                 </View >

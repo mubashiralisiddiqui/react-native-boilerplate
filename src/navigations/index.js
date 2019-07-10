@@ -27,7 +27,7 @@ import DrawerContent from './drawercontent'
 
 
 const AppStack = createStackNavigator({
-    Home: Samples,
+    Home: Login,
     // all other routes
     CallPlans,
     DoctorLocation,

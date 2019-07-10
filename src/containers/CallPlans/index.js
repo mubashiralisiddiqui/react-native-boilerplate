@@ -5,8 +5,9 @@ import React, { Component } from 'react';
 import { View, ActivityIndicator, Animated } from 'react-native';
 import { CallPlanHeader } from '../../components/Headers';
 import { ImageBackgroundWrapper } from '../../components';
-import { navigationOption, brandColors } from '../../constants'
+import { navigationOption, brandColors, RandomInteger } from '../../constants'
 import ItemCard from '../../components/Itemcard';
+import { getCalls } from '../../services';
 
 class CallPlans extends Component {
     static navigationOptions = ({ navigation }) => (navigationOption(navigation, 'Daily Calls'))
@@ -14,60 +15,34 @@ class CallPlans extends Component {
         loading: true,
         fadeAnim: new Animated.Value(0),
         loadingButton: false,
+        data: []
     }
-    componentDidMount() {
+    animate = (duration, easeDuration = 2000) => {
         setTimeout(() => {
             this.setState({ loading: false})
             Animated.timing(                  // Animate over time
                 this.state.fadeAnim,            // The animated value to drive
                 {
                   toValue: 1,                   // Animate to opacity: 1 (opaque)
-                  duration: 2000,              // Make it take a while
+                  duration: easeDuration,              // Make it take a while
                 }
               ).start();
-        }, 2000)
+        }, duration)
+    }
+    async componentDidMount() {
+        const data  = await getCalls()
+        console.log(data)
+        this.setState({ data: data })
+        this.animate(800);    
     }
 
-    onPress = () => this.props.navigation.navigate('CallExecution')
+    onPress = (data) => this.props.navigation.navigate('CallExecution', {
+        call_info: data,
+        existing_call: true,
+    })
 
     render() {
-        const list = [
-            {
-                name: 'Amy Farha',
-                type: 'A',
-                category: 'Opthalmic',
-                status: 1,
-            },
-            {
-                name: 'Amir Saleem',
-                type: 'A',
-                category: 'Respiratory',
-                status: 0,
-            },
-            {
-                name: 'Chris Jackson',
-                type: 'A',
-                category: 'Respiratory',
-                status: 1,
-            },{
-                name: 'Amy Farha',
-                type: 'A',
-                category: 'Opthalmic',
-                status: 1,
-            },
-            {
-                name: 'Amir Saleem',
-                type: 'A',
-                category: 'Respiratory',
-                status: 0,
-            },
-            {
-                name: 'Chris Jackson',
-                type: 'A',
-                category: 'Respiratory',
-                status: 1,
-            },
-        ];
+        const { data } = this.state;
         return (
             <View style={styles.InputContainer}>
                 <ImageBackgroundWrapper>
@@ -78,16 +53,21 @@ class CallPlans extends Component {
                             : null
                     }
                     <Animated.ScrollView showsVerticalScrollIndicator={false} style={{ width: '99%', opacity: this.state.fadeAnim }}>
+                    <ItemCard
+                        key={RandomInteger}
+                        name={'Name'}
+                        type={'Class'}
+                        category={'Team'}
+                    />
                         {
-                            list.map((a, i) => {
+                            data.map((call, i) => {
                                 return (<ItemCard
                                     key={i}
-                                    name={a.name}
-                                    type={a.type}
-                                    category={a.category}
-                                    status={a.status}
+                                    name={call.Doctor.DoctorName}
+                                    category={call.TeamName}
+                                    doctorClass={call.Doctor.ClassName}
                                     loading={this.state.loadingButton}
-                                    onPressHandler={this.onPress}
+                                    onPressHandler={() => this.onPress(call)}
                                 />)
                             })
                         }

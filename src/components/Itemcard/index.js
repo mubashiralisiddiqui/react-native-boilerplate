@@ -2,13 +2,12 @@ import React, { useState } from 'react';
 import { View, Text, Dimensions } from 'react-native';
 import { Card, Button } from 'react-native-elements'
 import { brandColors, RandomInteger } from '../../constants';
-import Icon from 'react-native-vector-icons/FontAwesome'
 
 const ItemCard = ({
     name,
-    type,
+    doctorClass = 'A',
     category,
-    status,
+    status = 1,
     onPressHandler
 }) => {
     const [loading, setLoading] = useState(false);
@@ -20,7 +19,7 @@ const ItemCard = ({
         }, 1000)
     }
     const styles = getStyles(status);
-    return (   
+    return (
         <Card key={RandomInteger()}
             containerStyle={styles.cardContainer}
         >
@@ -29,14 +28,13 @@ const ItemCard = ({
                     <Text key={RandomInteger()} style={styles.text}> { name }</Text>
                 </View>
                 <View key={RandomInteger()} style={styles.itemSecond}>
-                    <Text key={RandomInteger()} style={styles.text}>{ type }</Text>
+                    <Text key={RandomInteger()} style={styles.text}>{ doctorClass }</Text>
                 </View>
                 <View key={RandomInteger()} style={styles.item}>
                     <Text key={RandomInteger()} style={styles.text}>{ category }</Text>
                 </View>
                 <Button 
                     buttonStyle={{
-                        // marginRight: 8,
                         backgroundColor: brandColors.lightGreen
                     }}
                     title={<Text style={{color: brandColors.darkBrown}}>Execute</Text>}

@@ -1,6 +1,5 @@
 import React from 'react'
 import { Icon } from 'react-native-elements';
-import { StyleSheet } from 'react-native';
 
 export const brandColors = {
     darkBrown: '#514835',
@@ -92,7 +91,7 @@ export const navigationOption = (navigation, title) => {
 }
 
 // export const styles = new StyleSheet.create({
-export const styles = {
+export const styles = { 
     container: {
         justifyContent: 'center',
         width: '100%',
@@ -107,3 +106,6 @@ export const styles = {
 }
 
 export const rangeArray = times => new Array(times).fill(times)
+
+export const baseURL = 'http://localhost:12670/CRMService.svc/';
+export const getToken = 'Fahad';
