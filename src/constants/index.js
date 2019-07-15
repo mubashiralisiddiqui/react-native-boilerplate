@@ -1,5 +1,8 @@
 import React from 'react'
 import { Icon } from 'react-native-elements';
+import moment from 'moment';
+import axios from 'axios';
+import { AsyncStorage } from 'react-native'
 
 export const brandColors = {
     darkBrown: '#514835',
@@ -102,10 +105,33 @@ export const styles = {
         fontWeight: 'bold',
         fontSize: 14,
         color: brandColors.darkBrown,
-    }, 
+    },
+    inputStyle: {
+        color: 'gray'
+    }
 }
 
 export const rangeArray = times => new Array(times).fill(times)
 
 export const baseURL = 'http://localhost:12670/CRMService.svc/';
 export const getToken = 'Fahad';
+
+export const todayDate = (format = 'YYYY_MM_DD') => moment().format(format)
+
+export const log = (...data) => console.log(data)
+
+export const parse = data => JSON.parse(data)
+
+export const stringify = data => JSON.stringify(data)
+
+export const get = (url, params) => Axios.get(url, params)
+
+export const post = (url, params) => Axios.post(url, params)
+
+export const getStorage = key => AsyncStorage.getItem(key)
+
+export const setStorage = (key, value) => AsyncStorage.setItem(key, value)
+
+const Axios = axios.create({
+    baseURL: 'http://localhost:12670/CRMService.svc/',
+});

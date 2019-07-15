@@ -5,9 +5,9 @@ import React, { Component } from 'react';
 import { View, ActivityIndicator, Animated } from 'react-native';
 import { CallPlanHeader } from '../../components/Headers';
 import { ImageBackgroundWrapper } from '../../components';
-import { navigationOption, brandColors, RandomInteger } from '../../constants'
+import { navigationOption, brandColors, RandomInteger, todayDate } from '../../constants'
 import ItemCard from '../../components/Itemcard';
-import { getCalls } from '../../services';
+import { getCalls, serviceWrapper } from '../../services';
 
 class CallPlans extends Component {
     static navigationOptions = ({ navigation }) => (navigationOption(navigation, 'Daily Calls'))
@@ -30,10 +30,13 @@ class CallPlans extends Component {
         }, duration)
     }
     async componentDidMount() {
-        const data  = await getCalls()
-        console.log(data)
+        const service = {
+            cache_key: todayDate(),
+            call: () => getCalls(),
+        }
+        const data  = await serviceWrapper(service)
         this.setState({ data: data })
-        this.animate(800);    
+        this.animate(200);    
     }
 
     onPress = (data) => this.props.navigation.navigate('CallExecution', {
@@ -53,12 +56,6 @@ class CallPlans extends Component {
                             : null
                     }
                     <Animated.ScrollView showsVerticalScrollIndicator={false} style={{ width: '99%', opacity: this.state.fadeAnim }}>
-                    <ItemCard
-                        key={RandomInteger}
-                        name={'Name'}
-                        type={'Class'}
-                        category={'Team'}
-                    />
                         {
                             data.map((call, i) => {
                                 return (<ItemCard
@@ -84,7 +81,6 @@ const styles = {
     InputContainer: {
         display: 'flex',
         flex: 1,
-        // backgroundColor: '#e3ded5',
         backgroundColor: '#f1eee9',
         alignItems: 'center'
     }

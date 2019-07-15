@@ -14,10 +14,7 @@ const ListView = ({
     firstColumnValue = '',
     secondColumnValue = '',
 }) => {
-    console.log(firstColumnHeading,
-        secondColumnHeading, RandomInteger, columns)
     const _render = item => {
-        console.log()
         return (
             <SingleRow
                 item={item.item}

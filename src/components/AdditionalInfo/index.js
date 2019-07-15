@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React, { useState } from 'react';
 import { View } from 'react-native';
 import ReminderField from './ReminderField';
 import ProductField from './ProductField';
@@ -8,21 +8,29 @@ import GiftField from './GiftField';
 import CallRemarksField from './CallRemarksField';
 import NotesField from './NotesField';
 
-const AdditionalInfo = () => {
-    const [productFieldsCount, setProductFieldsCount] = useState(1);
+const AdditionalInfo = ({
+    navigate
+}) => {
+    const { Products } = navigate.getParam('call_info')
+    const [productFieldsCount, setProductFieldsCount] = useState(Products.length);
     const [reminderFieldsCount, setReminderFieldsCount] = useState(1);
+
     return (
         <View style={styles.container}>
             <ProductField
+                products={Products}
+                existingCall={ Products !== undefined ? true : false }
                 times={productFieldsCount}
                 onRemove={() => setProductFieldsCount(productFieldsCount - 1)} 
             />
-            <Icon
+            {/* This functionality will be use in future when we have more products(hopefully) and 
+                will give the feasibility to SPO/RSM to have dynamic number of products par visit */}
+            {/* <Icon
                 name="plus-square"
                 size={30}
                 color={brandColors.lightGreen}
                 onPress={() => setProductFieldsCount(productFieldsCount + 1) }
-            />
+            /> */}
             <ReminderField times={reminderFieldsCount} onRemove={() => setReminderFieldsCount(reminderFieldsCount - 1) }/>
             <Icon
                 name="plus-square"

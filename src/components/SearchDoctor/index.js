@@ -89,13 +89,11 @@ const SearchDoctor = (props) => {
         setShowOverlay(true);
     }
     useEffect(() => {
-        console.log('change effect of Overlay=>', showOverlay)
         setQuery('');
         setList(initialList)
     }, [showOverlay])   
 
     useEffect(() => {
-        console.log('change effect of query =>', query)
         if(query !== '') {
             const text = query.toLowerCase();
             const searched = initialList.filter(user => {
@@ -126,7 +124,7 @@ const SearchDoctor = (props) => {
                         <Text h2 style={{ textAlign: 'center' }}>Select Doctor</Text>
                         <Divider />
                         <View style={{ width: '40%', paddingBottom: 10 }}>
-                            <Input placeholder="Search" value={query} onChangeText={ value => {console.log(value);setQuery(value)}}></Input>
+                            <Input placeholder="Search" value={query} onChangeText={ value => setQuery(value)}></Input>
 
                         </View>
                         <ListView

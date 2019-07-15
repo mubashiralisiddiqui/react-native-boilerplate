@@ -35,6 +35,7 @@ const CallRemarksField = () => {
                 <View style={{width: '100%', flex: 1, flexDirection: 'row'}}>    
                     <View style={{width: '33%'}}>
                     <CheckBox
+                        containerStyle={{ backgroundColor: 'transparent'}}
                         textStyle={{color: brandColors.darkBrown}}
                         checkedColor={brandColors.lightGreen}
                         title='Positive'
@@ -44,6 +45,7 @@ const CallRemarksField = () => {
                     </View>
                     <View style={{width: '33%'}}>
                         <CheckBox
+                            containerStyle={{ backgroundColor: 'transparent'}}
                             textStyle={{color: brandColors.darkBrown}}
                             checkedColor={brandColors.lightGreen}
                             title='Negative'
@@ -53,6 +55,7 @@ const CallRemarksField = () => {
                     </View>
                     <View style={{width: '33%'}}>
                         <CheckBox
+                            containerStyle={{ backgroundColor: 'transparent'}}
                             textStyle={{color: brandColors.darkBrown}}
                             checkedColor={brandColors.lightGreen}
                             title='Neutral'

@@ -20,7 +20,8 @@ const FieldHeader = ({
                 : <Text style={inlineStyles.textStyle('subtitle')}>{`Click on right icon to remove this ${fieldType}`}</Text>
             }
             containerStyle={inlineStyles.listItemContainer}
-            rightIcon={ isFirst ? null : <Icon
+            // rightIcon={ isFirst ? null : <Icon
+            rightIcon={ true ? null : <Icon
                         name='remove'
                         size={25}
                         color={brandColors.green}

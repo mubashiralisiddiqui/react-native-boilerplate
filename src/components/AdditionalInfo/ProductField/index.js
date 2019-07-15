@@ -6,12 +6,15 @@ import FieldHeader from '../FieldHeader';
 
 const ClassField = ({
     times = 1,
-    onRemove = () => {}
+    onRemove = () => {},
+    existingCall = false,
+    products = [],
 }) => {
+    
     return (
         <View style={styles.container}>
             {
-                rangeArray(times).map((value, key) => {
+                products.map((product, key) => {
                     return (
                         <View key={ key + RandomInteger() } style={{width: "95%", paddingBottom: 10}}>
                             <FieldHeader
@@ -21,10 +24,10 @@ const ClassField = ({
                                 isFirst={ key === 0 ? true : false }
                                 onRemove={onRemove}
                             />
-                            <Input labelStyle={styles.labelStyle} key={ key + RandomInteger() } label={`Product ${key + 1}`} placeholder="Product Name" />
+                            <Input editable={false} labelStyle={styles.labelStyle} key={ key + RandomInteger() } label={`Product ${key + 1}`} placeholder="Product Name" value={product.ProductName} />
                             <View key={ key + RandomInteger() } style={{flex:1, flexDirection: 'row'}}>
                                 <View key={ key + RandomInteger() } style={{width: "50%"}}>
-                                    <Input labelStyle={styles.labelStyle} key={ key + RandomInteger() } label={`Sample ${key + 1}`} placeholder="Sample Name" />
+                                    <Input editable={false} labelStyle={styles.labelStyle} key={ key + RandomInteger() } label={`Sample ${key + 1}`} placeholder="Sample Name" />
                                 </View>
                                 <View key={ key + RandomInteger() } style={{width: "50%"}}>
                                     <Input labelStyle={styles.labelStyle} key={ key + RandomInteger() } label="Quantity" placeholder="Quantity" />

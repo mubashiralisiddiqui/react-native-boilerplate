@@ -3,7 +3,6 @@ import { View } from 'react-native';
 import { ImageBackgroundWrapper, SearchDoctor, ListView } from '../../components';
 import { CallPlanHeader } from '../../components/Headers';
 import { navigationOption } from '../../constants';
-import { ScrollView } from 'react-native-gesture-handler';
 
 export default class Samples extends Component {
     static navigationOptions = ({ navigation }) => (navigationOption(navigation, 'Samples'))

@@ -37,7 +37,7 @@ const ItemCard = ({
                     buttonStyle={{
                         backgroundColor: brandColors.lightGreen
                     }}
-                    title={<Text style={{color: brandColors.darkBrown}}>Execute</Text>}
+                    title="Execute"
                     containerStyle={{ marginRight: 5, }}
                     onPress={onPress}
                     disabled={!status}
@@ -59,7 +59,6 @@ const getStyles = (status) => {
             flexDirection: 'row',
             height: 40,
             paddingLeft: 0,
-            border: 1,
         },
         itemFirst: {
             height: 40,
@@ -95,7 +94,6 @@ const getStyles = (status) => {
             paddingLeft: 2,
             paddingRight: 5,
             shadowColor: brandColors.lightGreen,
-            border: 2,
             borderRadius: 2,
             borderColor: '#86af49',
             borderBottomWidth: 0,
