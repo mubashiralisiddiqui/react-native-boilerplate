@@ -10,7 +10,8 @@ import Home from './Home'
 import DoctorLocation from './DoctorLocation'
 import CallExecution from './CallExecution';
 import NewDoctor from './NewDoctor';
-import Samples from './Samples'
+import Samples from './Samples';
+import Tab from './Tabs'
 
 export {
     Login,
@@ -22,4 +23,5 @@ export {
     CallExecution,
     NewDoctor,
     Samples,
+    Tab,
 }

@@ -33,8 +33,11 @@ class CallPlans extends Component {
         const service = {
             cache_key: todayDate(),
             call: () => getCalls(),
+            sync: true,
         }
         const data  = await serviceWrapper(service)
+        console.log("nae to", data);
+        
         this.setState({ data: data })
         this.animate(200);    
     }

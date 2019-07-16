@@ -19,6 +19,7 @@ import {
     CallExecution,
     NewDoctor,
     Samples,
+    Tab,
 } from '../containers';
 import DrawerContent from './drawercontent'
 
@@ -27,7 +28,7 @@ import DrawerContent from './drawercontent'
 
 
 const AppStack = createStackNavigator({
-    Home: Login,
+    Home: CallPlans,
     // all other routes
     CallPlans,
     DoctorLocation,

@@ -18,6 +18,7 @@ import ImageBackgroundWrapper from './ImageBackground';
 import NewDoctorForm from './NewDoctorForm';
 import SearchDoctor from './SearchDoctor';
 import ListView from './Listing';
+import EDetailing from './EDetailing';
 
 export {
     TextInput,
@@ -35,4 +36,5 @@ export {
     NewDoctorForm,
     SearchDoctor,
     ListView,
+    EDetailing,
 }

@@ -132,6 +132,6 @@ export const getStorage = key => AsyncStorage.getItem(key)
 
 export const setStorage = (key, value) => AsyncStorage.setItem(key, value)
 
-const Axios = axios.create({
+export const Axios = axios.create({
     baseURL: 'http://localhost:12670/CRMService.svc/',
 });

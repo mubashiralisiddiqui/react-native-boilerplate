@@ -10,6 +10,7 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 import com.hudsonpharma.KeyboardPackage;
+import com.swmansion.reanimated.ReanimatedPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,7 +29,8 @@ public class MainApplication extends Application implements ReactApplication {
           new MainReactPackage(),
           new RNGestureHandlerPackage(),
           new VectorIconsPackage(),
-          new KeyboardPackage()
+          new KeyboardPackage(),
+          new ReanimatedPackage()
       );
     }
 

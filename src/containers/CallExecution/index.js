@@ -11,6 +11,7 @@ import Icon2 from 'react-native-vector-icons/MaterialIcons';
 import { Collapse, KeyCallInfo, AdditionalInfo, DoctorHistory, ImageBackgroundWrapper } from '../../components';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { getDocHistory } from '../../services';
+import { Tab } from '..';
 
 export default class CallExecution extends Component {
     constructor(props) {
@@ -91,7 +92,8 @@ export default class CallExecution extends Component {
                                 isCollapsed={isKeyInfoCollapsed}
                                 toggler={() => this.onToggle('isKeyInfoCollapsed')}
                                 title="Key Call Information"
-                                Body={<KeyCallInfo navigate={this.props.navigation}  />}  
+                                Body={<Tab navigate={this.props.navigation}/>}  
+                                // Body={<KeyCallInfo navigate={this.props.navigation}  />}  
                                 HeaderIcon={<Icon name="info-circle" size={40} color="#fff" />} />
                             <Collapse
                                 isCollapsed={isAdditionalInfoCollapsed}

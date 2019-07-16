@@ -8,6 +8,7 @@ import {
     getStorage,
     setStorage,
     stringify,
+    Axios,
 } from '../constants';
 import axios from 'axios';
 
@@ -25,7 +26,7 @@ export const errorInterceptor = error => {
     return error
 }
 
-axios.interceptors.response.use(responseInterceptor, errorInterceptor);
+Axios.interceptors.response.use(responseInterceptor, errorInterceptor);
 
 export const getCalls = async () => {
     return get(`/getTodayCalls`, {
@@ -35,6 +36,7 @@ export const getCalls = async () => {
         }
     }).then(response => {
         if(response !== null) {
+            log('Mai hun new data daily calls ka => ', response)
             setStorage(todayDate(), stringify(response))
             return response
         }
@@ -58,9 +60,10 @@ export const getDocHistory = async (params) => {
 export const serviceWrapper = async ({
     cache_key,
     call,
+    sync = false,
 }) => {
-    const data = await getStorage(cache_key);
-    // log(parse(data))
+    const data = sync === false ? await getStorage(cache_key) : null;
+    // log("han jani", parse(data))
     return  data === null || typeof(data) === 'undefined'
         ? call()
         : parse(data)
