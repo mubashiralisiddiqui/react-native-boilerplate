@@ -11,8 +11,11 @@ const InputText = (
         handleChange = () => ({}),
         underlineColor = "",
         secureTextEntry = false,
-        text,
-        leftIcon
+        value,
+        leftIcon,
+        onKeyUp,
+        type,
+        error
 
     }
 ) => {
@@ -27,11 +30,13 @@ const InputText = (
                     secureTextEntry={secureTextEntry}
                     placeholderTextColor={brandColors.darkBrown}
                     keyboardType={keyboardType}
-                    onChangeText={handleChange}
-                    value={text}
+                    onChangeText={(text) => handleChange(type === 'password' ? 'Password' : 'LoginId', text)}
+                    value={value}
                     rightIcon={leftIcon}
-                    inputContainerStyle={{ borderBottomWidth: 0 }}
+                    inputContainerStyle={{ borderBottomWidth: 0, paddingVertical:15 }}
                     autoCapitalize={'none'}
+                    onKeyPress={(e) => onKeyUp(type === 'password' ? 'Password' : 'LoginId', e)}
+                    errorMessage={error.message}
                     />
             </View>
         </View>

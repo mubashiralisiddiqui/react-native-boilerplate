@@ -33,5 +33,8 @@ export const styles = StyleSheet.create({
         paddingLeft: 20,
         color: 'white',
         borderBottomWidth: 0
+    },
+    errorStyle: {
+        // paddingVertical: 15
     }
 })

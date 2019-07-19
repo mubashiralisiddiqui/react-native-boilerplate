@@ -138,6 +138,8 @@ android {
 }
 
 dependencies {
+    implementation project(':rn-fetch-blob')
+    implementation project(':react-native-view-pdf')
     implementation project(':react-native-reanimated')
     implementation project(':react-native-linear-gradient')
     implementation project(':@react-native-community_async-storage')

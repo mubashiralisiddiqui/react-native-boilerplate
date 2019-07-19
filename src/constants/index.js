@@ -2,7 +2,7 @@ import React from 'react'
 import { Icon } from 'react-native-elements';
 import moment from 'moment';
 import axios from 'axios';
-import { AsyncStorage } from 'react-native'
+import { AsyncStorage, Dimensions } from 'react-native'
 
 export const brandColors = {
     darkBrown: '#514835',
@@ -135,3 +135,23 @@ export const setStorage = (key, value) => AsyncStorage.setItem(key, value)
 export const Axios = axios.create({
     baseURL: 'http://localhost:12670/CRMService.svc/',
 });
+
+export const getOrientation = () => {
+    return Dimensions.get('window').width < Dimensions.get('window').height
+        ? 'portrait'
+        : 'landscape'
+}
+
+export const authUser = async () => {
+    const user = await getStorage('user')
+    return JSON.parse(user);
+}
+
+export const getProducts = async () => {
+    const user = await getStorage('user');
+    const products = await getStorage(`${user.LoginId}-products`)
+    if(products !== null) {
+        return JSON.parse(products)
+    }
+    return [];
+} 

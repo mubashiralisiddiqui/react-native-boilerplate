@@ -19,6 +19,7 @@ import NewDoctorForm from './NewDoctorForm';
 import SearchDoctor from './SearchDoctor';
 import ListView from './Listing';
 import EDetailing from './EDetailing';
+import PDF from './PDF';
 
 export {
     TextInput,
@@ -37,4 +38,5 @@ export {
     SearchDoctor,
     ListView,
     EDetailing,
+    PDF
 }

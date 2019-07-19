@@ -21,6 +21,7 @@ import {
     Samples,
     Tab,
 } from '../containers';
+import { PDF } from '../components'
 import DrawerContent from './drawercontent'
 
 // this is the Application stack which is wrapped in createstackNavigator

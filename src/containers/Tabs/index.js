@@ -16,11 +16,14 @@ export default class Tab extends React.Component {
   
   renderScene = ({ route }) => {
     const info = this.props.navigate.getParam('call_info');
-    const files = info.Products.map(product => product.Files);
+    info.user = this.props.navigate.getParam('user');
+    const files = info.Products.map(product => {
+      if(product.Files.length > 0) return product.Files
+    }).filter(file => file !== undefined);
     switch (route.key) {
       case 'callingformation':
         return <KeyCallInfo info={info} />
-      case 'edetailing' : 
+      case 'edetailing': 
         return <EDetailing files={files}/>
       default:
         return null;

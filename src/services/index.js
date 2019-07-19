@@ -9,8 +9,9 @@ import {
     setStorage,
     stringify,
     Axios,
+    post,
+    authUser,
 } from '../constants';
-import axios from 'axios';
 
 export const responseInterceptor = response => {
     log('api response with everything => ', response)
@@ -28,16 +29,12 @@ export const errorInterceptor = error => {
 
 Axios.interceptors.response.use(responseInterceptor, errorInterceptor);
 
-export const getCalls = async () => {
-    return get(`/getTodayCalls`, {
-        params: {
-            Token: getToken,
-            EmployeeId: 1,
-        }
-    }).then(response => {
+export const getCalls = (params) => {
+    return get(`/getTodayCalls`, {params}).then(async (response) => {
         if(response !== null) {
             log('Mai hun new data daily calls ka => ', response)
-            setStorage(todayDate(), stringify(response))
+            const user = await authUser();
+            setStorage(`${user.LoginId}-${todayDate()}`, stringify(response))
             return response
         }
     }).catch(log)
@@ -49,12 +46,31 @@ export const getDocHistory = async (params) => {
         EmployeeId: 1,
     }}).then(response => {
         if(response !== null && typeof(response) !== 'undefined') {
-            log("mai hun doctor history api ka response", response)
             return response
         }
         return [];
     })
     .catch(log)
+}
+
+export const submitCall = (params) => {
+    Object.keys(params).map(value => {
+         if(params[value] != 'Fahad') {
+            params[value] = JSON.stringify(params[value])
+         }
+    })
+    return post('executeCall', params).then(console.log).catch(console.log)
+}
+
+export const login = (params, onSuccess, onFailure) => {
+    return get('loginUser', {params}).then(response => {
+        if(response.length > 0) {
+            setStorage('user', JSON.stringify(response[0]))
+            onSuccess();
+            return;
+        }
+        onFailure();
+    }).catch(console.log)
 }
 
 export const serviceWrapper = async ({
@@ -63,8 +79,19 @@ export const serviceWrapper = async ({
     sync = false,
 }) => {
     const data = sync === false ? await getStorage(cache_key) : null;
-    // log("han jani", parse(data))
     return  data === null || typeof(data) === 'undefined'
         ? call()
         : parse(data)
+}
+
+export const getProductsWithSamples = (params) => {
+    return get('getAllProducts', {
+        params
+    }).then(async (response) => {
+        if(response.length > 0) {
+            const user = await authUser()
+            setStorage(`${user.LoginId}-products`, stringify(response))
+        }
+        return response;
+    }).catch(console.error)
 }

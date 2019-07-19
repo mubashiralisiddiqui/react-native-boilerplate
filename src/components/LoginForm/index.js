@@ -1,7 +1,7 @@
 
 
 import React, { Fragment, Component } from 'react';
-import Icon from 'react-native-vector-icons/AntDesign';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import { TextInput, Button } from '../../components';
 import LoginHoc from '../../containers/LoginHoc';
 import { Text, CheckBox } from 'react-native-elements';
@@ -10,7 +10,18 @@ import { styles } from './styles';
 
 class LoginForm extends Component {
     render() {
-            const {email, password, onChange, loading, onSubmit} = this.props;
+            const {
+                email,
+                password,
+                onChange,
+                loading,
+                onSubmit,
+                onKeyUp,
+                showPassword,
+                passwordVisible,
+                passwordIconColor,
+                errors,
+            } = this.props;
             return (
                 <Fragment>
                     <Text h1 style={styles.heading}>Login</Text>
@@ -21,24 +32,31 @@ class LoginForm extends Component {
                         underlineColor="black"
                         secureTextEntry={false}
                         value={email}
+                        onKeyUp={onKeyUp}
+                        type="text"
                         leftIcon={<Icon
                             size={20}
                             name="user"
                             color={brandColors.darkBrown} />}
+                        error={errors.LoginId}    
                     />
                     <TextInput
                         placeholder="Password"
                         keyboardType="default"
                         handleChange={onChange}
                         underlineColor="black"
-                        secureTextEntry={true}
+                        secureTextEntry={showPassword}
                         value={password}
+                        onKeyUp={onKeyUp}
+                        type="password"
                         leftIcon={
                             <Icon
-                                size={20}
-                                name="key"
-                                color={brandColors.darkbrown}
+                                size={25}
+                                name="eye-slash"
+                                color={passwordIconColor}
+                                onPress={passwordVisible}
                             />}
+                        error={errors.Password}
                     />
                     {/* <CheckBox
                         title="Keep me signed in"

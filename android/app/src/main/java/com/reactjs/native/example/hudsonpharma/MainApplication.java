@@ -11,6 +11,8 @@ import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 import com.hudsonpharma.KeyboardPackage;
 import com.swmansion.reanimated.ReanimatedPackage;
+import com.rumax.reactnative.pdfviewer.PDFViewPackage;
+import com.RNFetchBlob.RNFetchBlobPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,7 +32,9 @@ public class MainApplication extends Application implements ReactApplication {
           new RNGestureHandlerPackage(),
           new VectorIconsPackage(),
           new KeyboardPackage(),
-          new ReanimatedPackage()
+          new ReanimatedPackage(),
+          new PDFViewPackage(),
+          new RNFetchBlobPackage()
       );
     }
 

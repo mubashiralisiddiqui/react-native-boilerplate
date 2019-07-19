@@ -5,9 +5,9 @@ import React, { Component } from 'react';
 import { View, ActivityIndicator, Animated } from 'react-native';
 import { CallPlanHeader } from '../../components/Headers';
 import { ImageBackgroundWrapper } from '../../components';
-import { navigationOption, brandColors, RandomInteger, todayDate } from '../../constants'
+import { navigationOption, brandColors, RandomInteger, todayDate, authUser, getToken } from '../../constants'
 import ItemCard from '../../components/Itemcard';
-import { getCalls, serviceWrapper } from '../../services';
+import { getCalls, serviceWrapper, getProductsWithSamples } from '../../services';
 
 class CallPlans extends Component {
     static navigationOptions = ({ navigation }) => (navigationOption(navigation, 'Daily Calls'))
@@ -15,7 +15,9 @@ class CallPlans extends Component {
         loading: true,
         fadeAnim: new Animated.Value(0),
         loadingButton: false,
-        data: []
+        data: [],
+        user: {},
+        products: [],
     }
     animate = (duration, easeDuration = 2000) => {
         setTimeout(() => {
@@ -30,21 +32,40 @@ class CallPlans extends Component {
         }, duration)
     }
     async componentDidMount() {
-        const service = {
-            cache_key: todayDate(),
-            call: () => getCalls(),
-            sync: true,
+        const user = await authUser();
+        if(user === null) {
+            this.props.navigation.navigate('Login');
         }
-        const data  = await serviceWrapper(service)
-        console.log("nae to", data);
+        const serviceCallPlans = {
+            cache_key: `${user.loginId}-${todayDate()}`,
+            call: () => getCalls({
+                Token: getToken,
+                EmployeeId: user.EmployeeId,
+            }),
+            sync: false,
+        }
+        const serviceProductsAndSamples = {
+            cache_key: `${user.loginId}-products`,
+            call: () => getProductsWithSamples({
+                EmployeeId: user.EmployeeId
+            }),
+            sync: false
+        }
+        const data  = await serviceWrapper(serviceCallPlans)
+        this.setState({ data: data, user: user })
+        this.animate(200);
         
-        this.setState({ data: data })
-        this.animate(200);    
+        const products = await serviceWrapper(serviceProductsAndSamples)
+        this.setState({
+            products
+        })
     }
 
     onPress = (data) => this.props.navigation.navigate('CallExecution', {
         call_info: data,
         existing_call: true,
+        user: this.state.user,
+        products: this.state.products,
     })
 
     render() {

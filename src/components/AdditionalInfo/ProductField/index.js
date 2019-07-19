@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, NativeModules, Keyboard } from 'react-native';
 import { Input } from 'react-native-elements';
 import { RandomInteger, styles, rangeArray } from '../../../constants';
 import FieldHeader from '../FieldHeader';
@@ -10,6 +10,11 @@ const ClassField = ({
     existingCall = false,
     products = [],
 }) => {
+
+    const onFocus = () => {
+        Keyboard.dismiss();
+        NativeModules.KeyboardFunctionalities.hideKeyboard()
+    }
     
     return (
         <View style={styles.container}>
@@ -24,13 +29,13 @@ const ClassField = ({
                                 isFirst={ key === 0 ? true : false }
                                 onRemove={onRemove}
                             />
-                            <Input editable={false} labelStyle={styles.labelStyle} key={ key + RandomInteger() } label={`Product ${key + 1}`} placeholder="Product Name" value={product.ProductName} />
+                            <Input editable={false} onFocus={onFocus} labelStyle={styles.labelStyle} key={ key + RandomInteger() } label={`Product ${key + 1}`} placeholder="Product Name" value={product.ProductName} />
                             <View key={ key + RandomInteger() } style={{flex:1, flexDirection: 'row'}}>
                                 <View key={ key + RandomInteger() } style={{width: "50%"}}>
-                                    <Input editable={false} labelStyle={styles.labelStyle} key={ key + RandomInteger() } label={`Sample ${key + 1}`} placeholder="Sample Name" />
+                                    <Input onFocus={onFocus} labelStyle={styles.labelStyle} key={ key + RandomInteger() } label={`Sample ${key + 1}`} placeholder="Sample Name" />
                                 </View>
                                 <View key={ key + RandomInteger() } style={{width: "50%"}}>
-                                    <Input labelStyle={styles.labelStyle} key={ key + RandomInteger() } label="Quantity" placeholder="Quantity" />
+                                    <Input labelStyle={styles.labelStyle} key={ key + RandomInteger() } label="Quantity" keyboardType="number-pad" placeholder="Quantity" />
                                 </View>
                             </View>
                         </View>
