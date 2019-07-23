@@ -2,10 +2,10 @@
  *  start of Login container
  */
 import React, { Component } from 'react';
-import { View, Dimensions } from 'react-native'
-import { Divider, Overlay, Text, ListItem } from 'react-native-elements';
+import { View, Dimensions, PermissionsAndroid, } from 'react-native'
+import { Divider, Overlay, Text, ListItem, Button } from 'react-native-elements';
 import { CallPlanHeader } from '../../components/Headers'
-import { navigationOption, brandColors, authUser, getProducts } from '../../constants'
+import { navigationOption, brandColors, authUser, RandomInteger } from '../../constants'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/MaterialIcons';
 import { Collapse, AdditionalInfo, DoctorHistory, ImageBackgroundWrapper } from '../../components';
@@ -13,10 +13,15 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { getDocHistory, submitCall } from '../../services';
 import { Tab } from '..';
 import { FlatList } from 'react-native-gesture-handler';
+import { callExecution } from '../../defaults';
+import { connect } from 'react-redux';
+import { getProducts } from '../../reducers/productsReducer';
+import { bindActionCreators } from 'redux'
 
-export default class CallExecution extends Component {
+class CallExecution extends Component {
     constructor(props) {
         super(props)
+        console.log(props)
         let height = Dimensions.get('screen').height;
         this.state = {
             isKeyInfoCollapsed: true,
@@ -25,77 +30,60 @@ export default class CallExecution extends Component {
             buttonPositionFromTop: height,
             existingCall: false,
             doctor_history: [],
-            products: [],
             samples: [],
-            overlay: true,
-            selectedProduct: 0,
-            selectedSample: 0,
-            form_data: {
-                jsonDailyCall: {
-                    DoctorCode: 256348,
-                    EmployeeId: 1,
-                    Lattitude: 24.65842,
-                    Longitude: 67.515258,
-                    PlanDetailId: 164462,
-                    DeviceDateTime: '2019-06-06 13:42:50',
-                    FeedBack: 'This is feedback',
-                    JVEmployeeId: 0,
-                    CallStartTime: '2019-06-06 13:26:50',
-                    CallEndTime: '2019-06-06 13:41:50',
-                    Remarks: 'Neutral',
-                },
-                jsonDailyCallDetail: [{
-                    ProductId: 4,
-                    DetailingSeconds: 10,
-                    
-                  },
-                  {
-                    ProductId: 7,
-                    DetailingSeconds: 6,
-                    
-                  }],
-                  jsonSampleDetail: [{
-                    ProductId: 4,
-                    SampleQty: 1,
-                    IsReminder: true
-                  },
-                  {
-                    ProductId: 7,
-                    SampleQty: 1,
-                    IsReminder: false
-                  }],
-                  jsonGiftDetail: [],
-                  EmployeeId: 1,
-                  Token: 'Fahad'
-            }
+            overlay: false,
+            lat: '',
+            long: '',
+            selectedProduct: {
+                name: '',
+                id: 0,
+            },
+            selectedSample: {
+                name: '',
+                id: 0,
+            },
+            form_data: callExecution
         }
 
     }
 
     onClickProduct = (productTemplateId) => {
-        const samples = this.state.products.filter(product => product.ProductTemplateId == productTemplateId)[0]
+        const samples = this.props.products.products.filter(product => product.ProductTemplateId == productTemplateId)[0]
         this.setState({
             samples: samples.Products,
-            selectedProduct: productTemplateId
+            selectedProduct: {
+                id: productTemplateId,
+                name: samples.ProductTemplateName,
+            }
         })
     }
     onClickSample = (productId) => {
+        var productName = '';
+        this.props.products.products.map(product => {
+            product.Products.map(sample => {
+                if(sample.ProductId === productId) productName = sample.ProductName;
+            })
+        })
         this.setState({
-            selectedSample: productId
+            selectedSample: {
+                id: productId,
+                name: productName,
+            }
         })
     }
 
     renderProductsRow = ({item}) => {
         const {selectedProduct} = this.state
         let style = styles.listItems;
-        style = selectedProduct === item.ProductTemplateId
+        style = selectedProduct.id === item.ProductTemplateId
         ? {...style, ...styles.selectedItems}
         : {...style, ...styles.unSelectedItem}
-        let titleStyle = selectedProduct === item.ProductTemplateId
+        let titleStyle = selectedProduct.id === item.ProductTemplateId
         ? styles.selectedTitle
         : styles.unSelectedTitle
         return (<ListItem
             containerStyle={style}
+            // badge={{ value: item.Products.length, status: 'success', badgeStyle: {backgroundColor: brandColors.darkBrown}, textStyle: { color: 'orange' } }}
             titleStyle={titleStyle}
             key={item.ProductTemplateId}
             bottomDivider
@@ -104,20 +92,25 @@ export default class CallExecution extends Component {
 
     }
 
+    handleOverlayClose = () => {
+        this.setState({
+            overlay: false,
+        })
+        console.log(this.state.selectedProduct, this.state.selectedSample)
+    }
+
     renderSamplesRow = ({item}) => {
         const {selectedSample} = this.state
-        let style = styles.listItems;
-        console.log(selectedSample, item.ProductId)
-        const style1 = selectedSample === item.ProductId
-        ? {...styles.selectedItem, ...style}
-        : {...style, ...styles.selectedItem}
-        console.log(style, item.ProductName)
-        let titleStyle = selectedSample === item.ProductId
+
+        let style = selectedSample.id === item.ProductId
+        ? {...styles.selectedItem, ...styles.listItems}
+        : {...styles.listItems, ...styles.selectedItem}
+        let titleStyle = selectedSample.id === item.ProductId
         ? styles.selectedTitle
         : styles.unSelectedTitle
         return (<ListItem
-            key={item.ProductId}
-            containerStyle={style1}
+            key={RandomInteger()}
+            containerStyle={style}
             titleStyle={titleStyle}
             bottomDivider
             onPress={() => this.onClickSample(item.ProductId)}
@@ -130,6 +123,29 @@ export default class CallExecution extends Component {
         })
         this.setState({[section]: !this.state[section]})
     }
+    showProductsOverlay = () => {
+        this.setState({
+            overlay: true,
+        })
+    }
+    requestLocationPermission = async () => {
+    try {
+        const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+            'title': 'Location Access Required',
+            'message': 'This App needs to Access your location'
+        })
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        this.callLocation();
+        } else {
+        alert("Permission Denied");
+        }
+    } catch (err) {
+        alert("err",err);
+        console.warn(err)
+    }
+    }
     static navigationOptions = ({ navigation }) => (navigationOption(navigation, 'Call Details'))
  
     async componentDidMount() {
@@ -139,12 +155,44 @@ export default class CallExecution extends Component {
         })
         this.setState({
             doctor_history: history,
-            existing_call: this.props.navigation.getParam('existing_call', false),
-            products: this.props.navigation.getParam('products', []),
+            // existing_call: this.props.navigation.getParam('existing_call', false),
+            // products: this.props.products.products,
         })
-        console.log(this.state.products)
-        // submitCall(this.state.form_data)
+        await this.requestLocationPermission()
     }
+    callLocation(){
+    //alert("callLocation Called");
+        navigator.geolocation.getCurrentPosition(
+        //Will give you the current location
+            (position) => {
+                const currentLongitude = JSON.stringify(position.coords.longitude);
+                //getting the Longitude from the location json
+                const currentLatitude = JSON.stringify(position.coords.latitude);
+                //getting the Latitude from the location json
+                this.setState({ currentLongitude:currentLongitude });
+                //Setting state Longitude to re re-render the Longitude Text
+                this.setState({ currentLatitude:currentLatitude });
+                //Setting state Latitude to re re-render the Longitude Text
+                },
+                (error) => alert(error.message),
+                { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+        );
+        this.watchID = navigator.geolocation.watchPosition((position) => {
+        //Will give you the location on location change
+            console.log(position);
+            const currentLongitude = JSON.stringify(position.coords.longitude);
+            //getting the Longitude from the location json
+            const currentLatitude = JSON.stringify(position.coords.latitude);
+            //getting the Latitude from the location json
+            this.setState({ long:currentLongitude });
+            //Setting state Longitude to re re-render the Longitude Text
+            this.setState({ lat: currentLatitude });
+            //Setting state Latitude to re re-render the Longitude Text
+        });
+    }
+    componentWillUnmount = () => {
+        navigator.geolocation.clearWatch(this.watchID);
+     }
 
     render() {
         const {
@@ -173,7 +221,7 @@ export default class CallExecution extends Component {
                                 isCollapsed={isAdditionalInfoCollapsed}
                                 toggler={() => this.onToggle('isAdditionalInfoCollapsed')}
                                 title="Additional Information"
-                                Body={<AdditionalInfo navigate={this.props.navigation} />}
+                                Body={<AdditionalInfo showProducts={this.showProductsOverlay} selectedProduct={this.state.selectedProduct } selectedSample={this.state.selectedProduct} navigate={this.props.navigation} />}
                                 HeaderIcon={<Icon name="plus-square" size={40} color="#fff" />} />
                                 {
                                     existingCall && !!doctor_history ?
@@ -202,6 +250,7 @@ export default class CallExecution extends Component {
                     ></Icon2>
                     <Overlay
                     borderRadius={15}
+                    width={'90%'}
                     onBackdropPress={() => this.setState({overlay: false})}
                     isVisible={this.state.overlay}
                     >
@@ -209,17 +258,29 @@ export default class CallExecution extends Component {
                             <View style={styles.flatList}>
                                 <Text h3 h3Style={styles.listTitle}>Select Product</Text>
                                 <FlatList
-                                data={this.state.products}
+                                extraData={this.state.selectedProduct}
+                                keyExtractor={RandomInteger}
+                                data={this.props.products.products}
                                 renderItem={this.renderProductsRow}
                                 />
                             </View>
                             <View style={styles.flatList}>
                                 <Text h3 h3Style={styles.listTitle}>Select Sample (Select Product First)</Text>
                                 <FlatList
-                                    extraData={this.state.products}
+                                    contentContainerStyle={{height: 400}}
+                                    keyExtractor={RandomInteger}
+                                    extraData={this.state.selectedSample}
                                     data={this.state.samples}
                                     renderItem={this.renderSamplesRow}
                                 />
+                                <View style={{width:'100%', display: 'flex', flex: 1, flexDirection: 'row'}}>
+                                    <View style={styles.flatList}>
+                                        <Button buttonStyle={styles.button} onPress={this.handleOverlayClose} title="No need to select Sample" />
+                                    </View>
+                                    <View style={styles.flatList}>
+                                        <Button buttonStyle={styles.button} onPress={this.handleOverlayClose} title="Close" />
+                                    </View>
+                                </View>
                             </View>
                         </View>
                     </Overlay>
@@ -227,9 +288,26 @@ export default class CallExecution extends Component {
         )
     }
 }
+const mapStateToProps = state => {
+    return {
+        products: getProducts(state),
+    }
+}
+
+const mapDispatchToProps = dispatch => bindActionCreators({
+    // getProductsWithSamples: getProductsWithSamples,
+}, dispatch)
+
+export default connect(mapStateToProps, mapDispatchToProps)(CallExecution)
 
 // end of Login container
 const styles = {
+    button: {
+        marginVertical: 5,
+        width: '100%',
+        backgroundColor: brandColors.lightGreen,
+        position: 'relative'
+    },
     InputContainer: {
         display: 'flex',
         flex: 1,
@@ -252,7 +330,8 @@ const styles = {
         width: '99%',
     },
     selectedItem: {
-        backgroundColor: brandColors.lightGreen,
+        backgroundColor: 'black',
+        // backgroundColor: brandColors.lightGreen,
     },
     selectedItems: {
         backgroundColor: brandColors.green,

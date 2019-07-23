@@ -8,12 +8,14 @@ const ClassField = ({
     times = 1,
     onRemove = () => {},
     existingCall = false,
-    products = [],
+    products,
+    showProducts,
 }) => {
 
     const onFocus = () => {
         Keyboard.dismiss();
         NativeModules.KeyboardFunctionalities.hideKeyboard()
+        showProducts();
     }
     
     return (
@@ -29,7 +31,7 @@ const ClassField = ({
                                 isFirst={ key === 0 ? true : false }
                                 onRemove={onRemove}
                             />
-                            <Input editable={false} onFocus={onFocus} labelStyle={styles.labelStyle} key={ key + RandomInteger() } label={`Product ${key + 1}`} placeholder="Product Name" value={product.ProductName} />
+                            <Input onFocus={onFocus} labelStyle={styles.labelStyle} key={ key + RandomInteger() } label={`Product ${key + 1}`} placeholder="Product Name" value={product.ProductName} />
                             <View key={ key + RandomInteger() } style={{flex:1, flexDirection: 'row'}}>
                                 <View key={ key + RandomInteger() } style={{width: "50%"}}>
                                     <Input onFocus={onFocus} labelStyle={styles.labelStyle} key={ key + RandomInteger() } label={`Sample ${key + 1}`} placeholder="Sample Name" />

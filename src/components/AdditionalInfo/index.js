@@ -9,7 +9,8 @@ import CallRemarksField from './CallRemarksField';
 import NotesField from './NotesField';
 
 const AdditionalInfo = ({
-    navigate
+    navigate,
+    showProducts
 }) => {
     const { Products } = navigate.getParam('call_info')
     const [productFieldsCount, setProductFieldsCount] = useState(Products.length);
@@ -18,6 +19,7 @@ const AdditionalInfo = ({
     return (
         <View style={styles.container}>
             <ProductField
+                showProducts={showProducts}
                 products={Products}
                 existingCall={ Products !== undefined ? true : false }
                 times={productFieldsCount}

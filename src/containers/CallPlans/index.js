@@ -7,21 +7,26 @@ import { CallPlanHeader } from '../../components/Headers';
 import { ImageBackgroundWrapper } from '../../components';
 import { navigationOption, brandColors, RandomInteger, todayDate, authUser, getToken } from '../../constants'
 import ItemCard from '../../components/Itemcard';
-import { getCalls, serviceWrapper, getProductsWithSamples } from '../../services';
+import { getTodayCalls, serviceWrapper, getProductsWithSamples } from '../../services';
+import { connect } from 'react-redux';
+import { getCalls, getCallsError, getCallsLoading } from '../../reducers/callsReducers'
+import { bindActionCreators } from 'redux'
+import { getProducts } from '../../reducers/productsReducer';
 
 class CallPlans extends Component {
     static navigationOptions = ({ navigation }) => (navigationOption(navigation, 'Daily Calls'))
     state = {
-        loading: true,
+        // loading: true,
         fadeAnim: new Animated.Value(0),
         loadingButton: false,
         data: [],
+        // calls: [],
         user: {},
         products: [],
+        // error: null,
     }
-    animate = (duration, easeDuration = 2000) => {
+    animate = (duration, easeDuration = 1000) => {
         setTimeout(() => {
-            this.setState({ loading: false})
             Animated.timing(                  // Animate over time
                 this.state.fadeAnim,            // The animated value to drive
                 {
@@ -51,37 +56,57 @@ class CallPlans extends Component {
             }),
             sync: false
         }
-        const data  = await serviceWrapper(serviceCallPlans)
-        this.setState({ data: data, user: user })
-        this.animate(200);
+        this.props.getTodayCalls({
+            Token: getToken,
+            EmployeeId: user.EmployeeId,
+        });
+        this.props.getProductsWithSamples({
+            Token: getToken,
+            EmployeeId: user.EmployeeId
+        })
+        // const data  = await serviceWrapper(serviceCallPlans)
+        // this.setState({ data: data, user: user })
+        // this.props.get({Token: getToken, EmployeeId: user.EmployeeId});
         
-        const products = await serviceWrapper(serviceProductsAndSamples)
-        this.setState({
-            products
+        this.animate(200);
+        // const products = await serviceWrapper(serviceProductsAndSamples)
+        // this.setState({
+        //     products
+        // })
+    }
+    shouldComponentRender = () => {
+        const { loading } = this.props;
+        if(loading === false) return false;
+        // more tests
+        return true;
+    }
+    
+    onPress = (data) => {
+        this.props.navigation.navigate('CallExecution', {
+            call_info: data,
+            existing_call: true,
+            user: this.state.user,
+            products: this.state.products,
         })
     }
 
-    onPress = (data) => this.props.navigation.navigate('CallExecution', {
-        call_info: data,
-        existing_call: true,
-        user: this.state.user,
-        products: this.state.products,
-    })
-
     render() {
         const { data } = this.state;
+        const { calls } = this.props;
+        console.log(this.props.products)
+        // if(this.shouldComponentRender())
         return (
             <View style={styles.InputContainer}>
                 <ImageBackgroundWrapper>
                     <CallPlanHeader />
                     {
-                        this.state.loading
+                        !this.shouldComponentRender()
                             ? <ActivityIndicator size={45} color={brandColors.lightGreen} />
                             : null
                     }
                     <Animated.ScrollView showsVerticalScrollIndicator={false} style={{ width: '99%', opacity: this.state.fadeAnim }}>
                         {
-                            data.map((call, i) => {
+                            this.props.calls.calls.map((call, i) => {
                                 return (<ItemCard
                                     key={i}
                                     name={call.Doctor.DoctorName}
@@ -98,7 +123,23 @@ class CallPlans extends Component {
         )
     }
 }
-export default CallPlans
+
+const mapStateToProps = state => {
+    return {
+        error: getCallsError(state),
+        loading: getCallsLoading(state),
+        calls: getCalls(state),
+        products: getProducts(state),
+    }
+}
+
+const mapDispatchToProps = dispatch => bindActionCreators({
+    getTodayCalls: getTodayCalls,
+    getProductsWithSamples: getProductsWithSamples,
+}, dispatch)
+
+export default connect(mapStateToProps, mapDispatchToProps)(CallPlans)
+// export default CallPlans
 
 // end of Login container
 const styles = {

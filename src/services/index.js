@@ -13,6 +13,9 @@ import {
     authUser,
 } from '../constants';
 
+import { getCalls, getCallsFailure, getCallsSuccess } from '../actions/calls'
+import { getProducts, getProductsSuccess } from '../actions/products'
+
 export const responseInterceptor = response => {
     log('api response with everything => ', response)
     const data = parse(response.data.d)
@@ -29,15 +32,21 @@ export const errorInterceptor = error => {
 
 Axios.interceptors.response.use(responseInterceptor, errorInterceptor);
 
-export const getCalls = (params) => {
-    return get(`/getTodayCalls`, {params}).then(async (response) => {
-        if(response !== null) {
-            log('Mai hun new data daily calls ka => ', response)
-            const user = await authUser();
-            setStorage(`${user.LoginId}-${todayDate()}`, stringify(response))
-            return response
-        }
-    }).catch(log)
+export const getTodayCalls = (params) => {
+    return dispatch => {
+        dispatch(getCalls())
+        get(`/getTodayCalls`, {params}).then(async (response) => {
+            if(response !== null && response.length > 0) {
+                const user = await authUser();
+                setStorage(`${user.LoginId}-${todayDate()}`, stringify(response))
+                dispatch(getCallsSuccess(response))
+                return response
+            }
+            return [];
+        }).catch(error => {
+            dispatch(getCallsFailure(error))
+        })
+    }
 }
 
 export const getDocHistory = async (params) => {
@@ -85,13 +94,16 @@ export const serviceWrapper = async ({
 }
 
 export const getProductsWithSamples = (params) => {
-    return get('getAllProducts', {
-        params
-    }).then(async (response) => {
-        if(response.length > 0) {
-            const user = await authUser()
-            setStorage(`${user.LoginId}-products`, stringify(response))
-        }
-        return response;
-    }).catch(console.error)
+    return dispatch => {
+        get('getAllProducts', {
+            params
+        }).then(async (response) => {
+            if(response.length > 0) {
+                const user = await authUser()
+                dispatch(getProductsSuccess(response))
+                setStorage(`${user.LoginId}-products`, stringify(response))
+            }
+            return response;
+        }).catch(console.error)
+    }
 }
