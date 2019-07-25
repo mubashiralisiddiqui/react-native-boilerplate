@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React from 'react';
 import {
-    View, StyleSheet
+    View, Keyboard, NativeModules
 } from 'react-native';
 import { Input } from 'react-native-elements';
 import FieldHeader from '../FieldHeader';
@@ -10,6 +10,11 @@ const ReminderField = ({
     times = 1,
     onRemove = () => {},
 }) => {
+    const onFocus = (selectedProduct) => {
+        Keyboard.dismiss();
+        NativeModules.KeyboardFunctionalities.hideKeyboard()
+        showProducts(selectedProduct);
+    }
     return (
         <View style={styles.container}>
             {
@@ -24,6 +29,14 @@ const ReminderField = ({
                                 onRemove={onRemove}
                             />
                             <Input labelStyle={styles.labelStyle} label={`Reminder ${key+1}`} placeholder="Product Name" />
+                            <View key={ RandomInteger() } style={{flex:1, flexDirection: 'row'}}>
+                                <View key={ RandomInteger() } style={{width: "50%"}}>
+                                    <Input onFocus={() => onFocus(null)} labelStyle={styles.labelStyle} key={ key + RandomInteger() } label={`Sample ${key + 1}`} placeholder="Sample Name" />
+                                </View>
+                                <View key={ RandomInteger() } style={{width: "50%"}}>
+                                    <Input labelStyle={styles.labelStyle} key={ RandomInteger() } label="Quantity" keyboardType="number-pad" placeholder="Quantity" />
+                                </View>
+                            </View>
                         </View>
                     );
                 })

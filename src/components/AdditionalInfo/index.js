@@ -8,18 +8,24 @@ import GiftField from './GiftField';
 import CallRemarksField from './CallRemarksField';
 import NotesField from './NotesField';
 
+
 const AdditionalInfo = ({
     navigate,
-    showProducts
+    showProducts,
+    selectedProducts,
+    selectedSamples
 }) => {
     const { Products } = navigate.getParam('call_info')
     const [productFieldsCount, setProductFieldsCount] = useState(Products.length);
     const [reminderFieldsCount, setReminderFieldsCount] = useState(1);
+    console.log(selectedSamples)
 
     return (
         <View style={styles.container}>
             <ProductField
                 showProducts={showProducts}
+                selectedProduct={selectedProducts}
+                selectedSamples={selectedSamples}
                 products={Products}
                 existingCall={ Products !== undefined ? true : false }
                 times={productFieldsCount}

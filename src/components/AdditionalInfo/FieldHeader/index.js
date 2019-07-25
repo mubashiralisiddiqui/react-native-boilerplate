@@ -15,10 +15,6 @@ const FieldHeader = ({
         <ListItem
             key={ key }
             title={<Text style={inlineStyles.textStyle('title')}>{title}</Text>}
-            subtitle={ isFirst
-                ? null
-                : <Text style={inlineStyles.textStyle('subtitle')}>{`Click on right icon to remove this ${fieldType}`}</Text>
-            }
             containerStyle={inlineStyles.listItemContainer}
             // rightIcon={ isFirst ? null : <Icon
             rightIcon={ true ? null : <Icon
@@ -45,7 +41,6 @@ const inlineStyles = {
     },
     listItemContainer: {
         borderRadius: 5,
-        fontWeight: 'bold',
         height: 50,
         padding: 2,
         backgroundColor: brandColors.darkBrown

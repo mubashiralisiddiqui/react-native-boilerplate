@@ -155,3 +155,21 @@ export const getProducts = async () => {
     }
     return [];
 } 
+
+export const getNameFromSelectedSamples = (selectedSamples, productId) => {
+    if(selectedSamples[productId] === undefined) return '';
+    return selectedSamples[productId].name;
+}
+
+export const getQuantityOfTheSelectedSamples = (selectedSamples, productId) => {
+    if(selectedSamples[productId] === undefined) return '';
+    return selectedSamples[productId].SampleQty;
+}
+
+export const array_count = (array) => {
+    let count = 0;
+    for(var i = 0; i < array.length; ++i){
+        if(array[i] !== undefined) count++
+    }
+    return count;
+}

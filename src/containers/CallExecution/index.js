@@ -19,66 +19,112 @@ import { getProducts } from '../../reducers/productsReducer';
 import { bindActionCreators } from 'redux'
 
 class CallExecution extends Component {
-    constructor(props) {
-        super(props)
-        console.log(props)
-        let height = Dimensions.get('screen').height;
-        this.state = {
+    // constructor(props) {
+    //     super(props)
+    //     console.log(props)
+        state = {
             isKeyInfoCollapsed: true,
             isAdditionalInfoCollapsed: false,
             isDocHistoryCollapsed: false,
-            buttonPositionFromTop: height,
             existingCall: false,
             doctor_history: [],
             samples: [],
             overlay: false,
+            overlayError: '',
             lat: '',
             long: '',
-            selectedProduct: {
-                name: '',
-                id: 0,
-            },
-            selectedSample: {
-                name: '',
-                id: 0,
-            },
+            selectedProductId: 0, // This will be only set while opening the overlay, and unset while closing the overlay
+            // This key will me merged with JsonCallDetails key of API call
+            selectedProducts: [
+                // This will be the structure of each object in this array
+                // {
+                //     ProductId: 0, // This is ProductTemplateId in database and API calls
+                //     name: '',
+                //     DetailingSeconds: 0, 
+                // },
+            ],
+            // This key will be merged with JsonSamplesDetails key of API call
+            selectedSamples: [
+                // This will be the structure of each object in this array
+                // {
+                //     0: 0,
+                //     name: '',
+                //     ProductId: 0,  // This is ProductId in database and API calls and represent Samples
+                //     IsReminder: false,
+                // },
+            ],
             form_data: callExecution
         }
 
-    }
+    // }
 
     onClickProduct = (productTemplateId) => {
-        const samples = this.props.products.products.filter(product => product.ProductTemplateId == productTemplateId)[0]
-        this.setState({
-            samples: samples.Products,
-            selectedProduct: {
-                id: productTemplateId,
-                name: samples.ProductTemplateName,
-            }
-        })
+        console.log(this.state)
+        if(this.state.selectedProductId == 0) {
+
+            const samples = this.props.products.products.filter(product => product.ProductTemplateId == productTemplateId)[0]
+            this.setState({
+                samples: samples.Products,
+            })
+        } else {
+            this.setState({
+                overlayError: 'You can not select another product.'
+            })
+            setTimeout(() => {
+                this.setState({
+                    overlayError: ''
+                })
+            }, 5000)
+        }
     }
-    onClickSample = (productId) => {
-        var productName = '';
+    onClickSample = (productId, IsReminder) => {
+        const productTemplate = this.props.products
+        .products
+        .filter(product => product
+            .Products
+            .filter(sample => sample.ProductId == productId).length > 0)
+        [0];
+
+        var selectedProduct = null;
         this.props.products.products.map(product => {
             product.Products.map(sample => {
-                if(sample.ProductId === productId) productName = sample.ProductName;
+                if(sample.ProductId === productId) {
+                    selectedProduct = sample;
+                }
             })
         })
-        this.setState({
-            selectedSample: {
-                id: productId,
-                name: productName,
+        let selectedSamples = this.state.selectedSamples;
+        selectedSamples[productTemplate.ProductTemplateId] = {
+            IsReminder,
+            ProductId: productId,
+            name: selectedProduct.ProductName,
+            SampleQty: 0,
+        }
+        let selectedProducts = this.state.selectedProducts;
+        selectedProducts[productTemplate.ProductTemplateId] = {
+            ProductId: productTemplate.ProductTemplateId,
+            DetailingSeconds: 0,
+            name: productTemplate.ProductTemplateName
+        };
+        this.setState((state) =>{
+            return {
+                selectedSamples: selectedSamples,
+                selectedProducts: selectedProducts
             }
         })
+        // console.log(this.state.selectedProducts, this.state.selectedSamples)
     }
 
     renderProductsRow = ({item}) => {
-        const {selectedProduct} = this.state
+        if(this.state.selectedProducts.length === 0) {
+            
+        }
+        const {selectedProductId} = this.state
         let style = styles.listItems;
-        style = selectedProduct.id === item.ProductTemplateId
+        style = selectedProductId === item.ProductTemplateId
         ? {...style, ...styles.selectedItems}
         : {...style, ...styles.unSelectedItem}
-        let titleStyle = selectedProduct.id === item.ProductTemplateId
+        let titleStyle = selectedProductId === item.ProductTemplateId
         ? styles.selectedTitle
         : styles.unSelectedTitle
         return (<ListItem
@@ -89,25 +135,27 @@ class CallExecution extends Component {
             bottomDivider
             onPress={() => this.onClickProduct(item.ProductTemplateId)}
             title={item.ProductTemplateName} />)
-
     }
 
     handleOverlayClose = () => {
         this.setState({
             overlay: false,
+            selectedProductId: 0
         })
-        console.log(this.state.selectedProduct, this.state.selectedSample)
     }
 
     renderSamplesRow = ({item}) => {
         const {selectedSample} = this.state
 
-        let style = selectedSample.id === item.ProductId
-        ? {...styles.selectedItem, ...styles.listItems}
-        : {...styles.listItems, ...styles.selectedItem}
-        let titleStyle = selectedSample.id === item.ProductId
-        ? styles.selectedTitle
-        : styles.unSelectedTitle
+        // let style = selectedSample.id === item.ProductId
+        // ? {...styles.selectedItem, ...styles.listItems}
+        // : {...styles.listItems, ...styles.selectedItem}
+        // let titleStyle = selectedSample.id === item.ProductId
+        // ? styles.selectedTitle
+        // : styles.unSelectedTitle
+        let style = styles.unSelectedItem
+        let titleStyle = styles.selectedTitle
+        console.log('random', RandomInteger())
         return (<ListItem
             key={RandomInteger()}
             containerStyle={style}
@@ -118,14 +166,15 @@ class CallExecution extends Component {
             title={item.ProductName} />)
     }
     onToggle = (section) => {
-        Object.keys(this.state).map((value, key) => {
-            if(value !== section) this.setState({ [value]: false })
-        })
         this.setState({[section]: !this.state[section]})
     }
-    showProductsOverlay = () => {
+    showProductsOverlay = (selectedProduct) => {
         this.setState({
             overlay: true,
+            selectedProductId: selectedProduct,
+            samples: selectedProduct !== null
+                ? this.props.products.products.filter(product => product.ProductTemplateId == selectedProduct)[0].Products
+                : [] 
         })
     }
     requestLocationPermission = async () => {
@@ -149,19 +198,17 @@ class CallExecution extends Component {
     static navigationOptions = ({ navigation }) => (navigationOption(navigation, 'Call Details'))
  
     async componentDidMount() {
+        console.log(this.state)
         const history = await getDocHistory({
             DoctorCode: 24081,
             EmployeeId: 1,
         })
         this.setState({
             doctor_history: history,
-            // existing_call: this.props.navigation.getParam('existing_call', false),
-            // products: this.props.products.products,
         })
         await this.requestLocationPermission()
     }
     callLocation(){
-    //alert("callLocation Called");
         navigator.geolocation.getCurrentPosition(
         //Will give you the current location
             (position) => {
@@ -169,9 +216,9 @@ class CallExecution extends Component {
                 //getting the Longitude from the location json
                 const currentLatitude = JSON.stringify(position.coords.latitude);
                 //getting the Latitude from the location json
-                this.setState({ currentLongitude:currentLongitude });
+                this.setState({ lat: currentLongitude });
                 //Setting state Longitude to re re-render the Longitude Text
-                this.setState({ currentLatitude:currentLatitude });
+                this.setState({ long: currentLatitude });
                 //Setting state Latitude to re re-render the Longitude Text
                 },
                 (error) => alert(error.message),
@@ -221,7 +268,7 @@ class CallExecution extends Component {
                                 isCollapsed={isAdditionalInfoCollapsed}
                                 toggler={() => this.onToggle('isAdditionalInfoCollapsed')}
                                 title="Additional Information"
-                                Body={<AdditionalInfo showProducts={this.showProductsOverlay} selectedProduct={this.state.selectedProduct } selectedSample={this.state.selectedProduct} navigate={this.props.navigation} />}
+                                Body={<AdditionalInfo selectedProducts={this.state.selectedProducts} selectedSamples={this.state.selectedSamples} showProducts={this.showProductsOverlay} selectedProduct={this.state.selectedProduct } selectedSample={this.state.selectedProduct} navigate={this.props.navigation} />}
                                 HeaderIcon={<Icon name="plus-square" size={40} color="#fff" />} />
                                 {
                                     existingCall && !!doctor_history ?
@@ -235,6 +282,46 @@ class CallExecution extends Component {
                                 }
                         </View>
                     </KeyboardAwareScrollView>
+                    <Overlay
+                    borderRadius={15}
+                    width={'90%'}
+                    onBackdropPress={() => this.setState({overlay: false})}
+                    isVisible={this.state.overlay}
+                    >
+                        <View style={{width:'100%', display: 'flex', flex: 1, flexDirection: 'row'}}>
+                            <View style={styles.flatList}>
+                                <Text h3 h3Style={styles.listTitle}>Select Product</Text>
+                                <FlatList
+                                keyExtractor={RandomInteger}
+                                data={this.props.products.products}
+                                renderItem={this.renderProductsRow}
+                                />
+                            </View>
+                            <View style={styles.flatList}>
+                                <Text h3 h3Style={styles.listTitle}>Select Sample (Select Product First)</Text>
+                                <FlatList
+                                    contentContainerStyle={{height: 400}}
+                                    keyExtractor={RandomInteger}
+                                    data={this.state.samples}
+                                    renderItem={this.renderSamplesRow}
+                                />
+                                <View  style={{width:'100%', display: 'flex', flex: 1, flexDirection: 'row'}}>
+                                    <View style={{width: '100%'}}>
+                                        <Text style={{fontSize: 14, fontWeight: 'bold', color: 'red'}}>{this.state.overlayError}</Text>
+                                    </View>
+                                </View>
+                                <View style={{width:'100%', display: 'flex', flex: 1, flexDirection: 'row'}}>
+                                    
+                                    <View style={styles.flatList}>
+                                        <Button buttonStyle={styles.button} onPress={this.handleOverlayClose} title="No need to select Sample" />
+                                    </View>
+                                    <View style={styles.flatList}>
+                                        <Button buttonStyle={styles.button} onPress={this.handleOverlayClose} title="Close" />
+                                    </View>
+                                </View>
+                            </View>
+                        </View>
+                    </Overlay>
                 </View >
                 <Icon2 style={{
                             width: 50,
@@ -248,42 +335,6 @@ class CallExecution extends Component {
                             }}
                         name="grain" color={brandColors.darkBrown} size={50}
                     ></Icon2>
-                    <Overlay
-                    borderRadius={15}
-                    width={'90%'}
-                    onBackdropPress={() => this.setState({overlay: false})}
-                    isVisible={this.state.overlay}
-                    >
-                        <View style={{width:'100%', display: 'flex', flex: 1, flexDirection: 'row'}}>
-                            <View style={styles.flatList}>
-                                <Text h3 h3Style={styles.listTitle}>Select Product</Text>
-                                <FlatList
-                                extraData={this.state.selectedProduct}
-                                keyExtractor={RandomInteger}
-                                data={this.props.products.products}
-                                renderItem={this.renderProductsRow}
-                                />
-                            </View>
-                            <View style={styles.flatList}>
-                                <Text h3 h3Style={styles.listTitle}>Select Sample (Select Product First)</Text>
-                                <FlatList
-                                    contentContainerStyle={{height: 400}}
-                                    keyExtractor={RandomInteger}
-                                    extraData={this.state.selectedSample}
-                                    data={this.state.samples}
-                                    renderItem={this.renderSamplesRow}
-                                />
-                                <View style={{width:'100%', display: 'flex', flex: 1, flexDirection: 'row'}}>
-                                    <View style={styles.flatList}>
-                                        <Button buttonStyle={styles.button} onPress={this.handleOverlayClose} title="No need to select Sample" />
-                                    </View>
-                                    <View style={styles.flatList}>
-                                        <Button buttonStyle={styles.button} onPress={this.handleOverlayClose} title="Close" />
-                                    </View>
-                                </View>
-                            </View>
-                        </View>
-                    </Overlay>
             </ImageBackgroundWrapper>
         )
     }
@@ -316,8 +367,6 @@ const styles = {
     flatList: {
         width: '48%',
         marginHorizontal: 5,
-        // borderWidth: 1,
-        // borderRadius: 15,
     },
     listTitle: {
         backgroundColor: '#e3ded5',
