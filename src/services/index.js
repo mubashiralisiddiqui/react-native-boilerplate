@@ -4,12 +4,15 @@ import {
 } from '../constants';
 
 export const responseInterceptor = response => {
-    const data = parse(response.data && response.data.d)
-    if(data.Error !== undefined) {
-        alert(`${data.Error}, Please contact IT support.`)
-        return null
-    }
-    return data
+    console.log(response, 'interceptor')
+    // if(typeof response === 'string') {
+         response = parse(response.data && response.data.d)
+         if(response.Error !== undefined) {
+             alert(`${response.Error}, Please contact IT support.`)
+             return null
+         }
+    // }
+    return response
 }
 
 export const errorInterceptor = error => {

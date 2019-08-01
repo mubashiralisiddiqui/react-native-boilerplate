@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import { View, ActivityIndicator, Animated } from 'react-native';
 import { CallPlanHeader } from '../../components/Headers';
 import { ImageBackgroundWrapper } from '../../components';
-import { navigationOption, brandColors, todayDate, authUser, getToken } from '../../constants'
+import { navigationOption, brandColors, todayDate, authUser, getToken, getStorage, parse } from '../../constants'
 import ItemCard from '../../components/Itemcard';
 import { getProductsWithSamples } from '../../services/productService'
 import { getTodayCalls } from '../../services/callServices'
@@ -41,6 +41,8 @@ class CallPlans extends Component {
     }
     async componentDidMount() {
         const user = await this.props.getAuthUser();
+        const off = await getStorage('offlineCalls')
+        console.log(parse(off), 'parsed offline')
         
         this.props.getTodayCalls({
             Token: getToken,
@@ -53,7 +55,6 @@ class CallPlans extends Component {
         this.props.getAllGifts();
         
         this.animate(200);
-        console.log(this.props, user)
         }
         shouldComponentRender = () => {
             const { loading } = this.props.calls;
@@ -81,7 +82,7 @@ class CallPlans extends Component {
                     }
                     <Animated.ScrollView showsVerticalScrollIndicator={false} style={{ width: '99%', opacity: this.state.fadeAnim }}>
                         {
-                            this.props.calls.calls.map((call, i) => {
+                            this.props.calls.map((call, i) => {
                                 return (<ItemCard
                                     key={i}
                                     name={call.Doctor.DoctorName}
@@ -90,6 +91,7 @@ class CallPlans extends Component {
                                     loading={this.state.loadingButton}
                                     onPressHandler={() => this.onPress(call)}
                                     status={call.IsExecuted}
+                                    isOffline={call.IsExecutedOffline && call.IsExecutedOffline}
                                 />)
                             })
                         }

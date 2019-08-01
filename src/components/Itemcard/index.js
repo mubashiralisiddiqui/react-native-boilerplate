@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Dimensions } from 'react-native';
-import { Card, Button } from 'react-native-elements'
+import { Card, Button, Badge } from 'react-native-elements'
 import { brandColors, RandomInteger, getStorage, parse } from '../../constants';
 
 const ItemCard = ({
@@ -9,6 +9,7 @@ const ItemCard = ({
     category,
     status = 1,
     onPressHandler,
+    isOffline = false,
 }) => {
     const [loading, setLoading] = useState(false);
     const onPress = () => {
@@ -29,6 +30,13 @@ const ItemCard = ({
                     <Text key={RandomInteger()} style={styles.text}> { name }</Text>
                 </View>
                 <View key={RandomInteger()} style={styles.itemSecond}>
+                    { (status === true && isOffline === true)
+                        ? <Badge status="warning" value="Offline"/>
+                        : (status === true && isOffline === false)
+                            ? <Badge status="success" value="Synced"/>
+                            : null
+                    }
+                    
                     <Text key={RandomInteger()} style={styles.text}>{ doctorClass }</Text>
                 </View>
                 <View key={RandomInteger()} style={styles.item}>

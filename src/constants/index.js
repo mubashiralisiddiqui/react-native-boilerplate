@@ -158,7 +158,6 @@ export const parse = data => JSON.parse(data)
 export const stringify = data => JSON.stringify(data)
 
 export const get = (url, params) => {
-    console.log(Axios)
     return Axios.get(url, params)
 }
 

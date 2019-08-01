@@ -2,8 +2,8 @@
  *  start of Login container
  */
 import React, { Component } from 'react';
-import { View, PermissionsAndroid, } from 'react-native'
-import { Overlay, Text, ListItem, Button, Badge } from 'react-native-elements';
+import { View, PermissionsAndroid, ActivityIndicator } from 'react-native'
+import { Overlay, Text, ListItem, Button } from 'react-native-elements';
 import { CallPlanHeader } from '../../components/Headers'
 import { navigationOption, brandColors, RandomInteger, getToken } from '../../constants'
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -11,7 +11,7 @@ import Icon2 from 'react-native-vector-icons/MaterialIcons';
 import { Collapse, AdditionalInfo, DoctorHistory, ImageBackgroundWrapper, Blink } from '../../components';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { getDocHistory } from '../../services/historyService';
-import { submitCallSingle, getTodayCalls } from '../../services/callServices';
+import { submitCallSingle, getTodayCalls, submitOfflineCall } from '../../services/callServices';
 import { Tab } from '..';
 import { FlatList } from 'react-native-gesture-handler';
 import { callExecution } from '../../defaults';
@@ -22,7 +22,7 @@ import Counter from "react-native-counters";
 import moment from 'moment';
 import { getGifts } from '../../reducers/giftsReducer';
 import { getUser } from '../../reducers/authReducer';
-import { getSubmitData } from '../../reducers/callsReducers';
+import { getSubmitData, getSubmitLoader } from '../../reducers/callsReducers';
 import { getHistory } from '../../actions/history';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 
@@ -228,7 +228,6 @@ class CallExecution extends Component {
     async componentDidMount() {
         let dailyCall = this.state.form_data;
         const callData = this.props.navigation.getParam('call_info')
-        console.log(callData)
         let selectedProducts = [];
         callData.Products.map(product => {
             selectedProducts[product.ProductId] = {
@@ -256,7 +255,7 @@ class CallExecution extends Component {
             selectedProducts: selectedProducts
         })
         this.requestLocationPermission()
-        console.log('checking all the values set', this.state, this.context)
+        // console.log('checking all the values set', this.state, this.context)
     }
 
     onChangeCallRemarks = (remarks) => {
@@ -324,22 +323,30 @@ class CallExecution extends Component {
         let dailyCall = this.state.form_data;
         dailyCall.jsonSampleDetail = this.state.selectedSamples.filter(sample => sample !== undefined);
         dailyCall.jsonDailyCallDetail = this.state.selectedProducts.filter(product => product !== undefined)
-        console.log('checking the whole data', dailyCall);
         if(dailyCall.jsonDailyCall.Lattitude == '0.0' || dailyCall.jsonDailyCall.Longitude == '0.0'){
             alert('Unable to capture your location, please try to move, refresh the application or open your location service if it is not.');
             return;
         }
-        // return
 
-        this.props.submitCallSingle(dailyCall).then(response => {
-            if(response === 1) {
-                this.props.getTodayCalls({
-                    Token: getToken,
-                    EmployeeId: this.props.user.EmployeeId,
-                });
-            }
-        }).catch(console.warn)
-    } 
+        if(this.context.isConnected) {
+            this.props.submitCallSingle(dailyCall).then(response => {
+                if(response === 1) {
+                    this.props.navigation.goBack();
+                }
+            }).catch(console.warn)
+        } else {
+            this.submitOffline(dailyCall).then(response => {
+                console.log(response)
+            })
+        }
+
+    }
+
+    submitOffline = (params) => {
+        this.props.submitOfflineCall(params).then(response => {
+            this.props.navigation.goBack()
+        })
+    }
 
     renderGiftsRow = ({ item }) => {
         const dailyCall = this.state.form_data
@@ -582,8 +589,21 @@ class CallExecution extends Component {
                                     name="grain" color={brandColors.darkBrown} size={50}
                                     onPress={this.submitCall}
                                 />}
-                        disabled={this.state.submitLoader}
+                        disabled={this.props.submitLoader}
                         />
+                        {this.props.submitLoader ?
+                            <View style={{
+                                position: 'absolute',
+                                left: 0,
+                                right: 0,
+                                top: 0,
+                                bottom: 0,
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                              }}>
+                                <ActivityIndicator size='large' />
+                            </View>
+                            : null}
                 
             </ImageBackgroundWrapper>
         )
@@ -596,14 +616,15 @@ const mapStateToProps = state => {
         user: getUser(state),
         submit_data: getSubmitData(state),
         history: getHistory(state),
-        netInfo: getNetInfo(state)
+        submitLoader: getSubmitLoader(state)
     }
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     getTodayCalls: getTodayCalls,
     submitCallSingle: submitCallSingle,
-    getDocHistory: getDocHistory
+    getDocHistory: getDocHistory,
+    submitOfflineCall: submitOfflineCall,
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(CallExecution)

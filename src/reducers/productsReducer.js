@@ -5,7 +5,6 @@ const initialState = {
 };
 
 export const productsReducer = (state = initialState, action) => {
-    console.log(state, action)
     switch(action.type) {
     case GET_PRODUCTS:
         return {

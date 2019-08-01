@@ -13,7 +13,6 @@ export const getUser = () => {
 }
 
 export function loginSuccess(user) {
-    console.log('success jani')
     return {
         type: LOGIN_SUCCESS,
         user,
