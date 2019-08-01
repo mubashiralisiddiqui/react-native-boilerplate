@@ -29,5 +29,5 @@ export const productsReducer = (state = initialState, action) => {
 }
 
 // export const getCallsLoading = state => state.loading;
-export const getProducts = state => {console.log(434343); return state.products};
+export const getProducts = state => {return state.products};
 // export const getProductsError = state => state.error;

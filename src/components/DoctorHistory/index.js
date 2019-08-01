@@ -1,30 +1,13 @@
 import React, {Component} from 'react';
 import { View, Dimensions } from 'react-native';
-import { Card, Text, Image } from 'react-native-elements'
-import { styles } from '../../constants';
 import { ScrollView } from 'react-native-gesture-handler';
 import HistoryCard from './HistoryCard';
+import { useSelector } from 'react-redux'
 
 export default class DoctorHistory extends Component {
     render() {
-        const users = [
-            {
-                name: 'brynn',
-                avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg'
-            },
-            {
-                name: 'brynn',
-                avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg'
-            },
-            {
-                name: 'brynn',
-                avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg'
-            },
-            {
-                name: 'brynn',
-                avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg'
-            },
-        ];
+        const data = useSelector(state => state.history.history)
+        console.log(data, 'history')
 
         const { width } = Dimensions.get('window')
         return (

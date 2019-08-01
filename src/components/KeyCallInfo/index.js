@@ -1,10 +1,13 @@
 import React from 'react';
 import { View, Dimensions } from 'react-native';
-import { Input, CheckBox, Text } from 'react-native-elements';
-import { styles, brandColors } from '../../constants';
+import { Input } from 'react-native-elements';
+import { styles } from '../../constants';
 import { keyCallInfo } from '../../defaults';
-
+import { CallReason } from '..'
+import { useSelector } from 'react-redux';
+    
 const KeyCallInfo = (props) => {
+
     const defaults = {
         Doctor: {
             DoctorName: '',
@@ -18,6 +21,7 @@ const KeyCallInfo = (props) => {
             LastName: '',
         }
     }
+    const user = useSelector(state => state.auth.user);
     const info = props.info ? props.info : keyCallInfo
     const { width, height } = Dimensions.get('window')
     return (
@@ -26,31 +30,9 @@ const KeyCallInfo = (props) => {
                 <Input editable={false} editable={false} inputStyle={styles.inputStyle} labelStyle={styles.labelStyle} label="Start Time" placeholder="12:30:00" value={info.VisitStart || ''}/>
                 <Input editable={false} inputStyle={styles.inputStyle} labelStyle={styles.labelStyle} label="End Time" placeholder="12:30:00"  value={info.VisitEnd || ''}/>
                 <Input editable={false} inputStyle={styles.inputStyle} labelStyle={styles.labelStyle} label="Doctor" placeholder="Doctor Name" value={info.Doctor.DoctorName || ''}/>
-                <Input editable={false} inputStyle={styles.inputStyle} labelStyle={styles.labelStyle} label="SPO Name" placeholder="SPO Name" value={`${info.user.FirstName} ${info.user.MiddleName == null ? '' : info.user.MiddleName} ${info.user.LastName  == null ? '' : info.user.LastName}`}/>
+                <Input editable={false} inputStyle={styles.inputStyle} labelStyle={styles.labelStyle} label="SPO Name" placeholder="SPO Name" value={`${user.FullName || ''}`}/>
                 <Input editable={false} inputStyle={styles.inputStyle} labelStyle={styles.labelStyle} label="Address" placeholder="Doctor address" value={info.Doctor.DoctorAddress || ''}/>
-                <View style={{width: '100%', flex: 1, flexDirection: 'row'}}>
-                    <Text style={{fontSize: 14, color: brandColors.darkBrown, fontWeight: 'bold', paddingLeft: 10}}>Reason</Text>
-                    <View style={{width: '50%'}}>
-                        <CheckBox
-                            containerStyle={{ backgroundColor: 'transparent'}}
-                            textStyle={{color: brandColors.darkBrown}}
-                            checkedColor={brandColors.lightGreen}
-                            title='Clinic Closed'
-                            checked={false}
-                            onPress={() => onchange('positive')}
-                        />
-                    </View>
-                    <View style={{width: '50%'}}>
-                        <CheckBox
-                            containerStyle={{ backgroundColor: 'transparent'}}
-                            textStyle={{color: brandColors.darkBrown}}
-                            checkedColor={brandColors.lightGreen}
-                            title='N/A'
-                            checked={true}
-                            onPress={() => onchange('negative')}
-                        />
-                    </View>
-                </View>
+                <CallReason onCallReasonChange={props.onCallReasonChange} />
             </View>
         </View>
     )

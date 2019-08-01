@@ -20,6 +20,9 @@ import SearchDoctor from './SearchDoctor';
 import ListView from './Listing';
 import EDetailing from './EDetailing';
 import PDF from './PDF';
+import CallReason from './CallReason';
+import UserInfo from './UserInfo';
+import Blink from './Blink'
 
 export {
     TextInput,
@@ -38,5 +41,8 @@ export {
     SearchDoctor,
     ListView,
     EDetailing,
-    PDF
+    PDF,
+    CallReason,
+    UserInfo,
+    Blink
 }

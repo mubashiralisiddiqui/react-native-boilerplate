@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { View } from 'react-native';
 import ReminderField from './ReminderField';
 import ProductField from './ProductField';
-import { brandColors, styles } from '../../constants';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { styles } from '../../constants';
 import GiftField from './GiftField';
 import CallRemarksField from './CallRemarksField';
 import NotesField from './NotesField';
@@ -13,12 +12,16 @@ const AdditionalInfo = ({
     navigate,
     showProducts,
     selectedProducts,
-    selectedSamples
+    selectedSamples,
+    onChangeCallRemarks,
+    onChangeAdditionalNotes,
+    showGifts,
+    selectedGift,
+    allGifts,
 }) => {
     const { Products } = navigate.getParam('call_info')
     const [productFieldsCount, setProductFieldsCount] = useState(Products.length);
-    const [reminderFieldsCount, setReminderFieldsCount] = useState(1);
-    console.log(selectedSamples)
+    const [reminderFieldsCount, setReminderFieldsCount] = useState(3);
 
     return (
         <View style={styles.container}>
@@ -39,16 +42,18 @@ const AdditionalInfo = ({
                 color={brandColors.lightGreen}
                 onPress={() => setProductFieldsCount(productFieldsCount + 1) }
             /> */}
-            <ReminderField times={reminderFieldsCount} onRemove={() => setReminderFieldsCount(reminderFieldsCount - 1) }/>
-            <Icon
+            {/* <ReminderField times={reminderFieldsCount} onRemove={() => setReminderFieldsCount(reminderFieldsCount - 1)} showProducts={showProducts}/> */}
+            {/* This functionality will be use in future when we have more products(hopefully) and 
+                will give the feasibility to SPO/RSM to have dynamic number of products par visit */}
+            {/* <Icon
                 name="plus-square"
                 size={30}
                 color={brandColors.lightGreen}
                 onPress={() => setReminderFieldsCount(reminderFieldsCount + 1) }
-            />
-            <GiftField />
-            <CallRemarksField />
-            <NotesField />
+            /> */}
+            <GiftField showGifts={showGifts} selectedGift={selectedGift} gifts={allGifts}/>
+            <CallRemarksField onChangeCallRemarks={onChangeCallRemarks}/>
+            <NotesField onChangeAdditionalNotes={onChangeAdditionalNotes} />
         </View>
     )
 }

@@ -39,7 +39,7 @@ const ProductField = ({
                                     <Input onFocus={() => onFocus(product.ProductId)} labelStyle={styles.labelStyle} key={ RandomInteger() } label={`Sample ${key + 1}`} placeholder="Sample Name" value={getNameFromSelectedSamples(selectedSamples, product.ProductId)}/> 
                                 </View>
                                 <View key={ RandomInteger() } style={{width: "50%"}}>
-                                    <Input labelStyle={styles.labelStyle} key={ RandomInteger() } label="Quantity" keyboardType="number-pad" placeholder="Quantity" value={getQuantityOfTheSelectedSamples(selectedSamples, product.ProductId)} />
+                                    <Input onFocus={() => onFocus(product.ProductId)} labelStyle={styles.labelStyle} key={ RandomInteger() } label="Quantity"  placeholder="Quantity" value={`${getQuantityOfTheSelectedSamples(selectedSamples, product.ProductId)}`} />
                                 </View>
                             </View>
                         </View>

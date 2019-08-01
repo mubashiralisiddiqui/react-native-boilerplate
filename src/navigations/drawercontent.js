@@ -6,6 +6,7 @@ import {
     StyleSheet,
     TouchableOpacity,
     AsyncStorage,
+    Alert,
     ScrollView,
 } from 'react-native';
 import { Icon } from 'react-native-elements';
@@ -20,8 +21,24 @@ class NavigationMenu extends Component {
     };
 
     logout = () => {
-        AsyncStorage.removeItem('userData')
-        this.props.navigation.navigate('Auth')
+        Alert.alert(
+            'Are you sure?',
+            'Are you sure you wan to logout? Make sure you do not have unsynced data, this action will remove all the data.',
+            [
+            {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+            },
+            {
+                text: 'OK',
+                onPress: () => {
+                    AsyncStorage.clear()
+                    this.props.navigation.navigate('AuthCheck')
+                }
+            },
+            ],
+        );
     }
 
 
@@ -38,7 +55,7 @@ class NavigationMenu extends Component {
                     {
                         navigationOptions.map((option, index) => {
                             return (<TouchableOpacity key={RandomInteger()}
-                                onPress={() => option.navigateTo && navigate(option.navigateTo)}
+                                onPress={() => option.navigateTo === 'Login' ? this.logout() : option.navigateTo && navigate(option.navigateTo)}
                                 style={styles.section}
                             >
                                 <Icon key={RandomInteger()} name='schedule' color={brandColors.darkBrown} />

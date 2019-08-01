@@ -13,6 +13,7 @@ import com.hudsonpharma.KeyboardPackage;
 import com.swmansion.reanimated.ReanimatedPackage;
 import com.rumax.reactnative.pdfviewer.PDFViewPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
+// import com.reactnativecommunity.netinfo.NetInfoPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,6 +36,7 @@ public class MainApplication extends Application implements ReactApplication {
           new ReanimatedPackage(),
           new PDFViewPackage(),
           new RNFetchBlobPackage()
+          // new NetInfoPackage()
       );
     }
 

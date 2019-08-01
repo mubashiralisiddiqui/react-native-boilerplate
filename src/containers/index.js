@@ -11,7 +11,9 @@ import DoctorLocation from './DoctorLocation'
 import CallExecution from './CallExecution';
 import NewDoctor from './NewDoctor';
 import Samples from './Samples';
-import Tab from './Tabs'
+import Tab from './Tabs';
+import AuthCheck from './AuthCheck';
+import SavedData from './SavedData';
 
 export {
     Login,
@@ -24,4 +26,6 @@ export {
     NewDoctor,
     Samples,
     Tab,
+    AuthCheck,
+    SavedData,
 }

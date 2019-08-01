@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Dimensions } from 'react-native';
 import { Card, Button } from 'react-native-elements'
-import { brandColors, RandomInteger } from '../../constants';
+import { brandColors, RandomInteger, getStorage, parse } from '../../constants';
 
 const ItemCard = ({
     name,
     doctorClass = 'A',
     category,
     status = 1,
-    onPressHandler
+    onPressHandler,
 }) => {
     const [loading, setLoading] = useState(false);
     const onPress = () => {
@@ -16,8 +16,9 @@ const ItemCard = ({
         setTimeout(() => {
             onPressHandler();
             setLoading(false)
-        }, 1000)
+        }, 0)
     }
+    
     const styles = getStyles(status);
     return (
         <Card key={RandomInteger()}
@@ -40,7 +41,7 @@ const ItemCard = ({
                     title="Execute"
                     containerStyle={{ marginRight: 5, }}
                     onPress={onPress}
-                    disabled={!status}
+                    disabled={status}
                     raised
                     loading={loading}
                 />
@@ -87,7 +88,7 @@ const getStyles = (status) => {
         },
         text: {
             fontSize: 18,
-            color: status === 1 ? brandColors.darkBrown : '#aaa',
+            color: !status ? brandColors.darkBrown : '#aaa',
         },
         cardContainer: {
             backgroundColor: 'transparent',

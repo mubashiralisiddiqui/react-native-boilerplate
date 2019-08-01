@@ -4,12 +4,15 @@ import FieldHeader from '../FieldHeader';
 import { styles, brandColors } from '../../../constants';
 import { CheckBox } from 'react-native-elements';
 
-const CallRemarksField = () => {
-    const [neutral, setNeutral] = useState(false);
+const CallRemarksField = ({
+    onChangeCallRemarks
+}) => {
+    const [neutral, setNeutral] = useState(true);
     const [positive, setPositive] = useState(false);
     const [negative, setNegative] = useState(false);
     const onchange = ( state ) => {
         if(state === 'neutral') {
+            onChangeCallRemarks('Neutral')
             setNeutral(true);
             setNegative(false);
             setPositive(false);
@@ -17,11 +20,13 @@ const CallRemarksField = () => {
         }
         if(state === 'positive') {
             setPositive(true);
+            onChangeCallRemarks('Positive')
             setNeutral(false);
             setNegative(false);
             return;
         }
         setNegative(true);
+        onChangeCallRemarks('Negative')
         setNeutral(false);
         setPositive(false);
     }

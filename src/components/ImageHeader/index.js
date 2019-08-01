@@ -13,7 +13,6 @@ const ImageHeader = ({ verticalHeight = 30 }) => {
     )
 }
 const containerStyle = (height) => {
-    console.warn(height)
     return {
         display: 'flex',
         justifyContent: 'center',

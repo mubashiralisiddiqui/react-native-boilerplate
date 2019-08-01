@@ -4,25 +4,16 @@ import { TabView, SceneMap, TabBar} from 'react-native-tab-view';
 import { KeyCallInfo, EDetailing } from '../../components'
 import { brandColors } from '../../constants';
 
-const FirstRoute = () => (
-  <KeyCallInfo />
-  // <View style={[styles.scene, { backgroundColor: '#ff4081' }]} ><Text h1>asdsss</Text></View>
-);
-const SecondRoute = () => (
-  <EDetailing />
-);
-
 export default class Tab extends React.Component {
   
   renderScene = ({ route }) => {
     const info = this.props.navigate.getParam('call_info');
-    info.user = this.props.navigate.getParam('user');
     const files = info.Products.map(product => {
       if(product.Files.length > 0) return product.Files
     }).filter(file => file !== undefined);
     switch (route.key) {
       case 'callingformation':
-        return <KeyCallInfo info={info} />
+        return <KeyCallInfo info={info} onCallReasonChange={this.props.onCallReasonChange} />
       case 'edetailing': 
         return <EDetailing files={files}/>
       default:

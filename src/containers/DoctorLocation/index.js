@@ -82,7 +82,6 @@ export default class DoctorLocation extends Component {
     }
 }
 
-// end of Login container
 const styles = {
     InputContainer: {
         display: 'flex',

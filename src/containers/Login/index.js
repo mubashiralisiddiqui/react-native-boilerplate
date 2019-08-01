@@ -2,11 +2,13 @@
  *  start of Login container
  */
 import React, { Component } from 'react';
-import { View } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { LoginForm, ImageHeader, ImageBackgroundWrapper } from '../../components'
 import { brandColors } from '../../constants';
-import { login } from '../../services'
+import { loginUser } from '../../services/auth'
+import { getLoginLoding, getLoginError } from '../../reducers/authReducer';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux'
 
 class Login extends Component {
     static navigationOptions = {
@@ -70,17 +72,14 @@ class Login extends Component {
         if( !this.state.loading
             && this.state.errors.LoginId.message === ''
             && this.state.errors.Password.message === '' ) {
-            this.startLoader();
             const {LoginId, Password} = this.state;
-            login({
+            this.props.loginUser({
                 LoginId,
                 Password,
             }, () => {
-                this.stopLoader()
                 this.props.navigation.navigate('CallPlans');
             }, () => {
                 alert('Invalid credentials')
-                this.stopLoader();
             })
         }
     }
@@ -100,7 +99,7 @@ class Login extends Component {
                         onKeyUp={this.onKeyEvent}
                         email={this.state.LoginId}
                         password={this.state.Password}
-                        loading={this.state.loading}
+                        loading={this.props.loading}
                         onChange={this.onChange}
                         onSubmit={this.onSubmit}
                         showPassword={this.state.secure}
@@ -112,10 +111,21 @@ class Login extends Component {
             </ImageBackgroundWrapper>
         )                                                                                                                                                                           
     }
-}                                                                                                                                   
-export default Login
+}
+const mapStateToProps = state => {
+    return {
+        error: getLoginError(state),
+        loading: getLoginLoding(state),
+    }
+}
 
-// end of Login container
+const mapDispatchToProps = dispatch => bindActionCreators({
+    loginUser: loginUser,
+}, dispatch)
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login)
+
+
 const styles = {
     InputContainer: {
         display: 'flex',

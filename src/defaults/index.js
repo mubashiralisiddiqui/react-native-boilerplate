@@ -22,13 +22,14 @@ export const callExecution = {
         EmployeeId: 0,
         Lattitude: 0.0,
         Longitude: 0.0,
-        PlanDetailId: 0,
+        DailyCallId: 0,
         DeviceDateTime: moment().toLocaleString(),
         FeedBack: '',
         JVEmployeeId: 0,
         CallStartTime: '',
         CallEndTime: '',
         Remarks: 'Neutral',
+        CallReason: 'N/A',
     },
     jsonDailyCallDetail: [
         // {
@@ -47,7 +48,13 @@ export const callExecution = {
         //     IsReminder: false
         // }
     ],
-    jsonGiftDetail: [],
+    jsonGiftDetail: [
+        // {
+        //     GiftId: 0,
+        //     GiftQty: 0
+        // }
+    ],
     EmployeeId: 1,
-    Token: getToken
+    Token: getToken,
+    DailyCallId: 0,
 }
