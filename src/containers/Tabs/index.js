@@ -7,19 +7,26 @@ import { brandColors } from '../../constants';
 export default class Tab extends React.Component {
   
   renderScene = ({ route }) => {
-    const info = this.props.navigate.getParam('call_info');
-    const files = info.Products.map(product => {
+    const info = this.props.existingCall ? this.props.navigate.getParam('call_info')
+    : this.props.data
+    
+    const showTimePicker = this.props.existingCall ? () => {} : this.props.showTimePicker
+    
+    const files = (this.props.existingCall ? info.Products : [] ).map(product => {
       if(product.Files.length > 0) return product.Files
     }).filter(file => file !== undefined);
+    
     switch (route.key) {
       case 'callingformation':
-        return <KeyCallInfo info={info} onCallReasonChange={this.props.onCallReasonChange} />
+        return <KeyCallInfo handleDatePicked={this.props.handleDatePicked && this.props.handleDatePicked} showTimePicker={showTimePicker} existingCall={this.props.existingCall} info={info} onCallReasonChange={this.props.onCallReasonChange} />
       case 'edetailing': 
         return <EDetailing files={files}/>
       default:
         return null;
     }
+  
   };
+  
   state = {
     index: 0,
     routes: [

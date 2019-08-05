@@ -49,27 +49,30 @@ export const getTodayCalls = (params) => {
 
 export const serializeData = (json) => {
     Object.keys(json).map(value => {
-        json[value] = json[value] != 'Fahad'
+        json[value] = typeof json[value] == 'object'
             ? JSON.stringify(json[value])
             : json[value]
     })
     return json
 }
 
-export const syncCall = (params) => dispatch => {
-    Object.keys(params).map(param => {
+export const syncCall = (params) => async (dispatch) => {
+    await Object.keys(params).map(param => {
         console.log(params[param])
         params[param] = params[param]
     })
     dispatch(submitCall(params))
     return post('executeCall', params).then(async (response) => {
-        dispatch(submitCallSuccess(params))
-        let offlineCalls = await getStorage('offlineCalls')
-        offlineCalls = parse(offlineCalls)
-        delete offlineCalls[params.DailyCallId]
-        setStorage('offlineCalls', stringify(offlineCalls))
-        const allCalls = await updateCallStatus(params.DailyCallId);
-        dispatch(getCallsSuccess(allCalls))
+        if(response.data.d == 1) {
+
+            dispatch(submitCallSuccess(params))
+            let offlineCalls = await getStorage('offlineCalls')
+            offlineCalls = parse(offlineCalls)
+            delete offlineCalls[params.DailyCallId]
+            setStorage('offlineCalls', stringify(offlineCalls))
+            const allCalls = await updateCallStatus(params.DailyCallId);
+            dispatch(getCallsSuccess(allCalls))
+        }
         return response;
     })
 

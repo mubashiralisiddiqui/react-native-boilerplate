@@ -18,9 +18,10 @@ const AdditionalInfo = ({
     showGifts,
     selectedGift,
     allGifts,
+    existingCall,
 }) => {
-    const { Products } = navigate.getParam('call_info')
-    const [productFieldsCount, setProductFieldsCount] = useState(Products.length);
+    const { Products } = existingCall ? navigate.getParam('call_info') : { Products: [] }
+    const [productFieldsCount, setProductFieldsCount] = useState(existingCall ? 2 : Products.length);
     const [reminderFieldsCount, setReminderFieldsCount] = useState(3);
 
     return (
@@ -30,7 +31,7 @@ const AdditionalInfo = ({
                 selectedProduct={selectedProducts}
                 selectedSamples={selectedSamples}
                 products={Products}
-                existingCall={ Products !== undefined ? true : false }
+                existingCall={existingCall}
                 times={productFieldsCount}
                 onRemove={() => setProductFieldsCount(productFieldsCount - 1)} 
             />
@@ -42,7 +43,8 @@ const AdditionalInfo = ({
                 color={brandColors.lightGreen}
                 onPress={() => setProductFieldsCount(productFieldsCount + 1) }
             /> */}
-            {/* <ReminderField times={reminderFieldsCount} onRemove={() => setReminderFieldsCount(reminderFieldsCount - 1)} showProducts={showProducts}/> */}
+            <ReminderField selectedProduct={selectedProducts}
+                selectedSamples={selectedSamples} times={reminderFieldsCount} onRemove={() => setReminderFieldsCount(reminderFieldsCount - 1)} showProducts={showProducts}/>
             {/* This functionality will be use in future when we have more products(hopefully) and 
                 will give the feasibility to SPO/RSM to have dynamic number of products par visit */}
             {/* <Icon

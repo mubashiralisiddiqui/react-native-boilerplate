@@ -9,20 +9,19 @@ import { navigationOption, brandColors } from '../../constants';
 export default class NewDoctor extends Component {
     static navigationOptions = ({ navigation }) => (navigationOption(navigation, 'Add New Doctor'))
     state = {
-        name: '',
-        gender: 'male',
-        address: '',
-        address2: '',
-        city: '',
-        country: '',
-        mobile_number: '',
-        mobile_number2: '',
-        designation: '',
-        speciality: '',
-        qualification: '',
-        class: '',
-        frequency: '',
+        DoctorName: '',
+        DoctorAddress: '',
+        DoctorEmail: '',
+        DoctorPhone: '',
+        DoctorDesignation: '',
+        DoctorSpeciality: '',
         fadeAnim: new Animated.Value(0)
+    }
+
+    setField = (field, value) => {
+        this.setState({
+            [field]: value
+        }, () => console.log(this.state))
     }
     styles = ()  => {
         return {
@@ -33,8 +32,8 @@ export default class NewDoctor extends Component {
                     alignItems: 'center',
                 },
                 scrollContainer: {
-                    width: '90%',
-                    maxHeight: 550,
+                    width: '100%',
+                    // maxHeight: 550,
                 },
                 buttonContainer: {
                     width: '100%'
@@ -44,9 +43,13 @@ export default class NewDoctor extends Component {
                     borderWidth: 2,
                     borderRadius: 33,
                     borderColor: brandColors.lightGreen,
+                    width: '100%'
                 },
                 buttonContainer: {
-                    padding: 15,
+                    flex: 1,
+                    marginVertical: 15,
+                    alignItems: 'center',
+                    width: '100%'
                 },
                 buttonTitle: {
                     color: '#fff',
@@ -56,37 +59,37 @@ export default class NewDoctor extends Component {
     }
 
     componentDidMount() {
-        setTimeout(() => {
-            Animated.timing(                  // Animate over time
-                this.state.fadeAnim,            // The animated value to drive
-                {
-                  toValue: 1,                   // Animate to opacity: 1 (opaque)
-                  duration: 2000,              // Make it take a while
-                }
-              ).start();
-        }, 500)
+        Animated.timing(                  // Animate over time
+            this.state.fadeAnim,            // The animated value to drive
+            {
+                toValue: 1,                   // Animate to opacity: 1 (opaque)
+                duration: 2000,              // Make it take a while
+            }
+        ).start();
     }
     render() {
         const { styles } = this.styles();
         return (
-            <ImageBackgroundWrapper>
-                <Animated.View style={{...styles.container, opacity: this.state.fadeAnim}}>
-                    <CallPlanHeader />
+            <Animated.View style={{...styles.container, opacity: this.state.fadeAnim}}>
+                <ImageBackgroundWrapper>
                     <KeyboardAwareScrollView
                         style={styles.scrollContainer}
                         showsVerticalScrollIndicator={false}
                     >
-                        <NewDoctorForm />
+                        <CallPlanHeader />
+                        <View style={{width: '85%', display: 'flex', alignSelf: 'center'}}>
+                            <NewDoctorForm data={this.state} setField={this.setField}/>
+                            <View style={{width: '100%', display: 'flex', flex:1, justifyContent:'flex-end' }}>
+                                <Button
+                                    buttonStyle={styles.button}
+                                    containerStyle={styles.buttonContainer}
+                                    titleStyle={styles.buttonTitle}
+                                    title="Add" />
+                            </View>
+                        </View>
                     </KeyboardAwareScrollView>
-                    <View style={{width: '90%' }}>
-                        <Button
-                            buttonStyle={styles.button}
-                            containerStyle={styles.buttonContainer}
-                            titleStyle={styles.buttonTitle}
-                            title="Add" />
-                    </View>
-                </Animated.View>
-            </ImageBackgroundWrapper>
+                </ImageBackgroundWrapper>
+            </Animated.View>
         )
     }
 }

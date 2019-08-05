@@ -4,7 +4,7 @@ import { removeOldStorageEnteries } from './callServices';
 import { initiateResponseInterceotors } from '.';
 
 export const getProductsWithSamples = (params) => {
-    initiateResponseInterceotors()
+    // initiateResponseInterceotors()
     return async (dispatch) => {
         dispatch(getProducts())
         let productsFromStorage = await getStorage(`products${todayDate()}`)

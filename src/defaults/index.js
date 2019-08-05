@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { getToken } from '../constants';
+import { getToken, todayDate } from '../constants';
 
 export const keyCallInfo = {
     Doctor: {
@@ -26,8 +26,8 @@ export const callExecution = {
         DeviceDateTime: moment().toLocaleString(),
         FeedBack: '',
         JVEmployeeId: 0,
-        CallStartTime: '',
-        CallEndTime: '',
+        CallStartTime: todayDate('YYYY-MM-DD hh:mm:ss'),
+        CallEndTime: moment().add(15, 'minute').format('YYYY-MM-DD hh:mm:ss'),
         Remarks: 'Neutral',
         CallReason: 'N/A',
     },

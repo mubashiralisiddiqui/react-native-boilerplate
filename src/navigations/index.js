@@ -21,6 +21,7 @@ import {
     Samples,
     AuthCheck,
     SavedData,
+    CallExecutionUnplanned,
 } from '../containers';
 import DrawerContent from './drawercontent'
 
@@ -29,7 +30,8 @@ import DrawerContent from './drawercontent'
 
 const CallPlansStack = createStackNavigator({
     CallPlans,
-    CallExecution
+    CallExecution,
+    CallExecutionUnplanned,
 })
 
 const AddNewDoctorStack = createStackNavigator({
@@ -50,6 +52,7 @@ const RootStack = createDrawerNavigator({
     // drawer component mean we are using our custom drawer if we dont use it by defautl 
     // drawer path will be shown in side menu like Main which is current in drawer
     {
+        unmountInactiveRoutes: true,
         contentComponent: DrawerContent,
         // initialRouteName: 'SelectInterpreterScreen'
     }
@@ -69,6 +72,7 @@ export default createAppContainer(createSwitchNavigator(
         AuthCheck: AuthCheck // where we decid where to switch app or auth
     },
     {
+        
         initialRouteName: 'AuthCheck'
     }
 ))

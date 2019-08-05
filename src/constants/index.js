@@ -9,7 +9,7 @@ import moment from 'moment';
 import axios from 'axios';
 import { AsyncStorage, Dimensions } from 'react-native'
 import { loginSuccess } from '../actions/auth'
-import { initiateResponseInterceotors } from '../services';
+import { services } from '../services'
 
 /* 
 * Theme colors as designed in the logo composition. All the colors used in the application are derived from here.
@@ -38,7 +38,7 @@ export const random = () => Math.random();
 export const  RandomInteger = (min = 1, max = 999999) => {
    min = ceil(min);
    max = floor(max);
-   return floor(random() * (max - min + 1)) + min;
+   return floor(random() * ( Number(max) - Number(min) + 1 )) + Number(min);
 }
 
 /* 
@@ -54,7 +54,7 @@ export const navigationOptions = [
     },{
         name: 'unplanned_visits',
         label: 'Unplanned Visits',
-        navigateTo: 'CallExecution',
+        navigateTo: 'CallExecutionUnplanned',
     },{
         name: 'add_doctor',
         label: 'Add New Doctor',
@@ -185,6 +185,7 @@ export const getOrientation = () => {
 }
 
 export const authUser = () => async (dispatch) => {
+    services().authService.loginUser({});
     let user = await getStorage('user')
     if(user !== null) {
         user = JSON.parse(user);
@@ -201,7 +202,7 @@ export const getProducts = async () => {
         return JSON.parse(products)
     }
     return [];
-} 
+}
 
 export const getNameFromSelectedSamples = (selectedSamples, productId) => {
     if(selectedSamples[productId] === undefined) return '';

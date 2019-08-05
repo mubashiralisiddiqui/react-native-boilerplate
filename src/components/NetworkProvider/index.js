@@ -2,8 +2,9 @@ import React from 'react';
 import {NetInfo} from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
-import { parse, getStorage, todayDate } from '../../constants';
+import { parse, getStorage, todayDate, setStorage, stringify, removeStorage } from '../../constants';
 import { submitCallSingle, syncCall } from '../../services/callServices';
+import { objectExpression } from '@babel/types';
 
 export const NetworkContext = React.createContext({
     isConnected: false,
@@ -30,29 +31,37 @@ class NetworkProviderClass extends React.PureComponent {
         if(index !== 0) {
             console.log(calls, index)
             let a = await this.props.syncCall(calls[index])
-            if(a == 1) {
+            console.log(a)
+            // if(a == 1) {
                 delete calls[index]
-                return this.sync(calls, Object.keys(calls)[0] || 0);
-            }
+                console.log(calls, Object.keys(calls), 'iterated', Object.keys(calls).length > 0)
+                if(Object.keys(calls).length > 0) {
+                    await setStorage('offlineCalls', stringify(calls))
+                    await this.sync(calls, Object.keys(calls)[0] || 0);
+                }
+                await removeStorage('offlineCalls')
+                return a
+            // }
         }
         return true;
     }
 
     syncCalls = async () => {
+        const jsonParamsArray = ['jsonDailyCall', 'jsonDailyCallDetail', 'jsonGiftDetail', 'jsonSampleDetail']
         let calls = await getStorage('offlineCalls');
         if(calls != null) {
             calls = parse(calls);
-            let test = this.sync(calls, Object.keys(calls)[0])
-            console.log(test)
             console.log(calls, 'from the connectivity')
-            // Object.keys(calls).map(call => {
-            //     if(this.state.isConnected) {
-            //         this.props.syncCall(calls[call]).then(response => {
-            //             delete calls[call];
-            //         })
-            //     }
-            //     console.log(calls[call])
-            // })
+            Object.keys(calls).map(call => {
+                Object.keys(calls[call]).map(single => {
+                    if(jsonParamsArray.includes(single) && typeof parse(calls[call][single]) == 'string') {
+                        calls[call][single] = parse(calls[call][single])
+                    }
+                })
+            })
+            Object.keys(calls).map(async (call) => {
+                await this.props.syncCall(calls[call])
+            })
         }
     }
 

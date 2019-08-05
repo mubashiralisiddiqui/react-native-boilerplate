@@ -4,7 +4,7 @@ import { initiateResponseInterceotors } from './index'
 
 export const loginUser = (params, onSuccess, onFailure) => {
     return dispatch => {
-        initiateResponseInterceotors();
+        // initiateResponseInterceotors();
         dispatch(login())
         return post('loginUser', params).then(response => {
             console.log(response, 'from login')

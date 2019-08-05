@@ -67,6 +67,7 @@ class CallExecution extends Component {
         ],
         form_data: parse(stringify(callExecution)),
         submitLoader: false,
+        isDateTimePickerVisible: true,
     }
 
     onClickProduct = (productTemplateId) => {
@@ -74,7 +75,7 @@ class CallExecution extends Component {
             const samples = this.props.products.filter(product => product.ProductTemplateId == productTemplateId)[0]
             this.setState({
                 selectedProductId: productTemplateId,
-                samples: samples.Products,
+                samples: samples.Products || [],
             }, console.log(this.state))
         } else {
             this.setState({
@@ -90,13 +91,13 @@ class CallExecution extends Component {
     onClickSample = (productId, IsReminder) => {
         const productTemplate = this.props.products
         .filter(product => product
-            .Products
+            .Products && product.Products
             .filter(sample => sample.ProductId == productId).length > 0)
         [0];
 
         var selectedProduct = null;
         this.props.products.map(product => {
-            product.Products.map(sample => {
+            product.Products && product.Products.map(sample => {
                 if(sample.ProductId === productId) {
                     selectedProduct = sample;
                 }
@@ -231,40 +232,29 @@ class CallExecution extends Component {
         console.warn(err)
     }
     }
-    static navigationOptions = ({ navigation }) => (navigationOption(navigation, 'Call Details'))
+    static navigationOptions = ({ navigation }) => (navigationOption(navigation, 'Unplanned Call Details'))
  
     async componentDidMount() {
-        let dailyCall = parse(stringify(callExecution));
-        console.log(dailyCall, 'before changes');
-        const callData = this.props.navigation.getParam('call_info')
-        let selectedProducts = [];
-        callData.Products.map(product => {
-            selectedProducts[product.ProductId] = {
-                ProductId: product.ProductId,
-                name: product.ProductName,
-                DetailingSeconds: 0
-            }
-            return product;
-        })
-        dailyCall.jsonDailyCall.CallStartTime = moment(callData.VisitStart).format('YYYY-MM-DD hh:mm:ss')
-        dailyCall.jsonDailyCall.CallEndTime = moment(callData.VisitEnd).format('YYYY-MM-DD hh:mm:ss')
-        dailyCall.jsonDailyCall.DoctorCode = callData.Doctor.DoctorCode
-        dailyCall.jsonDailyCall.PlanDetailId = callData.PlanDetailId
-        dailyCall.jsonDailyCall.DeviceDateTime = moment().format('YYYY-MM-DD hh:mm:ss')
-        // dailyCall.jsonDailyCall.EmployeeId = moment().format('YYYY-MM-DD hh:mm:ss')
-        dailyCall.EmployeeId = this.props.user.EmployeeId
-        dailyCall.DailyCallId = callData.PlanDetailId
-        console.log(dailyCall, 'afterChanges')
+        // let dailyCall = parse(stringify(callExecution));
+        // dailyCall.jsonDailyCall.CallStartTime = moment(callData.VisitStart).format('YYYY-MM-DD hh:mm:ss')
+        // dailyCall.jsonDailyCall.CallEndTime = moment(callData.VisitEnd).format('YYYY-MM-DD hh:mm:ss')
+        // dailyCall.jsonDailyCall.DoctorCode = callData.Doctor.DoctorCode
+        // dailyCall.jsonDailyCall.PlanDetailId = callData.PlanDetailId
+        // dailyCall.jsonDailyCall.DeviceDateTime = moment().format('YYYY-MM-DD hh:mm:ss')
+        // // dailyCall.jsonDailyCall.EmployeeId = moment().format('YYYY-MM-DD hh:mm:ss')
+        // dailyCall.EmployeeId = this.props.user.EmployeeId
+        // dailyCall.DailyCallId = callData.PlanDetailId
+        // console.log(dailyCall, 'afterChanges')
+        console.log(this.props.products)
 
-        this.props.getDocHistory({
-            Token: getToken,
-            DoctorCode: callData.Doctor.DoctorCode,
-            EmployeeId: this.props.user.EmployeeId,
-        });
-        this.setState({
-            form_data: dailyCall,
-            selectedProducts: selectedProducts
-        }, () => {console.log('checking all the values set', this.state, this.context)})
+        // this.props.getDocHistory({
+        //     Token: getToken,
+        //     DoctorCode: callData.Doctor.DoctorCode,
+        //     EmployeeId: this.props.user.EmployeeId,
+        // });
+        // this.setState({
+        //     form_data: dailyCall,
+        // }, () => {console.log('checking all the values set', this.state, this.context)})
         this.requestLocationPermission()
         
     }
@@ -411,6 +401,24 @@ class CallExecution extends Component {
             giftsOverlay: false
         })
     }
+    showDateTimePicker = () => {
+        this.setState({ isDateTimePickerVisible: true });
+      };
+    
+      hideDateTimePicker = () => {
+        this.setState({ isDateTimePickerVisible: false });
+      };
+    
+      handleDatePicked = (date, field, callback) => {
+        console.log("A date has been picked: ", date, "field=>", field);
+        let callDetails = this.state.form_data
+        callDetails.jsonDailyCall[field] = moment(date).format('YYYY-MM-DD hh:mm:ss')
+        console.log(callDetails, 'Call Details')
+        this.setState({
+            form_data: callDetails
+        }, () => console.log(this.state.form_data))
+        callback();
+      };
 
     render() {
         const {
@@ -469,14 +477,14 @@ class CallExecution extends Component {
                                 isCollapsed={isKeyInfoCollapsed}
                                 toggler={() => this.onToggle('isKeyInfoCollapsed')}
                                 title="Key Call Information"
-                                Body={<Tab existingCall={true} onCallReasonChange={this.onCallReasonChange} navigate={this.props.navigation}/>}  
+                                Body={<Tab handleDatePicked={this.handleDatePicked} existingCall={false} showTimePicker={this.showDateTimePicker} onCallReasonChange={this.onCallReasonChange} navigate={this.props.navigation} data={this.state.form_data.jsonDailyCall}/>}  
                                 HeaderIcon={<Icon name="info-circle" size={40} color="#fff" />} />
                             <Collapse
                                 isCollapsed={isAdditionalInfoCollapsed}
                                 toggler={() => this.onToggle('isAdditionalInfoCollapsed')}
                                 title="Additional Information"
                                 Body={<AdditionalInfo
-                                        existingCall={true}
+                                        existingCall={false}
                                         showGifts={this.showGifts}
                                         onChangeAdditionalNotes={this.onChangeAdditionalNotes}
                                         onChangeCallRemarks={this.onChangeCallRemarks}

@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { LoginForm, ImageHeader, ImageBackgroundWrapper } from '../../components'
 import { brandColors } from '../../constants';
-import { loginUser } from '../../services/auth'
+import { services } from '../../services'
 import { getLoginLoding, getLoginError } from '../../reducers/authReducer';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
@@ -120,7 +120,7 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    loginUser: loginUser,
+    loginUser: services().authService.loginUser,
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login)

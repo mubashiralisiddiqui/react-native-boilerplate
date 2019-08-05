@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import { View, ActivityIndicator, Animated } from 'react-native';
 import { CallPlanHeader } from '../../components/Headers';
 import { ImageBackgroundWrapper } from '../../components';
-import { navigationOption, brandColors, todayDate, authUser, getToken, getStorage, parse } from '../../constants'
+import { navigationOption, brandColors, todayDate, authUser, getToken, getStorage, parse, getAllStorageKeys } from '../../constants'
 import ItemCard from '../../components/Itemcard';
 import { getProductsWithSamples } from '../../services/productService'
 import { getTodayCalls } from '../../services/callServices'
@@ -41,6 +41,7 @@ class CallPlans extends Component {
     }
     async componentDidMount() {
         const user = await this.props.getAuthUser();
+        const keys = await getAllStorageKeys((err, keys) => console.log(keys), /$/)
         const off = await getStorage('offlineCalls')
         console.log(parse(off), 'parsed offline')
         
@@ -56,9 +57,8 @@ class CallPlans extends Component {
         
         this.animate(200);
         }
-        shouldComponentRender = () => {
-            const { loading } = this.props.calls;
-            return !loading;
+        shouldShowLoader = () => {
+            return this.props.loading;
         }
         
         onPress = (data) => {
@@ -76,7 +76,7 @@ class CallPlans extends Component {
                 <ImageBackgroundWrapper>
                     <CallPlanHeader />
                     {
-                        !this.shouldComponentRender()
+                        this.shouldShowLoader()
                             ? <ActivityIndicator size={45} color={brandColors.lightGreen} />
                             : null
                     }
@@ -85,7 +85,7 @@ class CallPlans extends Component {
                             this.props.calls.map((call, i) => {
                                 return (<ItemCard
                                     key={i}
-                                    name={call.Doctor.DoctorName}
+                                    name={`${call.Doctor.DoctorName}-${call.PlanDetailId}`}
                                     category={call.TeamName}
                                     doctorClass={call.Doctor.ClassName}
                                     loading={this.state.loadingButton}
@@ -108,7 +108,8 @@ const mapStateToProps = state => {
         loading: getCallsLoading(state),
         calls: getCalls(state),
         products: getProducts(state),
-        user: getUser(state)
+        user: getUser(state),
+        
     }
 }
 

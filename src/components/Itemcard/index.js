@@ -49,7 +49,8 @@ const ItemCard = ({
                     title="Execute"
                     containerStyle={{ marginRight: 5, }}
                     onPress={onPress}
-                    disabled={status}
+                    // disabled={status}
+                    disabled={false}
                     raised
                     loading={loading}
                 />
