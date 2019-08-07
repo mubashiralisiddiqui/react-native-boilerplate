@@ -119,6 +119,7 @@ class NetworkProviderClass extends React.PureComponent {
                             loading={this.state.isRefreshing}
                             loadingProps={{ color: brandColors.lightGreen }}
                             type="clear"
+                            disabled={!this.state.isConnected}
                             title="Refresh"
                             onPress={this.handleRefresh}
                             titleStyle={{color: brandColors.lightGreen, fontSize: 10}}

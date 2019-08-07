@@ -31,7 +31,7 @@ const EDetailing = ({
     }
 
     const onCloseFileModal = (seconds) => {
-        onCloseFile(selectedFile.ProductId, seconds)
+        onCloseFile(selectedFile.DetailingFileId, seconds)
         setSelectedFile('')
         setShowFile(false)
     }

@@ -210,6 +210,7 @@ export const getNameFromSelectedSamples = (selectedSamples, productId) => {
 }
 
 export const getQuantityOfTheSelectedSamples = (selectedSamples, productId) => {
+    console.log(selectedSamples[productId], productId)
     if(selectedSamples[productId] === undefined) return '';
     return selectedSamples[productId].SampleQty;
 }

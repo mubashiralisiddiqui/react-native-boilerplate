@@ -13,6 +13,7 @@ const ReminderField = ({
     selectedProduct,
     selectedSamples,
 }) => {
+    console.log('these are selected samples from reminder field', selectedSamples)
     const onFocus = (selectedProduct, position) => {
         Keyboard.dismiss();
         NativeModules.KeyboardFunctionalities.hideKeyboard()
@@ -35,13 +36,13 @@ const ReminderField = ({
                                 isFirst={ key === 0 ? true : false }
                                 onRemove={onRemove}
                             />
-                            <Input onFocus={() => onFocus(null, key + 1)} labelStyle={styles.labelStyle} label={`Reminder ${key+1}`} placeholder="Product Name" value={product.name || ''} />
+                            <Input onFocus={() => onFocus(product.length > 0 ? product.ProductId : null, key + 1)} labelStyle={styles.labelStyle} label={`Reminder ${key+1}`} placeholder="Product Name" value={product.name || ''} />
                             <View key={ RandomInteger() } style={{flex:1, flexDirection: 'row'}}>
                                 <View key={ RandomInteger() } style={{width: "50%"}}>
                                     <Input onFocus={() => onFocus(null)} labelStyle={styles.labelStyle} key={ key + RandomInteger() } label={`Sample ${key + 1}`} placeholder="Sample Name" value={getNameFromSelectedSamples(selectedSamples, product.ProductId)} />
                                 </View>
                                 <View key={ RandomInteger() } style={{width: "50%"}}>
-                                    <Input onFocus={() => onFocus(null)} labelStyle={styles.labelStyle} key={ RandomInteger() } label="Quantity" keyboardType="number-pad" placeholder="Quantity" value={getQuantityOfTheSelectedSamples(selectedSamples, product.ProductId)} />
+                                    <Input onFocus={() => onFocus(null)} labelStyle={styles.labelStyle} key={ RandomInteger() } label="Quantity" placeholder="Quantity" value={`${getQuantityOfTheSelectedSamples(selectedSamples, product.ProductId)}`} />
                                 </View>
                             </View>
                         </View>

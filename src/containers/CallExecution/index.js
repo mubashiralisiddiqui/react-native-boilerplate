@@ -50,6 +50,7 @@ class CallExecution extends Component {
         long: '',
         fetchingLocation: true,
         selectedProductId: 0, // This will be only set while opening the overlay, and unset while closing the overlay
+        selectedSampleId: 0, // This will be only set while opening the overlay, and unset while closing the overlay
         reminderPosition: 0, // This will be only set while opening the overlay, and unset while closing the overlay
         // This key will me merged with JsonCallDetails key of API call
         selectedProducts: [
@@ -71,12 +72,20 @@ class CallExecution extends Component {
             //     ProductTemplateId: 0
             // },
         ],
+        eDetailing: [
+            // this will be added in the final call param
+            // {
+            //     DetailingFileId: 1,
+            //     Duration: 0 // in seconds
+            // }
+        ],
         form_data: parse(stringify(callExecution)),
         submitLoader: false,
     }
 
     onClickProduct = (productTemplateId) => {
-        if(this.state.selectedProductId == null || this.state.selectedProducts[productTemplateId] == undefined) {
+        if(this.state.selectedProductId == null || this.state.selectedProductId == 0) {
+            console.log(this.state.selectedProductId, this.state.selectedProducts, this.state.selectedProducts[productTemplateId], 'dimagh out')
             const samples = this.props.products.filter(product => product.ProductTemplateId == productTemplateId)[0]
             this.setState({
                 selectedProductId: productTemplateId,
@@ -94,40 +103,59 @@ class CallExecution extends Component {
         }
     }
     onClickSample = (productId, IsReminder) => {
-        const productTemplate = this.props.products
-        .filter(product => product
-            .Products
-            .filter(sample => sample.ProductId == productId).length > 0)
-        [0];
-
+        // const productTemplate = this.props.products
+        // .filter(product => product
+        //     .Products
+        //     .filter(sample => sample.ProductId == productId).length > 0)
+        // [0];
         var selectedProduct = null;
+        var productTemplate = null;
         this.props.products.map(product => {
             product.Products.map(sample => {
                 if(sample.ProductId === productId) {
                     selectedProduct = sample;
+                    productTemplate = product;
                 }
             })
         })
+        const { reminderPosition } = this.state;
+        let selectedProducts = this.state.selectedProducts
         let selectedSamples = this.state.selectedSamples;
+        let alreadySelectedProductAtThisPosition = selectedProducts
+        .filter(product => (product.reminderPosition && product.reminderPosition == reminderPosition))
+        if(alreadySelectedProductAtThisPosition.length > 0) {
+            delete selectedProducts[alreadySelectedProductAtThisPosition[0].ProductId];
+            delete selectedSamples[alreadySelectedProductAtThisPosition[0].ProductId];
+        }
+        if(selectedProducts[productTemplate.ProductTemplateId] == undefined) {
+            selectedProducts[productTemplate.ProductTemplateId] = {
+                ProductId: productTemplate.ProductTemplateId,
+                name: productTemplate.ProductTemplateName,
+                DetailingSeconds: 0,
+                isReminder: true,
+                reminderPosition: reminderPosition,
+            }
+        }
+
         selectedSamples[productTemplate.ProductTemplateId] = {
-            IsReminder: (this.state.selectedProducts[productTemplate.ProductTemplateId] === undefined),
+            IsReminder: (selectedProducts[productTemplate.ProductTemplateId].IsReminder || false),
             ProductId: productId,
             name: selectedProduct.ProductName,
             SampleQty: 0,
             ProductTemplateId: productTemplate.ProductTemplateId
         }
-        this.setState((state) =>{
-            return {
+        this.setState({
+                selectedProducts: selectedProducts,
                 selectedSamples: selectedSamples,
-            }
-        })
+            })
     }
 
     renderProductsRow = ({item}) => {
-        if(this.state.selectedProducts.length === 0) {
-            
+        const {selectedProducts, selectedProductId} = this.state
+        let shouldBeDisabled = false;
+        if(selectedProducts[item.ProductTemplateId] !== undefined && selectedProducts[item.ProductTemplateId].IsReminder === false) {
+            shouldBeDisabled = true;
         }
-        const {selectedProductId} = this.state
         let style = styles.listItems;
         style = selectedProductId === item.ProductTemplateId
         ? {...style, ...styles.selectedItems}
@@ -136,8 +164,12 @@ class CallExecution extends Component {
         ? styles.selectedTitle
         : styles.unSelectedTitle
         return (<ListItem
+            disabled={shouldBeDisabled}
+            disabledStyle={{ backgroundColor: '#f4f1f0' }}
             containerStyle={style}
             titleStyle={titleStyle}
+            rightSubtitle={shouldBeDisabled ? 'Cannot be selected as reminder' : null}
+            // rightSubtitleStyle={{color: '#ada082'}}
             key={item.ProductTemplateId}
             bottomDivider
             // topDivider
@@ -148,8 +180,10 @@ class CallExecution extends Component {
     handleOverlayClose = (unselect = false) => {
         if(unselect) {
             let selectedSamples = this.state.selectedSamples;
-            const {selectedProductId} = this.state
-            const removed = selectedSamples.splice(selectedProductId, 1)
+            const {selectedProductId, reminderPosition} = this.state
+            if(selectedProductId != 0) {
+                delete selectedSamples[selectedProductId];
+            }
             this.setState({
                 selectedSamples,
                 overlay: false,
@@ -157,23 +191,11 @@ class CallExecution extends Component {
             })
             return;
         }
-        const { selectedProductId, selectedProducts, reminderPosition } = this.state
-        if(selectedProducts[selectedProductId] === undefined) {
-            const selectedProduct = this.props.products.filter(product => product.ProductTemplateId == selectedProductId)[0]
-            selectedProducts[selectedProductId] = {
-                ProductId: selectedProduct.ProductTemplateId,
-                name: selectedProduct.ProductTemplateName,
-                DetailingSeconds: 0,
-                reminderPosition: reminderPosition,
-                IsReminder: true,
-            }
-        }
-
         this.setState({
             overlay: false,
             selectedProductId: 0,
-            selectedProducts: selectedProducts
-        }, () => console.log(this.state))
+            // selectedProducts: selectedProducts
+        }, () => console.log(this.state.selectedProducts, 'asd', this.state.selectedSamples))
     }
 
     renderSamplesRow = ({item}) => {
@@ -242,10 +264,17 @@ class CallExecution extends Component {
     async componentDidMount() {
         this.context.hideRefresh();
         let dailyCall = parse(stringify(callExecution));
-        console.log(dailyCall, 'before changes');
         const callData = this.props.navigation.getParam('call_info')
         let selectedProducts = [];
+        let eDetailings = [];
         callData.Products.map(product => {
+            product.Files.map(file => {
+                eDetailings[file.DetailingFileId] = {
+                    DetailingFileId: file.DetailingFileId,
+                    Duration: 0,
+                }
+                return file;
+            })
             selectedProducts[product.ProductId] = {
                 ProductId: product.ProductId,
                 name: product.ProductName,
@@ -262,7 +291,6 @@ class CallExecution extends Component {
         // dailyCall.jsonDailyCall.EmployeeId = moment().format('YYYY-MM-DD hh:mm:ss')
         dailyCall.EmployeeId = this.props.user.EmployeeId
         dailyCall.DailyCallId = callData.PlanDetailId
-        console.log(dailyCall, 'afterChanges')
 
         this.props.getDocHistory({
             Token: getToken,
@@ -271,8 +299,11 @@ class CallExecution extends Component {
         });
         this.setState({
             form_data: dailyCall,
-            selectedProducts: selectedProducts
-        }, () => {console.log('checking all the values set', this.state, this.context)})
+            selectedProducts: selectedProducts,
+            eDetailing: eDetailings,
+        }
+        , () => {console.log('checking all the values set', this.state, this.context)}
+        )
         this.requestLocationPermission()
         
     }
@@ -344,6 +375,7 @@ class CallExecution extends Component {
         dailyCall.Epoch = new Date().getTime();
         dailyCall.jsonSampleDetail = this.state.selectedSamples.filter(sample => sample !== undefined);
         dailyCall.jsonDailyCallDetail = this.state.selectedProducts.filter(product => product !== undefined)
+        dailyCall.jsonDailyCallEDetailing = this.state.eDetailing.filter(file => file !== undefined)
         if(dailyCall.jsonDailyCall.Lattitude == '0.0' || dailyCall.jsonDailyCall.Longitude == '0.0'){
             alert('Unable to capture your location, please try to move, refresh the application or open your location service if it is not.');
             return;
@@ -418,14 +450,21 @@ class CallExecution extends Component {
         })
     }
 
-    updateDetailingSeconds = (productTemplateId, seconds) => {
-        const { selectedProducts } = this.state
-        selectedProducts[productTemplateId].DetailingSeconds = selectedProducts[productTemplateId].DetailingSeconds == 0
-        ? seconds
-        : selectedProducts[productTemplateId].DetailingSeconds + seconds;
+    updateDetailingSeconds = (fileId, seconds) => {
+        const { eDetailing } = this.state
+        if(eDetailing[fileId] == undefined) {
+            eDetailing[fileId] = {
+                DetailingFileId: fileId,
+                Duration: seconds
+            }
+        } else {
+            eDetailing[fileId].Duration = eDetailing[fileId].Duration == 0
+            ? seconds
+            : eDetailing[fileId].Duration + seconds;
+        }
         this.setState({
-            selectedProducts
-        }, () => console.log('detailing seconds updated', this.state.selectedProducts[productTemplateId]));
+            eDetailing
+        }, () => console.log('detailing seconds updated', this.state.eDetailing[fileId]));
     }
 
     render() {
