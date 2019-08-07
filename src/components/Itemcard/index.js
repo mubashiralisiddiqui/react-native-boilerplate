@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, Dimensions } from 'react-native';
 import { Card, Button, Badge } from 'react-native-elements'
-import { brandColors, RandomInteger, getStorage, parse } from '../../constants';
+import { brandColors, RandomInteger } from '../../constants';
 
 const ItemCard = ({
     name,
@@ -12,6 +12,10 @@ const ItemCard = ({
     isOffline = false,
 }) => {
     const [loading, setLoading] = useState(false);
+    const [width, setWidth] = useState(Dimensions.get('screen').width);
+    const onLayout = (e) => {
+        setWidth(Dimensions.get('screen').width)
+    }
     const onPress = () => {
         setLoading(true);
         setTimeout(() => {
@@ -20,12 +24,12 @@ const ItemCard = ({
         }, 0)
     }
     
-    const styles = getStyles(status);
+    const styles = getStyles(status, width);
     return (
         <Card key={RandomInteger()}
             containerStyle={styles.cardContainer}
         >
-            <View key={RandomInteger()} style={styles.viewContainer}> 
+            <View onLayout={onLayout} key={RandomInteger()} style={styles.viewContainer}> 
                 <View key={RandomInteger()} style={styles.itemFirst}>
                     <Text key={RandomInteger()} style={styles.text}> { name }</Text>
                 </View>
@@ -47,7 +51,7 @@ const ItemCard = ({
                         backgroundColor: brandColors.lightGreen
                     }}
                     title="Execute"
-                    containerStyle={{ marginRight: 5, }}
+                    containerStyle={{ marginRight: 5 }}
                     onPress={onPress}
                     // disabled={status}
                     disabled={false}
@@ -60,8 +64,7 @@ const ItemCard = ({
 } 
 export default ItemCard;
 
-const getStyles = (status) => {
-    const { width } = Dimensions.get('window');
+const getStyles = (status, width) => {
     return {
         viewContainer: {
             display: 'flex',
@@ -75,7 +78,7 @@ const getStyles = (status) => {
             justifyContent: 'center',
             marginLeft: 0,
             alignItems: 'center',
-            width: width/5
+            width: width/4
         },
         itemSecond: {
             height: 40,

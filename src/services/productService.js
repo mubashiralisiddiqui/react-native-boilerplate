@@ -3,12 +3,12 @@ import { getProducts, getProductsSuccess } from '../actions/products'
 import { removeOldStorageEnteries } from './callServices';
 import { initiateResponseInterceotors } from '.';
 
-export const getProductsWithSamples = (params) => {
+export const getProductsWithSamples = (params, refresh = false) => {
     // initiateResponseInterceotors()
     return async (dispatch) => {
         dispatch(getProducts())
         let productsFromStorage = await getStorage(`products${todayDate()}`)
-        if(productsFromStorage === null) {
+        if(productsFromStorage === null || refresh == true) {
             return get('getAllProducts', {
                 params
             }).then(async (response) => {

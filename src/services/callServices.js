@@ -13,16 +13,14 @@ import {
 import { getCalls, getCallsFailure, getCallsSuccess, submitCallSuccess, submitCall, submitCallFailure } from '../actions/calls'
 import moment from 'moment'
 
-export const getTodayCalls = (params) => {
-    // initiateResponseInterceotors()   
-    // checkConnectivity();
+export const getTodayCalls = (params, refresh = false) => {
     return async (dispatch) => {
         
         dispatch(getCalls())
         
         let callsFromStorage = await getStorage(`calls${todayDate()}`)
 
-        if(callsFromStorage === null) {
+        if(callsFromStorage === null || refresh == true) {
             return get(`/getTodayCalls`, {params}).then(async (response) => {
                 console.log(response, 'das')
                 if(response !== null && response.length > 0) {
@@ -61,17 +59,11 @@ export const syncCall = (params) => async (dispatch) => {
         console.log(params[param])
         params[param] = params[param]
     })
-    dispatch(submitCall(params))
     return post('executeCall', params).then(async (response) => {
-        if(response.data.d == 1) {
-
+        if(response == 1) {
             dispatch(submitCallSuccess(params))
-            let offlineCalls = await getStorage('offlineCalls')
-            offlineCalls = parse(offlineCalls)
-            delete offlineCalls[params.DailyCallId]
-            setStorage('offlineCalls', stringify(offlineCalls))
-            const allCalls = await updateCallStatus(params.DailyCallId);
-            dispatch(getCallsSuccess(allCalls))
+            // const allCalls = await updateCallStatus(params.DailyCallId);
+            // dispatch(getCallsSuccess(allCalls))
         }
         return response;
     })
@@ -88,9 +80,11 @@ export const submitCallSingle = (params) => dispatch => {
     
     return post('executeCall', params)
         .then(async (response) => {
-            dispatch(submitCallSuccess(params))
-            const allCalls = await updateCallStatus(jsonParams.DailyCallId, false);
-            dispatch(getCallsSuccess(allCalls))
+            if(response == 1) {
+                dispatch(submitCallSuccess(params))
+                const allCalls = await updateCallStatus(jsonParams.DailyCallId, false);
+                dispatch(getCallsSuccess(allCalls))
+            }
             return response;
         }).catch(async (error) => {
             // dispatch to failure event
@@ -114,9 +108,15 @@ export const submitCallSingle = (params) => dispatch => {
         })
 }
 export const updateCallStatus = async (planId, isOffline = false) => {
+    console.log('received this', planId)
     let allCalls = await getStorage(`calls${todayDate()}`)
     allCalls = parse(allCalls).map(call => {
-        if(call.PlanDetailId == planId) {
+        if(Array.isArray(planId) && planId.includes(Number(call.PlanDetailId))) {
+            console.log('updating because its in array')
+            call.IsExecuted = true,
+            call.IsExecutedOffline = isOffline
+        } else if(call.PlanDetailId == planId) {
+            console.log('updating because its received as string')
             call.IsExecuted = true,
             call.IsExecutedOffline = isOffline
         }
@@ -131,7 +131,6 @@ export const submitOfflineCall = (params) => {
     return async (dispatch) => {
         dispatch(submitCall(params))
         console.log(params, 'submitting offline')
-        dispatch(submitCallFailure('No Internet Connectivity'))
         const jsonParams = parse(stringify(params));
         
         params = serializeData(params)
@@ -147,10 +146,14 @@ export const submitOfflineCall = (params) => {
         params.call_execution_date = moment().format('YYYY-MM-DD hh:mm:ss')
         // set the params to store in offline calls
         unSyncedData[jsonParams.DailyCallId] = params
-    
+        
+        dispatch(submitCallFailure('No Internet Connectivity'))
         setStorage('offlineCalls', stringify(unSyncedData));
         dispatch(getCallsSuccess(allCalls))
-        return Promise.resolve(1)
+        return new Promise((resolve, reject) => {
+            return resolve(1)
+        })
+        // return Promise.resolve(1)
     } 
 }
 
@@ -167,4 +170,9 @@ export const removeOldStorageEnteries = (error, keys, regex) => {
     if(keysToRemove.length > 0) {
         removeStorageMultiple(keysToRemove)
     }
+}
+
+export const updatedCalls = (calls) => dispatch => {
+    dispatch(getCallsSuccess(calls))
+    return 1;
 }

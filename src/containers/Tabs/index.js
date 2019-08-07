@@ -20,7 +20,7 @@ export default class Tab extends React.Component {
       case 'callingformation':
         return <KeyCallInfo handleDatePicked={this.props.handleDatePicked && this.props.handleDatePicked} showTimePicker={showTimePicker} existingCall={this.props.existingCall} info={info} onCallReasonChange={this.props.onCallReasonChange} />
       case 'edetailing': 
-        return <EDetailing files={files}/>
+        return <EDetailing onCloseFile={this.props.updateDetailingSeconds} files={files}/>
       default:
         return null;
     }

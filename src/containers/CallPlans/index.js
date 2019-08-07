@@ -2,10 +2,10 @@
  *  start of Login container
  */
 import React, { Component } from 'react';
-import { View, ActivityIndicator, Animated } from 'react-native';
+import { View, Animated } from 'react-native';
 import { CallPlanHeader } from '../../components/Headers';
-import { ImageBackgroundWrapper } from '../../components';
-import { navigationOption, brandColors, todayDate, authUser, getToken, getStorage, parse, getAllStorageKeys } from '../../constants'
+import { ImageBackgroundWrapper, ScreenLoader } from '../../components';
+import { navigationOption, authUser, getToken, getStorage, parse } from '../../constants'
 import ItemCard from '../../components/Itemcard';
 import { getProductsWithSamples } from '../../services/productService'
 import { getTodayCalls } from '../../services/callServices'
@@ -15,36 +15,29 @@ import { getCalls, getCallsError, getCallsLoading } from '../../reducers/callsRe
 import { bindActionCreators } from 'redux'
 import { getProducts } from '../../reducers/productsReducer';
 import { getUser } from '../../reducers/authReducer';
+import { NetworkContext } from '../../components/NetworkProvider';
+import CallPlansListHeader from '../../components/CallPlansListHeader';
 
 class CallPlans extends Component {
     static navigationOptions = ({ navigation }) => (navigationOption(navigation, 'Daily Calls'))
+    static contextType = NetworkContext
     state = {
-        // loading: true,
         fadeAnim: new Animated.Value(0),
         loadingButton: false,
-        data: [],
-        // calls: [],
-        user: {},
-        products: [],
-        // error: null,
     }
-    animate = (duration, easeDuration = 1000) => {
-        setTimeout(() => {
-            Animated.timing(                  // Animate over time
-                this.state.fadeAnim,            // The animated value to drive
-                {
-                  toValue: 1,                   // Animate to opacity: 1 (opaque)
-                  duration: easeDuration,              // Make it take a while
-                }
-              ).start();
-        }, duration)
+    animate = (duration, easeDuration = 500) => {
+        Animated.timing(                  // Animate over time
+            this.state.fadeAnim,            // The animated value to drive
+            {
+                toValue: 1,                   // Animate to opacity: 1 (opaque)
+                duration: easeDuration,              // Make it take a while
+            }
+            ).start();
     }
     async componentDidMount() {
+        let calls = await getStorage('offlineCalls');
+        console.log(parse(calls))
         const user = await this.props.getAuthUser();
-        const keys = await getAllStorageKeys((err, keys) => console.log(keys), /$/)
-        const off = await getStorage('offlineCalls')
-        console.log(parse(off), 'parsed offline')
-        
         this.props.getTodayCalls({
             Token: getToken,
             EmployeeId: user.EmployeeId,
@@ -56,36 +49,34 @@ class CallPlans extends Component {
         this.props.getAllGifts();
         
         this.animate(200);
-        }
-        shouldShowLoader = () => {
-            return this.props.loading;
-        }
-        
-        onPress = (data) => {
-            this.props.navigation.navigate('CallExecution', {
-                call_info: data,
-                existing_call: true,
-                products: this.state.products,
+        this.context.showRefresh()
+    }
+
+
+    shouldShowLoader = () => {
+        return this.props.loading;
+    }
+    
+    onPress = (data) => {
+        this.props.navigation.navigate('CallExecution', {
+            call_info: data,
+            existing_call: true,
         })
     }
 
     render() {
-        // if(this.shouldComponentRender())
         return (
             <View style={styles.InputContainer}>
                 <ImageBackgroundWrapper>
                     <CallPlanHeader />
-                    {
-                        this.shouldShowLoader()
-                            ? <ActivityIndicator size={45} color={brandColors.lightGreen} />
-                            : null
-                    }
+                    { this.shouldShowLoader() ? <ScreenLoader /> : null }
+                    <CallPlansListHeader />
                     <Animated.ScrollView showsVerticalScrollIndicator={false} style={{ width: '99%', opacity: this.state.fadeAnim }}>
                         {
                             this.props.calls.map((call, i) => {
                                 return (<ItemCard
                                     key={i}
-                                    name={`${call.Doctor.DoctorName}-${call.PlanDetailId}`}
+                                    name={`${call.Doctor.DoctorName}`}
                                     category={call.TeamName}
                                     doctorClass={call.Doctor.ClassName}
                                     loading={this.state.loadingButton}

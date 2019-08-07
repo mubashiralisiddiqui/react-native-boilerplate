@@ -3,6 +3,7 @@ import { View, Image, ActivityIndicator } from 'react-native'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
 import { authUser } from '../../constants'
+import { ScreenLoader } from '../../components';
 
 class AuthCheck extends Component {
     state = {
@@ -28,9 +29,7 @@ class AuthCheck extends Component {
                     style={styles.logo}
                     source={this.state.src}
                 />
-                <ActivityIndicator
-                    size={30}
-                />
+                <ScreenLoader />
             </View>
          );
     }

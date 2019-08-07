@@ -22,7 +22,7 @@ export const callExecution = {
         EmployeeId: 0,
         Lattitude: 0.0,
         Longitude: 0.0,
-        DailyCallId: 0,
+        // DailyCallId: 0,
         DeviceDateTime: moment().toLocaleString(),
         FeedBack: '',
         JVEmployeeId: 0,

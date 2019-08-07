@@ -3,12 +3,12 @@ import { getGifts, getGiftsSuccess } from '../actions/gifts'
 import { removeOldStorageEnteries } from './callServices';
 import { initiateResponseInterceotors } from '.';
 
-export const getAllGifts = (params) => {
+export const getAllGifts = (params, refresh = false) => {
     // initiateResponseInterceotors()
     return async (dispatch) => {
         dispatch(getGifts())
         let giftsFromStorage = await getStorage(`gifts${todayDate()}`)
-        if(giftsFromStorage === null) {
+        if(giftsFromStorage === null || refresh == true) {
             return get('getAllGiftItems', {
                 params
             }).then(async (response) => {

@@ -78,7 +78,10 @@ export default class NewDoctor extends Component {
                     >
                         <CallPlanHeader />
                         <View style={{width: '85%', display: 'flex', alignSelf: 'center'}}>
-                            <NewDoctorForm data={this.state} setField={this.setField}/>
+                            <NewDoctorForm
+                                data={this.state}
+                                setField={this.setField}
+                            />
                             <View style={{width: '100%', display: 'flex', flex:1, justifyContent:'flex-end' }}>
                                 <Button
                                     buttonStyle={styles.button}

@@ -22,7 +22,11 @@ import EDetailing from './EDetailing';
 import PDF from './PDF';
 import CallReason from './CallReason';
 import UserInfo from './UserInfo';
-import Blink from './Blink'
+import Blink from './Blink';
+import ConnectivityStatus from './ConnectivityStatus';
+import LocationStatus from './LocationStatus';
+import ScreenLoader from './ScreenLoader'
+import CallExecutionButton from './CallExecutionButton'
 
 export {
     TextInput,
@@ -44,5 +48,9 @@ export {
     PDF,
     CallReason,
     UserInfo,
-    Blink
+    Blink,
+    ConnectivityStatus,
+    LocationStatus,
+    ScreenLoader,
+    CallExecutionButton,
 }

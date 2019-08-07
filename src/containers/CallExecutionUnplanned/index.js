@@ -333,7 +333,7 @@ class CallExecution extends Component {
             return;
         }
 
-        if(this.context.isConnected) {
+        if(this.context.state.isConnected) {
             this.props.submitCallSingle(dailyCall).then(response => {
                 this.props.navigation.goBack();
             }).catch(console.warn)
@@ -438,7 +438,7 @@ class CallExecution extends Component {
                             <View style={{width: '100%', height: 30, flexDirection: 'row', justifyContent: 'flex-end'}}>
                                 <View style={{width: '15%'}}>
                                     {
-                                        this.context.isConnected === true ?
+                                        this.context.state.isConnected === true ?
                                         <Button
                                             type="clear"
                                             title="connected"

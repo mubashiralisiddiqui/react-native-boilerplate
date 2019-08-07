@@ -1,50 +1,51 @@
 // With Flow type annotations (https://flow.org/)
 // import PDFView from 'react-native-view-pdf';
 // Without Flow type annotations
-import * as React from 'react';
-import { Platform, View } from 'react-native'
+import React, { useState, useEffect } from 'react';
+import { View } from 'react-native'
 import PDFView from  'react-native-view-pdf/lib/index';
-import RNFetchBlob from 'rn-fetch-blob'
+import Icon from 'react-native-vector-icons/FontAwesome'
+import { brandColors } from '../../constants';
+import { Button } from 'react-native-elements';
 
-const resources = {
-  file: Platform.OS === 'ios' ? 'downloadedDocument.pdf' : '/data/user/0/com.hudsonpharma/files/a.pdf',
-  url: 'http://www.africau.edu/images/default/sample.pdf',
-  base64: 'JVBERi0xLjMKJcfs...',
-};
+const PDF = ({
+  file,
+  onClose,
+}) => {
+  const [seconds, setSeconds] = useState(0);
 
-export default class App extends React.Component {
-  download = (url) => {
-    let dirs = RNFetchBlob.fs.dirs
-    RNFetchBlob
-    .config({
-      // response data will be saved to this path if it has access right.
-      path : dirs.DocumentDir + '/a.pdf'
-    })
-    .fetch('GET', url, {
-      //some headers ..
-    }).progress((received, total) => {
-      console.log('progress', received / total, 'received=>', received, 'total=>', total)
-    })
-    .then((res) => {
-      console.log('The file saved to ', res.path(), res)
-    }).catch(console.log)
-  }
-  render() {
-    const resourceType = 'file';
-    // this.download('https://www.ets.org/Media/Tests/TOEFL/pdf/SampleQuestions.pdf');
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSeconds(seconds => seconds + 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [])
+  
+  const resourceType = 'file';
+  
+  const resource = `/data/user/0/com.hudsonpharma/files/${file.FileName}`
 
-    return (
-      <View style={{ flex: 1 }}>
-        {/* Some Controls to change PDF resource */}
-        <PDFView
-          fadeInDuration={250.0}
-          style={{ flex: 1 }}
-          resource={resources[resourceType]}
-          resourceType={resourceType}
-          onLoad={() => console.log(`PDF rendered from ${resourceType}`)}
-          onError={(error) => console.log('Cannot render PDF', error)}
+  return (
+    <View style={{ flex: 1 }}>
+      {/* <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}> */}
+      <View style={{position: 'absolute', zIndex: 1000000, top: 10, right: 10}}>
+        <Button
+          type="clear"
+          onPress={() => onClose(seconds)}
+          icon={<Icon size={30} name="window-close" color={brandColors.lightGreen} />}
         />
       </View>
-    );
-  }
+      <PDFView
+        fadeInDuration={500.0}
+        style={{ flex: 1 }}
+        resource={resource}
+        resourceType={resourceType}
+        onLoad={() => console.log(`PDF rendered from ${resourceType}`)}
+        onError={(error) => console.log('Cannot render PDF', error)}
+      />
+    </View>
+  )
 }
+
+export default PDF;
+

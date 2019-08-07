@@ -1,15 +1,20 @@
 import React from 'react';
-import {NetInfo} from 'react-native';
+import {NetInfo, View} from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
-import { parse, getStorage, todayDate, setStorage, stringify, removeStorage } from '../../constants';
-import { submitCallSingle, syncCall } from '../../services/callServices';
-import { objectExpression } from '@babel/types';
+import { parse, getStorage, setStorage, brandColors, stringify, authUser, getToken } from '../../constants';
+import { syncCall, getTodayCalls, updateCallStatus, updatedCalls } from '../../services/callServices';
+import { Button } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/FontAwesome'
+import { getAllGifts } from '../../services/giftService';
+import { getProductsWithSamples } from '../../services/productService';
 
 export const NetworkContext = React.createContext({
     isConnected: false,
     type: 'unknown',
     effectiveType: 'unknown',
+    showRefresh: false,
+    isRefreshing: false,
 });
 
 class NetworkProviderClass extends React.PureComponent {
@@ -17,33 +22,17 @@ class NetworkProviderClass extends React.PureComponent {
         isConnected: false,
         type: 'unknown',
         effectiveType: 'unknown',
+        showRefresh: false,
+        isRefreshing: false,
     };
 
     setConnectivity = ({type, effectiveType, isConnected}) => {
-        return this.setState({
+        this.setState({
             type,
             effectiveType,
             isConnected,
         })
-    }
-
-    sync = async (calls, index) => {
-        if(index !== 0) {
-            console.log(calls, index)
-            let a = await this.props.syncCall(calls[index])
-            console.log(a)
-            // if(a == 1) {
-                delete calls[index]
-                console.log(calls, Object.keys(calls), 'iterated', Object.keys(calls).length > 0)
-                if(Object.keys(calls).length > 0) {
-                    await setStorage('offlineCalls', stringify(calls))
-                    await this.sync(calls, Object.keys(calls)[0] || 0);
-                }
-                await removeStorage('offlineCalls')
-                return a
-            // }
-        }
-        return true;
+        if(isConnected) this.syncCalls();
     }
 
     syncCalls = async () => {
@@ -51,7 +40,6 @@ class NetworkProviderClass extends React.PureComponent {
         let calls = await getStorage('offlineCalls');
         if(calls != null) {
             calls = parse(calls);
-            console.log(calls, 'from the connectivity')
             Object.keys(calls).map(call => {
                 Object.keys(calls[call]).map(single => {
                     if(jsonParamsArray.includes(single) && typeof parse(calls[call][single]) == 'string') {
@@ -59,17 +47,54 @@ class NetworkProviderClass extends React.PureComponent {
                     }
                 })
             })
-            Object.keys(calls).map(async (call) => {
-                await this.props.syncCall(calls[call])
+            let promises = Object.keys(calls).map(async (call) => {
+                let response = await this.props.syncCall(calls[call])
+                return Number(call) 
             })
+            let result = await Promise.all(promises)
+            const updatedCalls = await updateCallStatus(result)
+            this.props.updateCalls(updatedCalls);
+            result.map(id => {
+                return delete calls[id]
+            })
+            setStorage('offlineCalls', stringify(calls))
         }
     }
 
+    showRefresh = () => {
+        this.setState({
+            showRefresh: true
+        })
+    }
+    hideRefresh = () => {
+        this.setState({
+            showRefresh: false
+        })
+    }
+
+    handleRefresh = async () => {
+        this.setState({
+            isRefreshing: true
+        })
+        const user = await this.props.getAuthUser();
+        const payload = {
+            Token: getToken,
+            EmployeeId: user.EmployeeId
+        }
+        await this.props.getTodayCalls(payload, true);
+        await this.props.getProductsWithSamples(payload, true);
+        await this.props.getAllGifts({}, true);
+
+        this.setState({
+            isRefreshing: false,
+        })
+    }
+
     async componentDidMount() {
-        console.log(todayDate())
         const isConnected = await NetInfo.isConnected.fetch();
         const { type, effectiveType } = await NetInfo.getConnectionInfo();
         this.setConnectivity({ type, effectiveType, isConnected });
+
         NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
     }
 
@@ -79,15 +104,28 @@ class NetworkProviderClass extends React.PureComponent {
 
     handleConnectivityChange = async (isConnected) => {
         const {type, effectiveType} = await NetInfo.getConnectionInfo();
-        if(isConnected) this.syncCalls();
 
         return this.setConnectivity({type, effectiveType, isConnected})
     };
 
     render() {
         return (
-            <NetworkContext.Provider value={this.state}>
+            <NetworkContext.Provider value={{state: this.state, hideRefresh: this.hideRefresh, showRefresh: this.showRefresh}}>
                 {this.props.children}
+                {
+                    this.state.showRefresh ?
+                    <View style={{position: 'absolute', top: 60, right: 10, display: 'flex', flexDirection: 'row', justifyContent: 'flex-end'}}>
+                        <Button
+                            loading={this.state.isRefreshing}
+                            loadingProps={{ color: brandColors.lightGreen }}
+                            type="clear"
+                            title="Refresh"
+                            onPress={this.handleRefresh}
+                            titleStyle={{color: brandColors.lightGreen, fontSize: 10}}
+                            icon={<Icon name="refresh" size={20} color={brandColors.lightGreen} />}
+                        />
+                    </View> : null
+                }
             </NetworkContext.Provider>
         );
     }
@@ -99,7 +137,12 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    syncCall: syncCall
+    syncCall: syncCall,
+    getTodayCalls: getTodayCalls,
+    getProductsWithSamples: getProductsWithSamples,
+    getAllGifts: getAllGifts,
+    getAuthUser: authUser,
+    updateCalls: updatedCalls,
 }, dispatch)
 
 export const NetworkProvider =  connect(mapStateToProps, mapDispatchToProps)(NetworkProviderClass)

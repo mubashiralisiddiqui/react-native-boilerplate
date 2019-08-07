@@ -6,9 +6,17 @@ import { View, PermissionsAndroid, ActivityIndicator } from 'react-native'
 import { Overlay, Text, ListItem, Button } from 'react-native-elements';
 import { CallPlanHeader } from '../../components/Headers'
 import { navigationOption, brandColors, RandomInteger, getToken, parse, stringify } from '../../constants'
-import Icon from 'react-native-vector-icons/FontAwesome';
-import Icon2 from 'react-native-vector-icons/MaterialIcons';
-import { Collapse, AdditionalInfo, DoctorHistory, ImageBackgroundWrapper, Blink } from '../../components';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import { 
+    Collapse,
+    AdditionalInfo,
+    DoctorHistory,
+    ImageBackgroundWrapper,
+    ConnectivityStatus,
+    LocationStatus,
+    ScreenLoader,
+    CallExecutionButton,
+} from '../../components';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { getDocHistory } from '../../services/historyService';
 import { submitCallSingle, getTodayCalls, submitOfflineCall } from '../../services/callServices';
@@ -24,8 +32,6 @@ import { getGifts } from '../../reducers/giftsReducer';
 import { getUser } from '../../reducers/authReducer';
 import { getSubmitData, getSubmitLoader } from '../../reducers/callsReducers';
 import { getHistory } from '../../actions/history';
-import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons'
-
 import { NetworkContext } from '../../components/NetworkProvider'
 
 class CallExecution extends Component {
@@ -214,26 +220,27 @@ class CallExecution extends Component {
         })
     }
     requestLocationPermission = async () => {
-    try {
-        const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        {
-            'title': 'Location Access Required',
-            'message': 'This App needs to Access your location'
-        })
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        this.callLocation();
-        } else {
-        alert("Permission Denied");
+        try {
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                {
+                    'title': 'Location Access Required',
+                    'message': 'This App needs to Access your location'
+                })
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                this.callLocation();
+            } else {
+                alert("Permission Denied");
+            }
+        } catch (err) {
+            alert("err",err);
+            console.warn(err)
         }
-    } catch (err) {
-        alert("err",err);
-        console.warn(err)
-    }
     }
     static navigationOptions = ({ navigation }) => (navigationOption(navigation, 'Call Details'))
  
     async componentDidMount() {
+        this.context.hideRefresh();
         let dailyCall = parse(stringify(callExecution));
         console.log(dailyCall, 'before changes');
         const callData = this.props.navigation.getParam('call_info')
@@ -242,7 +249,8 @@ class CallExecution extends Component {
             selectedProducts[product.ProductId] = {
                 ProductId: product.ProductId,
                 name: product.ProductName,
-                DetailingSeconds: 0
+                DetailingSeconds: 0,
+                IsReminder: false,
             }
             return product;
         })
@@ -309,11 +317,11 @@ class CallExecution extends Component {
                 dailyCall.jsonDailyCall.Longitude = currentLongitude;
                 this.setState({ form_data: dailyCall, fetchingLocation: false });
                 },
-                (error) => console.log(this.state.form_data.jsonDailyCall.Lattitude, this.state.form_data.jsonDailyCall.Longitude),
+                (error) => console.log(error, this.state.form_data.jsonDailyCall.Lattitude, this.state.form_data.jsonDailyCall.Longitude),
                 { enableHighAccuracy: true, timeout: 200000, maximumAge: 1000 }
         );
         this.watchID = navigator.geolocation.watchPosition((position) => {
-        //Will give you the location on location change
+            //Will give you the location on location change
             console.log(position);
             const currentLongitude = JSON.stringify(position.coords.longitude);
             //getting the Longitude from the location json
@@ -326,16 +334,14 @@ class CallExecution extends Component {
         });
     }
     componentWillUnmount = () => {
-        console.log('unmounting')
-        // this.setState({
-        //     form_data: callExecution,
-        // })
         navigator.geolocation.clearWatch(this.watchID);
+        this.context.showRefresh();
      }
 
     submitCall = async () => {
         await this.requestLocationPermission()
         let dailyCall = this.state.form_data;
+        dailyCall.Epoch = new Date().getTime();
         dailyCall.jsonSampleDetail = this.state.selectedSamples.filter(sample => sample !== undefined);
         dailyCall.jsonDailyCallDetail = this.state.selectedProducts.filter(product => product !== undefined)
         if(dailyCall.jsonDailyCall.Lattitude == '0.0' || dailyCall.jsonDailyCall.Longitude == '0.0'){
@@ -343,9 +349,9 @@ class CallExecution extends Component {
             return;
         }
 
-        if(this.context.isConnected) {
+        if(this.context.state.isConnected) {
             this.props.submitCallSingle(dailyCall).then(response => {
-                this.props.navigation.goBack();
+                if(response == 1) this.props.navigation.goBack();
             }).catch(console.warn)
         } else {
             this.submitOffline(dailyCall).then(response => {
@@ -412,6 +418,16 @@ class CallExecution extends Component {
         })
     }
 
+    updateDetailingSeconds = (productTemplateId, seconds) => {
+        const { selectedProducts } = this.state
+        selectedProducts[productTemplateId].DetailingSeconds = selectedProducts[productTemplateId].DetailingSeconds == 0
+        ? seconds
+        : selectedProducts[productTemplateId].DetailingSeconds + seconds;
+        this.setState({
+            selectedProducts
+        }, () => console.log('detailing seconds updated', this.state.selectedProducts[productTemplateId]));
+    }
+
     render() {
         const {
             isKeyInfoCollapsed,
@@ -422,55 +438,28 @@ class CallExecution extends Component {
         } = this.state;
         return (        
             <ImageBackgroundWrapper>
+                <CallExecutionButton disabled={this.props.submitLoader} onPress={this.submitCall}/>
+                {this.props.submitLoader == true ? <ScreenLoader /> : null}
                 <View style={styles.InputContainer}>
                     <KeyboardAwareScrollView
-                    contentContainerStyle={{justifyContent: 'center', display: 'flex' }}>
+                        contentContainerStyle={{justifyContent: 'center', display: 'flex' }}>
                         <CallPlanHeader />
                         <View style={{ flex: 1}}>
                             <View style={{width: '100%', height: 30, flexDirection: 'row', justifyContent: 'flex-end'}}>
-                                <View style={{width: '15%'}}>
-                                    {
-                                        this.context.isConnected === true ?
-                                        <Button
-                                            type="clear"
-                                            title="connected"
-                                            titleStyle={{fontSize: 12}}
-                                            icon={<MaterialCommunityIcon name={'signal-4g'} />}
-                                        />
-                                        : <Button
-                                            type="clear"
-                                            title="Unavailable"
-                                            titleStyle={{fontSize: 11, color: 'red'}}
-                                            icon={<MaterialCommunityIcon name={'wifi-off'} color="red" />}
-                                        />
-                                    }
-                                </View>
-
-                                <View style={{width: '10%'}}>
-
-                                    <Blink blinking={this.state.fetchingLocation} delay={300}>
-                                        <Button
-                                            type="clear"
-                                            title={this.state.fetchingLocation === true ? `Fetching` : `Fetched`}
-                                            disabled={this.state.fetchingLocation}
-                                            titleStyle={{fontSize: 12}}
-                                            buttonStyle={{width: '100%'}}
-                                            containerStyle={{width: '100%',}}
-                                            icon={<Icon2
-                                                name={this.state.fetchingLocation === true ? "location-searching" : 'location-on'}
-                                                size={15} 
-                                                color={this.state.fetchingLocation === true ? 'red' : 'green'} />}
-                                        />
-                                    </Blink>
-                                </View>
-
+                                <ConnectivityStatus />
+                                <LocationStatus isFetching={this.state.fetchingLocation} />
                             </View>
                             <Collapse
                                 isCollapsed={isKeyInfoCollapsed}
                                 toggler={() => this.onToggle('isKeyInfoCollapsed')}
                                 title="Key Call Information"
-                                Body={<Tab existingCall={true} onCallReasonChange={this.onCallReasonChange} navigate={this.props.navigation}/>}  
-                                HeaderIcon={<Icon name="info-circle" size={40} color="#fff" />} />
+                                Body={<Tab
+                                        updateDetailingSeconds={this.updateDetailingSeconds}
+                                        existingCall={true}
+                                        onCallReasonChange={this.onCallReasonChange}
+                                        navigate={this.props.navigation}
+                                    />}  
+                                HeaderIcon={<FontAwesomeIcon name="info-circle" size={40} color="#fff" />} />
                             <Collapse
                                 isCollapsed={isAdditionalInfoCollapsed}
                                 toggler={() => this.onToggle('isAdditionalInfoCollapsed')}
@@ -489,7 +478,7 @@ class CallExecution extends Component {
                                         selectedGift={this.state.form_data.jsonGiftDetail}
                                         allGifts={this.props.gifts.gifts}
                                     />}
-                                HeaderIcon={<Icon name="plus-square" size={40} color="#fff" />} />
+                                HeaderIcon={<FontAwesomeIcon name="plus-square" size={40} color="#fff" />} />
                                 {
                                     existingCall && !!this.props.history.history ?
                                     <Collapse
@@ -497,26 +486,26 @@ class CallExecution extends Component {
                                         toggler={() => this.onToggle('isDocHistoryCollapsed')}
                                         title="Doctor Visit History"
                                         Body={ <DoctorHistory /> }
-                                        HeaderIcon={<Icon name="history" size={40} color="#fff" />}/>
+                                        HeaderIcon={<FontAwesomeIcon name="history" size={40} color="#fff" />}/>
                                         : null
                                 }
                         </View>
                     </KeyboardAwareScrollView>
                     <Overlay
-                    borderRadius={15}
-                    width={'90%'}
-                    height={'90%'}
-                    onBackdropPress={() => this.setState({overlay: false})}
-                    isVisible={this.state.overlay}
+                        borderRadius={15}
+                        width={'90%'}
+                        height={'90%'}
+                        onBackdropPress={() => this.setState({overlay: false})}
+                        isVisible={this.state.overlay}
                     >
                         <View style={{width:'100%', height: 450, display: 'flex', flexDirection: 'row', justifyContent: 'space-around'}}>
                             <View style={styles.flatList}>
                                 <Text h3 h3Style={styles.listTitle}>Select Product</Text>
                                 <FlatList
-                                // contentContainerStyle={{height: 150}}
-                                keyExtractor={item => `${item.ProductTemplateId} + ${RandomInteger()}`}
-                                data={this.props.products}
-                                renderItem={this.renderProductsRow}
+                                    // contentContainerStyle={{height: 150}}
+                                    keyExtractor={item => `${item.ProductTemplateId} + ${RandomInteger()}`}
+                                    data={this.props.products}
+                                    renderItem={this.renderProductsRow}
                                 />
                             </View>
                             <View style={styles.flatList}>
@@ -589,41 +578,6 @@ class CallExecution extends Component {
                         </View>
                     </Overlay>
                 </View >
-                <Button raised buttonStyle={{
-                    width: 75,
-                    height: 75,
-                    borderRadius: 35,
-                    backgroundColor: brandColors.green,
-                    zIndex: 10000
-                }} containerStyle={{
-                            width: 75,
-                            height: 75,
-                            borderRadius: 40,
-                            backgroundColor: brandColors.green,
-                            position: 'absolute',
-                            right: 50,
-                            bottom:50,
-                            }}
-                            icon={<Icon2
-                                    name="check-circle" color={brandColors.darkBrown} size={55}
-                                    onPress={this.submitCall}
-                                />}
-                        disabled={this.props.submitLoader}
-                        />
-                        {this.props.submitLoader == true ?
-                            <View style={{
-                                position: 'absolute',
-                                left: 0,
-                                right: 0,
-                                top: 0,
-                                bottom: 0,
-                                alignItems: 'center',
-                                justifyContent: 'center'
-                              }}>
-                                <ActivityIndicator size='large' />
-                            </View>
-                            : null}
-                
             </ImageBackgroundWrapper>
         )
     }
