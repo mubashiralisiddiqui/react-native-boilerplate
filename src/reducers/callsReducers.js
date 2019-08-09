@@ -20,7 +20,6 @@ const initialState = {
 };
 
 export const callsReducer = (state = initialState, action) => {
-  console.log(action)
   switch(action.type) {
     case GET_CALLS:
       return {

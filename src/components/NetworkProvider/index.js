@@ -8,6 +8,8 @@ import { Button } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import { getAllGifts } from '../../services/giftService';
 import { getProductsWithSamples } from '../../services/productService';
+import { getAllCities } from '../../services/city';
+import { getAllDesignations, getAllSpecialities } from '../../services/doctor';
 
 export const NetworkContext = React.createContext({
     isConnected: false,
@@ -84,6 +86,9 @@ class NetworkProviderClass extends React.PureComponent {
         await this.props.getTodayCalls(payload, true);
         await this.props.getProductsWithSamples(payload, true);
         await this.props.getAllGifts({}, true);
+        await this.props.getCities(true).then(console.log);
+        await this.props.getDesignations(true).then(console.log);
+        await this.props.getSpecialities(true).then(console.log);
 
         this.setState({
             isRefreshing: false,
@@ -144,6 +149,9 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     getAllGifts: getAllGifts,
     getAuthUser: authUser,
     updateCalls: updatedCalls,
+    getCities: getAllCities,
+    getDesignations: getAllDesignations,
+    getSpecialities: getAllSpecialities,
 }, dispatch)
 
 export const NetworkProvider =  connect(mapStateToProps, mapDispatchToProps)(NetworkProviderClass)

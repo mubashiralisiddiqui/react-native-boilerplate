@@ -2,7 +2,7 @@
  *  start of Login container
  */
 import React, { Component } from 'react';
-import { View, PermissionsAndroid, ActivityIndicator } from 'react-native'
+import { View, PermissionsAndroid, ActivityIndicator, FlatList } from 'react-native'
 import { Overlay, Text, ListItem, Button } from 'react-native-elements';
 import { CallPlanHeader } from '../../components/Headers'
 import { navigationOption, brandColors, RandomInteger, getToken, parse, stringify } from '../../constants'
@@ -13,7 +13,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { getDocHistory } from '../../services/historyService';
 import { submitCallSingle, getTodayCalls, submitOfflineCall } from '../../services/callServices';
 import { Tab } from '..';
-import { FlatList } from 'react-native-gesture-handler';
+// import { FlatList } from 'react-native-gesture-handler';
 import { callExecution } from '../../defaults';
 import { connect } from 'react-redux';
 import { getProducts } from '../../reducers/productsReducer';

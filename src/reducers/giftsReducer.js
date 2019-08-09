@@ -26,4 +26,4 @@ export const giftsReducer = (state = initialState, action) => {
     }
   }
 
-export const getGifts = state => {return state.gifts};
+export const getGifts = state => {return state.gifts.gifts};

@@ -31,7 +31,7 @@ export default class Collabsable extends Component {
                         (Header) ?
                             <Header isCollapsed={isCollapsed} />
                             :
-                            <TouchableOpacity onPress={toggler} style={{ backgroundColor: '#706349', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: 5 }}>
+                            <TouchableOpacity onPress={toggler} style={{ borderTopLeftRadius: 10, borderTopRightRadius: 10, backgroundColor: brandColors.darkBrown, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: 5 }}>
                                 {HeaderIcon}
                                 <Text style={{ textAlign: 'center', color: brandColors.green, padding: 5 }} h2>{title}</Text>
                                 <Icon name={(isCollapsed) ? 'angle-up' : 'angle-down'} size={30} color={brandColors.green} />

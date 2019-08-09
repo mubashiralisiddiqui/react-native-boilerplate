@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
 import { getStorage, parse, navigationOption } from '../../constants';
-import { View, ScrollView } from 'react-native';
+import { View, ScrollView, FlatList } from 'react-native';
 import { ImageBackgroundWrapper } from '../../components';
 import { CallPlanHeader } from '../../components/Headers';
-import { FlatList } from 'react-native-gesture-handler';
 import { ListItem } from 'react-native-elements';
 
 export default class SavedData extends Component {
@@ -20,7 +19,6 @@ export default class SavedData extends Component {
             this.setState({
                 calls: parse(data)
             })
-            console.log(this.state.calls)
         }
 
     }

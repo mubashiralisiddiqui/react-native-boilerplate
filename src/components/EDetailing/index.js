@@ -6,7 +6,6 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import { PDF } from '../../components';
 import RNFetchBlob from 'rn-fetch-blob'
-import { TouchableHighlight } from 'react-native-gesture-handler';
 
 const EDetailing = ({
     files = [],

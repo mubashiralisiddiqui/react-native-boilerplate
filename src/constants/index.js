@@ -138,6 +138,7 @@ export const styles = {
 export const rangeArray = times => new Array(times).fill(times)
 
 export const baseURL = 'http://portal.hudsonpharma.com/CRMService.svc/';
+export const baseURLSalesForce = 'http://portal.hudsonpharma.com/SalesForce.svc/';
 // export const baseURL = 'http://localhost:12670/CRMService.svc/';
 
 // application token to use for the APIs
@@ -176,6 +177,10 @@ export const setStorage = (key, value) => AsyncStorage.setItem(key, value)
 
 export const Axios = axios.create({
     baseURL: baseURL,
+});
+
+export const AxiosSalesForce = axios.create({
+    baseURL: baseURLSalesForce,
 });
 
 export const getOrientation = () => {
@@ -246,3 +251,46 @@ export const setDefault = (value, setDefault = '') => {
 }
 
 export const userFullName = user => `${setDefault(user.FirstName)} ${setDefault(user.MiddleName)} ${setDefault(user.LastName)}`
+
+export const validate = (rules, values) => {
+    const fieldsThatHaveValidationRules = Object.keys(rules)
+    const fieldsThatNeedsToValidate = Object.keys(values)
+    let errors = {}
+    fieldsThatNeedsToValidate.map(field => {
+        let rulesToCheck = rules[field] || null;
+        Object.keys(rulesToCheck || {}).map(rule => {
+            switch(rule) {
+                case 'required': {
+                    if(`${values[field]}`.trim() == '' || values[field] == null) {
+                        errors[field] = `${field} is required`
+                    }
+                    return;
+                }
+                case 'email': {
+                    if(! /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(values[field].trim())) {
+                        errors[field] = errors[field] != undefined
+                        ? errors[field]
+                        : `Please provide the valid Email`
+                    }
+                    return;
+                }
+                case 'required_if': {
+                    let checkValues = rulesToCheck.required_if
+                    if(values[field] == '' && values[checkValues[0]] == checkValues[1]) {
+                        // if(errors[checkValues[0]])
+                        errors[field] = `${field} is required when ${checkValues[0]} is not available`;
+                    }
+                    if(values[field] != '') {
+                        delete errors[checkValues[0]]
+                    }
+                    return;
+                }
+                default: {
+                    errors[field] = ''
+                    return;
+                }
+            }
+        })
+    })
+    return [errors, _.isEmpty(errors)]
+}

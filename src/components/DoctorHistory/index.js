@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import { View, Dimensions } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { View, Dimensions, ScrollView } from 'react-native';
+// import { ScrollView } from 'react-native-gesture-handler';
 import HistoryCard from './HistoryCard';
 import { useSelector } from 'react-redux'
 

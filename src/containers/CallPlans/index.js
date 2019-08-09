@@ -2,10 +2,10 @@
  *  start of Login container
  */
 import React, { Component } from 'react';
-import { View, Animated } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import { CallPlanHeader } from '../../components/Headers';
 import { ImageBackgroundWrapper, ScreenLoader } from '../../components';
-import { navigationOption, authUser, getToken, getStorage, parse } from '../../constants'
+import { navigationOption, authUser, getToken } from '../../constants'
 import ItemCard from '../../components/Itemcard';
 import { getProductsWithSamples } from '../../services/productService'
 import { getTodayCalls } from '../../services/callServices'
@@ -17,26 +17,16 @@ import { getProducts } from '../../reducers/productsReducer';
 import { getUser } from '../../reducers/authReducer';
 import { NetworkContext } from '../../components/NetworkProvider';
 import CallPlansListHeader from '../../components/CallPlansListHeader';
+import { getAllDesignations, getAllSpecialities } from '../../services/doctor';
+import { getAllCities } from '../../services/city';
 
 class CallPlans extends Component {
     static navigationOptions = ({ navigation }) => (navigationOption(navigation, 'Daily Calls'))
     static contextType = NetworkContext
     state = {
-        fadeAnim: new Animated.Value(0),
         loadingButton: false,
     }
-    animate = (duration, easeDuration = 500) => {
-        Animated.timing(                  // Animate over time
-            this.state.fadeAnim,            // The animated value to drive
-            {
-                toValue: 1,                   // Animate to opacity: 1 (opaque)
-                duration: easeDuration,              // Make it take a while
-            }
-            ).start();
-    }
     async componentDidMount() {
-        let calls = await getStorage('offlineCalls');
-        console.log(parse(calls))
         const user = await this.props.getAuthUser();
         this.props.getTodayCalls({
             Token: getToken,
@@ -47,6 +37,9 @@ class CallPlans extends Component {
             EmployeeId: user.EmployeeId
         })
         this.props.getAllGifts();
+        this.props.getDesignations();
+        this.props.getSpecialities();
+        this.props.getCities();
         
         this.animate(200);
         this.context.showRefresh()
@@ -71,7 +64,7 @@ class CallPlans extends Component {
                     <CallPlanHeader />
                     { this.shouldShowLoader() ? <ScreenLoader /> : null }
                     <CallPlansListHeader />
-                    <Animated.ScrollView showsVerticalScrollIndicator={false} style={{ width: '99%', opacity: this.state.fadeAnim }}>
+                    <ScrollView showsVerticalScrollIndicator={false} style={{ width: '99%' }}>
                         {
                             this.props.calls.map((call, i) => {
                                 return (<ItemCard
@@ -86,7 +79,7 @@ class CallPlans extends Component {
                                 />)
                             })
                         }
-                    </Animated.ScrollView>
+                    </ScrollView>
                 </ImageBackgroundWrapper>
             </View >
         )
@@ -99,8 +92,7 @@ const mapStateToProps = state => {
         loading: getCallsLoading(state),
         calls: getCalls(state),
         products: getProducts(state),
-        user: getUser(state),
-        
+        user: getUser(state),        
     }
 }
 
@@ -109,6 +101,9 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     getProductsWithSamples: getProductsWithSamples,
     getAllGifts: getAllGifts,
     getAuthUser: authUser,
+    getDesignations: getAllDesignations,
+    getSpecialities: getAllSpecialities,
+    getCities: getAllCities,
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(CallPlans)

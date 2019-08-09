@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, NativeModules, Keyboard } from 'react-native';
 import { Input, Overlay, Text, Divider, ListItem } from 'react-native-elements';
 import { RandomInteger } from '../../constants';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { FlatList } from 'react-native-gesture-handler';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { ListView } from '../../components'
 
 const SearchDoctor = (props) => {

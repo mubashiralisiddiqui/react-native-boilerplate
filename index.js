@@ -7,10 +7,12 @@ import AppContainer from './src/navigations'
 import { name as appName } from './app.json';
 import { Provider } from 'react-redux';
 import { NetworkProvider } from './src/components/NetworkProvider'
+import _ from 'lodash'
 
 import configureStore from './store';
 
 const store = configureStore()
+global._ = _;
 
 const RNRedux = () => (
   <Provider store={store}>

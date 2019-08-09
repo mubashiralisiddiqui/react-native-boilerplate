@@ -5,7 +5,7 @@ import { brandColors } from '../../constants';
 const ScreenLoader = () => {
     return (
         <View style={{
-            zIndex:10000,
+            zIndex:10000000,
             position: 'absolute',
             left: 0,
             right: 0,
@@ -13,7 +13,7 @@ const ScreenLoader = () => {
             bottom: 0,
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: '#efe',
+            backgroundColor: '#e6e6e6',
             opacity: 0.7
           }}>
             <ActivityIndicator pointerEvents="none" size='large' color={brandColors.green} />

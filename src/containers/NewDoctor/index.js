@@ -4,24 +4,85 @@ import { CallPlanHeader } from '../../components/Headers';
 import { NewDoctorForm, ImageBackgroundWrapper } from '../../components';
 import { View, Animated } from 'react-native';
 import { Button } from 'react-native-elements';
-import { navigationOption, brandColors } from '../../constants';
+import { navigationOption, brandColors, stringify, validate } from '../../constants';
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux';
+import { getDoctorRequestLoader, getDesignations, getSpecialities } from '../../reducers/doctorReducer';
+import { getCities } from '../../reducers/cityReducer';
+import { getUser } from '../../reducers/authReducer';
+import { NetworkContext } from '../../components/NetworkProvider'
+import { createDoctorRequest } from '../../services/doctor';
+import { newDoctor } from '../../defaults'
 
-export default class NewDoctor extends Component {
+class NewDoctor extends Component {
     static navigationOptions = ({ navigation }) => (navigationOption(navigation, 'Add New Doctor'))
     state = {
-        DoctorName: '',
-        DoctorAddress: '',
-        DoctorEmail: '',
-        DoctorPhone: '',
-        DoctorDesignation: '',
-        DoctorSpeciality: '',
+        ...newDoctor,
+        createdBy: 0,
+        validations: {
+            DoctorName: {
+                required: true,
+            },
+            Designation: {
+                required: true,
+            },
+            Speciality: {
+                required: true,
+            },
+            CityId: {
+                required: true,
+            },
+            Email: {
+                required_if: [ 'Phone', '' ],
+                email: true,
+            },
+            Phone: {
+                required_if: ['Email', ''],
+            }
+        },
+        errors: {
+            DoctorName: '',
+            Designation: '',
+            Speciality: '',
+            CityId: '',
+            Email: '',
+            Phone: '',
+        },
         fadeAnim: new Animated.Value(0)
     }
 
-    setField = (field, value) => {
+    static contextType = NetworkContext
+
+    onSubmit = async () => {
+        const payload = _.omit(this.state, ['errors', 'fadeAnim', 'validations']);
+        const [errors, shouldSubmit] = validate(this.state.validations, payload);
         this.setState({
-            [field]: value
-        }, () => console.log(this.state))
+            errors,
+        })
+        if(shouldSubmit) {
+            const response = await this.props.createDoctor({DoctorRequest: stringify(payload)});
+            if(response == 1) {
+                this.setState({
+                    ...newDoctor,
+                })
+            }
+            if(response == -1) {
+                let errors = this.state.errors;
+                errors.Phone = 'This phone number already exists'
+                this.setState({
+                    errors,
+                })
+            }
+        }
+    }
+
+    setField = (field, value) => {
+        let errors = this.state.errors;
+        errors[field] = value != '' ? '' : `${field} is required`
+        this.setState({
+            [field]: value,
+            errors: errors,
+        })
     }
     styles = ()  => {
         return {
@@ -58,6 +119,12 @@ export default class NewDoctor extends Component {
         }
     }
 
+    onPressSelection = (type, Id) => {
+        this.setState({
+            [type]: Id
+        })
+    }
+
     componentDidMount() {
         Animated.timing(                  // Animate over time
             this.state.fadeAnim,            // The animated value to drive
@@ -66,6 +133,10 @@ export default class NewDoctor extends Component {
                 duration: 2000,              // Make it take a while
             }
         ).start();
+        this.setState({
+            CreatedBy: this.props.user.EmployeeId
+        })
+
     }
     render() {
         const { styles } = this.styles();
@@ -81,9 +152,16 @@ export default class NewDoctor extends Component {
                             <NewDoctorForm
                                 data={this.state}
                                 setField={this.setField}
+                                designations={this.props.desgnations}
+                                specialities={this.props.specialities}
+                                onPressSelection={this.onPressSelection}
+                                cities={this.props.cities}
                             />
                             <View style={{width: '100%', display: 'flex', flex:1, justifyContent:'flex-end' }}>
                                 <Button
+                                    loading={this.props.loading}
+                                    disabled={this.props.loading}
+                                    onPress={this.onSubmit}
                                     buttonStyle={styles.button}
                                     containerStyle={styles.buttonContainer}
                                     titleStyle={styles.buttonTitle}
@@ -97,3 +175,18 @@ export default class NewDoctor extends Component {
     }
 }
 
+const mapStateToProps = state => {
+    return {
+        loading: getDoctorRequestLoader(state),
+        desgnations: getDesignations(state),
+        specialities: getSpecialities(state),        
+        cities: getCities(state),
+        user: getUser(state)
+    }
+}
+
+const mapDispatchToProps = dispatch => bindActionCreators({
+    createDoctor: createDoctorRequest
+}, dispatch)
+
+export default connect(mapStateToProps, mapDispatchToProps)(NewDoctor)

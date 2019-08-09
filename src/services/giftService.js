@@ -1,7 +1,6 @@
 import {get, setStorage, getAllStorageKeys, getStorage, todayDate, parse, stringify, dateFormatRegexGifts} from '../constants'
 import { getGifts, getGiftsSuccess } from '../actions/gifts'
 import { removeOldStorageEnteries } from './callServices';
-import { initiateResponseInterceotors } from '.';
 
 export const getAllGifts = (params, refresh = false) => {
     // initiateResponseInterceotors()

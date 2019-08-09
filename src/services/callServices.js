@@ -22,7 +22,6 @@ export const getTodayCalls = (params, refresh = false) => {
 
         if(callsFromStorage === null || refresh == true) {
             return get(`/getTodayCalls`, {params}).then(async (response) => {
-                console.log(response, 'das')
                 if(response !== null && response.length > 0) {
                     await getAllStorageKeys(removeOldStorageEnteries, dateFormatRegexCalls);
                     
@@ -56,7 +55,6 @@ export const serializeData = (json) => {
 
 export const syncCall = (params) => async (dispatch) => {
     await Object.keys(params).map(param => {
-        console.log(params[param])
         params[param] = params[param]
     })
     return post('executeCall', params).then(async (response) => {
@@ -108,21 +106,17 @@ export const submitCallSingle = (params) => dispatch => {
         })
 }
 export const updateCallStatus = async (planId, isOffline = false) => {
-    console.log('received this', planId)
     let allCalls = await getStorage(`calls${todayDate()}`)
     allCalls = parse(allCalls).map(call => {
         if(Array.isArray(planId) && planId.includes(Number(call.PlanDetailId))) {
-            console.log('updating because its in array')
             call.IsExecuted = true,
             call.IsExecutedOffline = isOffline
         } else if(call.PlanDetailId == planId) {
-            console.log('updating because its received as string')
             call.IsExecuted = true,
             call.IsExecutedOffline = isOffline
         }
         return call;
     })
-    console.log(allCalls, 'after map')
     await setStorage(`calls${todayDate()}`, stringify(allCalls));
     return allCalls;
 }
@@ -130,7 +124,6 @@ export const updateCallStatus = async (planId, isOffline = false) => {
 export const submitOfflineCall = (params) => {
     return async (dispatch) => {
         dispatch(submitCall(params))
-        console.log(params, 'submitting offline')
         const jsonParams = parse(stringify(params));
         
         params = serializeData(params)
@@ -150,17 +143,13 @@ export const submitOfflineCall = (params) => {
         dispatch(submitCallFailure('No Internet Connectivity'))
         setStorage('offlineCalls', stringify(unSyncedData));
         dispatch(getCallsSuccess(allCalls))
-        return new Promise((resolve, reject) => {
-            return resolve(1)
-        })
-        // return Promise.resolve(1)
+        return Promise.resolve(1)
     } 
 }
 
 
 
 export const removeOldStorageEnteries = (error, keys, regex) => {
-    console.log(error, keys, 'keys')
     let keysToRemove = []
     keys.map(key => {
         if(regex.test(key) && key !== todayDate()) {

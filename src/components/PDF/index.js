@@ -27,7 +27,6 @@ const PDF = ({
 
   return (
     <View style={{ flex: 1 }}>
-      {/* <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}> */}
       <View style={{position: 'absolute', zIndex: 1000000, top: 10, right: 10}}>
         <Button
           type="clear"

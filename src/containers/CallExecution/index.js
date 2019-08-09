@@ -2,10 +2,9 @@
  *  start of Login container
  */
 import React, { Component } from 'react';
-import { View, PermissionsAndroid, ActivityIndicator } from 'react-native'
-import { Overlay, Text, ListItem, Button } from 'react-native-elements';
+import { View, PermissionsAndroid } from 'react-native'
 import { CallPlanHeader } from '../../components/Headers'
-import { navigationOption, brandColors, RandomInteger, getToken, parse, stringify } from '../../constants'
+import { navigationOption, brandColors, getToken, parse, stringify } from '../../constants'
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import { 
     Collapse,
@@ -21,18 +20,18 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { getDocHistory } from '../../services/historyService';
 import { submitCallSingle, getTodayCalls, submitOfflineCall } from '../../services/callServices';
 import { Tab } from '..';
-import { FlatList } from 'react-native-gesture-handler';
 import { callExecution } from '../../defaults';
 import { connect } from 'react-redux';
 import { getProducts } from '../../reducers/productsReducer';
 import { bindActionCreators } from 'redux'
-import Counter from "react-native-counters";
 import moment from 'moment';
 import { getGifts } from '../../reducers/giftsReducer';
 import { getUser } from '../../reducers/authReducer';
 import { getSubmitData, getSubmitLoader } from '../../reducers/callsReducers';
 import { getHistory } from '../../actions/history';
 import { NetworkContext } from '../../components/NetworkProvider'
+import GiftsModal from '../../components/GiftsModal';
+import ProductsSamplesModal from '../../components/ProductsSamplesModal';
 
 class CallExecution extends Component {
     static contextType = NetworkContext
@@ -50,7 +49,6 @@ class CallExecution extends Component {
         long: '',
         fetchingLocation: true,
         selectedProductId: 0, // This will be only set while opening the overlay, and unset while closing the overlay
-        selectedSampleId: 0, // This will be only set while opening the overlay, and unset while closing the overlay
         reminderPosition: 0, // This will be only set while opening the overlay, and unset while closing the overlay
         // This key will me merged with JsonCallDetails key of API call
         selectedProducts: [
@@ -80,17 +78,16 @@ class CallExecution extends Component {
             // }
         ],
         form_data: parse(stringify(callExecution)),
-        submitLoader: false,
     }
 
     onClickProduct = (productTemplateId) => {
         if(this.state.selectedProductId == null || this.state.selectedProductId == 0) {
-            console.log(this.state.selectedProductId, this.state.selectedProducts, this.state.selectedProducts[productTemplateId], 'dimagh out')
+            // console.log(this.state.selectedProductId, this.state.selectedProducts, this.state.selectedProducts[productTemplateId], 'dimagh out')
             const samples = this.props.products.filter(product => product.ProductTemplateId == productTemplateId)[0]
             this.setState({
                 selectedProductId: productTemplateId,
                 samples: samples.Products,
-            }, console.log(this.state))
+            })
         } else {
             this.setState({
                 overlayError: 'You can not select another product.'
@@ -103,11 +100,6 @@ class CallExecution extends Component {
         }
     }
     onClickSample = (productId, IsReminder) => {
-        // const productTemplate = this.props.products
-        // .filter(product => product
-        //     .Products
-        //     .filter(sample => sample.ProductId == productId).length > 0)
-        // [0];
         var selectedProduct = null;
         var productTemplate = null;
         this.props.products.map(product => {
@@ -127,15 +119,15 @@ class CallExecution extends Component {
             delete selectedProducts[alreadySelectedProductAtThisPosition[0].ProductId];
             delete selectedSamples[alreadySelectedProductAtThisPosition[0].ProductId];
         }
-        if(selectedProducts[productTemplate.ProductTemplateId] == undefined) {
-            selectedProducts[productTemplate.ProductTemplateId] = {
-                ProductId: productTemplate.ProductTemplateId,
-                name: productTemplate.ProductTemplateName,
-                DetailingSeconds: 0,
-                isReminder: true,
-                reminderPosition: reminderPosition,
-            }
-        }
+        // if(selectedProducts[productTemplate.ProductTemplateId] == undefined) {
+        //     selectedProducts[productTemplate.ProductTemplateId] = {
+        //         ProductId: productTemplate.ProductTemplateId,
+        //         name: productTemplate.ProductTemplateName,
+        //         DetailingSeconds: 0,
+        //         isReminder: true,
+        //         reminderPosition: reminderPosition,
+        //     }
+        // }
 
         selectedSamples[productTemplate.ProductTemplateId] = {
             IsReminder: (selectedProducts[productTemplate.ProductTemplateId].IsReminder || false),
@@ -145,36 +137,9 @@ class CallExecution extends Component {
             ProductTemplateId: productTemplate.ProductTemplateId
         }
         this.setState({
-                selectedProducts: selectedProducts,
-                selectedSamples: selectedSamples,
-            })
-    }
-
-    renderProductsRow = ({item}) => {
-        const {selectedProducts, selectedProductId} = this.state
-        let shouldBeDisabled = false;
-        if(selectedProducts[item.ProductTemplateId] !== undefined && selectedProducts[item.ProductTemplateId].IsReminder === false) {
-            shouldBeDisabled = true;
-        }
-        let style = styles.listItems;
-        style = selectedProductId === item.ProductTemplateId
-        ? {...style, ...styles.selectedItems}
-        : {...style, ...styles.unSelectedItem}
-        let titleStyle = selectedProductId === item.ProductTemplateId
-        ? styles.selectedTitle
-        : styles.unSelectedTitle
-        return (<ListItem
-            disabled={shouldBeDisabled}
-            disabledStyle={{ backgroundColor: '#f4f1f0' }}
-            containerStyle={style}
-            titleStyle={titleStyle}
-            rightSubtitle={shouldBeDisabled ? 'Cannot be selected as reminder' : null}
-            // rightSubtitleStyle={{color: '#ada082'}}
-            key={item.ProductTemplateId}
-            bottomDivider
-            // topDivider
-            onPress={() => this.onClickProduct(item.ProductTemplateId)}
-            title={item.ProductTemplateName} />)
+            selectedProducts: selectedProducts,
+            selectedSamples: selectedSamples,
+        })
     }
 
     handleOverlayClose = (unselect = false) => {
@@ -194,31 +159,11 @@ class CallExecution extends Component {
         this.setState({
             overlay: false,
             selectedProductId: 0,
-            // selectedProducts: selectedProducts
-        }, () => console.log(this.state.selectedProducts, 'asd', this.state.selectedSamples))
+        }
+        // , () => console.log(this.state.selectedProducts, 'asd', this.state.selectedSamples)
+        )
     }
 
-    renderSamplesRow = ({item}) => {
-        const { selectedSamples } = this.state
-
-        let selected = selectedSamples.filter(sample => sample.ProductId === item.ProductId)
-
-        let style = selected[0] === undefined
-        ? {...styles.listItems, ...styles.unSelectedItem}
-        : {...styles.selectedItem, ...styles.listItems}
-        let titleStyle = selected[0] === undefined
-        ? styles.unSelectedTitle
-        : styles.selectedTitle
-        return (<ListItem
-            key={RandomInteger()}
-            containerStyle={style}
-            titleStyle={titleStyle}
-            bottomDivider
-            // topDivider
-            onPress={() => this.onClickSample(item.ProductId)}
-            rightElement={selected[0] !== undefined ? <Counter start={selected[0].SampleQty} max={10} onChange={(number, type) => this.setSampleCount(number, type, item.ProductTemplateId)} /> : null}
-            title={item.ProductName} />)
-    }
     setSampleCount = (number, type, productTemplateId) => {
         let allSamples = this.state.selectedSamples;
         let sample = allSamples[productTemplateId];
@@ -302,7 +247,7 @@ class CallExecution extends Component {
             selectedProducts: selectedProducts,
             eDetailing: eDetailings,
         }
-        , () => {console.log('checking all the values set', this.state, this.context)}
+        // , () => {console.log('checking all the values set', this.state, this.context)}
         )
         this.requestLocationPermission()
         
@@ -399,20 +344,6 @@ class CallExecution extends Component {
         })
     }
 
-    renderGiftsRow = ({ item }) => {
-        const dailyCall = this.state.form_data
-        const selected = dailyCall.jsonGiftDetail
-        return (<ListItem
-            key={RandomInteger()}
-            containerStyle={styles.listItems}
-            titleStyle={styles.unSelectedTitle}
-            bottomDivider
-            onPress={() => this.onClickGift(item.GiftId)}
-            containerStyle={styles.listItems}
-            rightElement={(selected[0] !== undefined && selected[0].GiftId === item.GiftId) ? <Counter start={selected[0].GiftQty} max={5} onChange={(number, type) => this.onClickGift(item.GiftId, number)} /> : null}
-            title={item.GiftName} />)
-    }
-
     onClickGift = (giftId, number = 0) => {
         let dailyCall = this.state.form_data
         const selected = dailyCall.jsonGiftDetail
@@ -427,11 +358,11 @@ class CallExecution extends Component {
     }
 
     showGifts = () => {
-        console.log(32234)
         this.setState({
             giftsOverlay: true
         })
     }
+
     hideGifts = (unselect = false) => {
         if(unselect) {
             let dailyCall = this.state.form_data;
@@ -464,7 +395,9 @@ class CallExecution extends Component {
         }
         this.setState({
             eDetailing
-        }, () => console.log('detailing seconds updated', this.state.eDetailing[fileId]));
+        }
+        // , () => console.log('detailing seconds updated', this.state.eDetailing[fileId])
+        );
     }
 
     render() {
@@ -473,7 +406,6 @@ class CallExecution extends Component {
             isAdditionalInfoCollapsed,
             isDocHistoryCollapsed,
             existingCall,
-            doctor_history,
         } = this.state;
         return (        
             <ImageBackgroundWrapper>
@@ -498,12 +430,14 @@ class CallExecution extends Component {
                                         onCallReasonChange={this.onCallReasonChange}
                                         navigate={this.props.navigation}
                                     />}  
-                                HeaderIcon={<FontAwesomeIcon name="info-circle" size={40} color="#fff" />} />
+                                HeaderIcon={<FontAwesomeIcon name="info-circle" size={40} color={brandColors.green} />} />
                             <Collapse
                                 isCollapsed={isAdditionalInfoCollapsed}
                                 toggler={() => this.onToggle('isAdditionalInfoCollapsed')}
                                 title="Additional Information"
-                                Body={<AdditionalInfo
+                                HeaderIcon={<FontAwesomeIcon name="plus-square" size={40} color={brandColors.green} />}
+                                Body={
+                                    <AdditionalInfo
                                         existingCall={true}
                                         showGifts={this.showGifts}
                                         onChangeAdditionalNotes={this.onChangeAdditionalNotes}
@@ -515,9 +449,10 @@ class CallExecution extends Component {
                                         selectedSample={this.state.selectedProduct}
                                         navigate={this.props.navigation}
                                         selectedGift={this.state.form_data.jsonGiftDetail}
-                                        allGifts={this.props.gifts.gifts}
-                                    />}
-                                HeaderIcon={<FontAwesomeIcon name="plus-square" size={40} color="#fff" />} />
+                                        allGifts={this.props.gifts}
+                                    />
+                                }
+                            />
                                 {
                                     existingCall && !!this.props.history.history ?
                                     <Collapse
@@ -530,92 +465,26 @@ class CallExecution extends Component {
                                 }
                         </View>
                     </KeyboardAwareScrollView>
-                    <Overlay
-                        borderRadius={15}
-                        width={'90%'}
-                        height={'90%'}
-                        onBackdropPress={() => this.setState({overlay: false})}
+                    <ProductsSamplesModal
+                        samples={this.state.samples}
+                        productSelectionError={this.state.overlayError}
+                        selectedProducts={this.state.selectedProducts}
+                        selectedProductId={this.state.selectedProductId}
+                        reminderPosition={this.state.reminderPosition}
+                        selectedSamples={this.state.selectedSamples}
                         isVisible={this.state.overlay}
-                    >
-                        <View style={{width:'100%', height: 450, display: 'flex', flexDirection: 'row', justifyContent: 'space-around'}}>
-                            <View style={styles.flatList}>
-                                <Text h3 h3Style={styles.listTitle}>Select Product</Text>
-                                <FlatList
-                                    // contentContainerStyle={{height: 150}}
-                                    keyExtractor={item => `${item.ProductTemplateId} + ${RandomInteger()}`}
-                                    data={this.props.products}
-                                    renderItem={this.renderProductsRow}
-                                />
-                            </View>
-                            <View style={styles.flatList}>
-                                <Text h3 h3Style={styles.listTitle}>Select Sample (Select Product First)</Text>
-                                <FlatList
-                                    contentContainerStyle={{height: 220}}
-                                    keyExtractor={item => `${item.ProductId} + ${RandomInteger()}`}
-                                    data={this.state.samples}
-                                    renderItem={this.renderSamplesRow}
-                                />
-                            </View>
-                        </View>
-                        <View style={{width:'98%', height: 150, display: 'flex', flex: 1, justifyContent: 'flex-end'}}>
-                            {
-                                this.state.overlayError != ''
-                                ?<View style={{width: '100%'}}>
-                                    <Text style={{fontSize: 14, fontWeight: 'bold', color: 'red'}}>{this.state.overlayError}</Text>
-                                </View>
-                                : null 
-                            }
-                            <View style={{flexDirection: 'row'}}>
-                                <View style={styles.flatList}>
-                                    <Button
-                                        buttonStyle={styles.button}
-                                        onPress={() => this.handleOverlayClose(true)}
-                                        title="Unselect"
-                                    />
-                                </View>
-                                <View style={styles.flatList}>
-                                <Button buttonStyle={styles.button} onPress={() => this.handleOverlayClose(false)} title="Done" />
-
-                                </View>
-                            </View>
-                        </View>
-                    </Overlay>
-                    <Overlay
-                        borderRadius={15}
-                        width={'75%'}
-                        onBackdropPress={() => this.hideGifts(true)}
+                        onPressProductHandler={this.onClickProduct}
+                        onPressSampleHanlder={this.onClickSample}
+                        setSamplesCountHandler={this.setSampleCount}
+                        onCloseHandler={this.handleOverlayClose}
+                    />
+                    <GiftsModal
                         isVisible={this.state.giftsOverlay}
-                    >
-                        <View style={{width:'100%', display: 'flex', flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                            <View style={{ width: '98%', marginHorizontal: 5}}>
-                                <Text h3 h3Style={styles.listTitle}>Select Gift</Text>
-                                <FlatList
-                                    contentContainerStyle={{height: 400}}
-                                    keyExtractor={ item => `${item.GiftId} + ${RandomInteger()}`}
-                                    data={this.props.gifts.gifts}
-                                    renderItem={this.renderGiftsRow}
-                                />
-                            </View>
-                        </View>
-                        <View style={{width:'98%', display: 'flex', flex: 1, justifyContent: 'flex-end'}}>
-                            <View style={{flexDirection: 'row'}}>
-
-                            <View style={styles.flatList}>
-                                <Button
-                                    buttonStyle={styles.button}
-                                    onPress={() => this.hideGifts(true)}
-                                    title="No need to select Gift"
-                                />
-                            </View>
-                            <View style={styles.flatList}>
-                                <Button
-                                    buttonStyle={styles.button}
-                                    onPress={() => this.hideGifts(false)}
-                                    title="Done" />
-                            </View>
-                            </View>
-                        </View>
-                    </Overlay>
+                        gifts={this.props.gifts}
+                        onCloseHandler={this.hideGifts}
+                        selectedGift={this.state.form_data.jsonGiftDetail}
+                        onPressGiftHandler={this.onClickGift}
+                    />
                 </View >
             </ImageBackgroundWrapper>
         )
@@ -642,47 +511,9 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 export default connect(mapStateToProps, mapDispatchToProps)(CallExecution)
 
 const styles = {
-    button: {
-        marginVertical: 5,
-        width: '100%',
-        backgroundColor: brandColors.lightGreen,
-        position: 'relative'
-    },
     InputContainer: {
         display: 'flex',
         flex: 1,
         height: 'auto'
-    },
-    flatList: {
-        width: '48%',
-        marginHorizontal: 5,
-    },
-    listTitle: {
-        backgroundColor: '#e3ded5',
-        borderTopLeftRadius: 15,
-        borderTopRightRadius: 15,
-        padding: 5,
-        width: '99.8%'
-    },
-    listItems: {
-        width: '99%',
-        height: 45,
-    },
-    selectedItem: {
-        // backgroundColor: 'black',
-        // backgroundColor: brandColors.lightGreen,
-    },
-    selectedItems: {
-        backgroundColor: brandColors.green,
-    },
-    unSelectedItem: {
-        backgroundColor: 'white',
-    },
-    selectedTitle: {
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
-    unSelectedTitle: {
-        fontSize: 16,
     }
 }

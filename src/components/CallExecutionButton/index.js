@@ -13,7 +13,7 @@ const CallExecutionButton = ({
             buttonStyle={{
             width: 75,
             height: 75,
-            borderRadius: 35,
+            borderRadius: 37,
             backgroundColor: brandColors.green,
             }}
             containerStyle={{
@@ -25,9 +25,8 @@ const CallExecutionButton = ({
                 right: 50,
                 bottom:50,
                 zIndex: 1000000
-                }}
+            }}
             icon={<MaterialIcon
-                    // style={{zIndex: 100000000}}
                     name="check-circle"
                     color={brandColors.darkBrown}
                     size={55}

@@ -13,7 +13,6 @@ import Collapse from './Collapsable';
 import KeyCallInfo from './KeyCallInfo';
 import AdditionalInfo from './AdditionalInfo';
 import DoctorHistory from './DoctorHistory';
-import FloatingButton from './FloatingButton';
 import ImageBackgroundWrapper from './ImageBackground';
 import NewDoctorForm from './NewDoctorForm';
 import SearchDoctor from './SearchDoctor';
@@ -39,7 +38,6 @@ export {
     KeyCallInfo,
     AdditionalInfo,
     DoctorHistory,
-    FloatingButton,
     ImageBackgroundWrapper,
     NewDoctorForm,
     SearchDoctor,

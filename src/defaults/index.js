@@ -58,3 +58,15 @@ export const callExecution = {
     Token: getToken,
     DailyCallId: 0,
 }
+
+export const newDoctor = {
+    DoctorName: '',
+    DoctorAddress: '',
+    Email: '',
+    Phone: '',
+    Designation: '',
+    Speciality: '',
+    CityId: '',
+    CityName: '',
+    isKOL: false,
+}
