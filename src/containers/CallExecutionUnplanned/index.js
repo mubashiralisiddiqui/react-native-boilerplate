@@ -1,35 +1,40 @@
-/**
- *  start of Login container
- */
 import React, { Component } from 'react';
-import { View, PermissionsAndroid, ActivityIndicator, FlatList } from 'react-native'
-import { Overlay, Text, ListItem, Button } from 'react-native-elements';
+import { View, PermissionsAndroid } from 'react-native'
 import { CallPlanHeader } from '../../components/Headers'
-import { navigationOption, brandColors, RandomInteger, getToken, parse, stringify } from '../../constants'
-import Icon from 'react-native-vector-icons/FontAwesome';
-import Icon2 from 'react-native-vector-icons/MaterialIcons';
-import { Collapse, AdditionalInfo, DoctorHistory, ImageBackgroundWrapper, Blink } from '../../components';
+import { navigationOption, brandColors, parse, stringify } from '../../constants'
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import {
+    Collapse,
+    AdditionalInfo,
+    DoctorHistory,
+    ImageBackgroundWrapper,
+    ConnectivityStatus,
+    LocationStatus,
+    ScreenLoader,
+    CallExecutionButton,
+} from '../../components';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { getDocHistory } from '../../services/historyService';
 import { submitCallSingle, getTodayCalls, submitOfflineCall } from '../../services/callServices';
 import { Tab } from '..';
-// import { FlatList } from 'react-native-gesture-handler';
 import { callExecution } from '../../defaults';
 import { connect } from 'react-redux';
 import { getProducts } from '../../reducers/productsReducer';
 import { bindActionCreators } from 'redux'
-import Counter from "react-native-counters";
 import moment from 'moment';
 import { getGifts } from '../../reducers/giftsReducer';
 import { getUser } from '../../reducers/authReducer';
 import { getSubmitData, getSubmitLoader } from '../../reducers/callsReducers';
 import { getHistory } from '../../actions/history';
-import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons'
-
 import { NetworkContext } from '../../components/NetworkProvider'
+import GiftsModal from '../../components/GiftsModal';
+import ProductsSamplesModal from '../../components/ProductsSamplesModal';
 
 class CallExecution extends Component {
     static contextType = NetworkContext
+    static navigationOptions = ({ navigation }) => (
+        navigationOption(navigation, 'Unplanned Call Details')
+    )
     state = {
         isKeyInfoCollapsed: true,
         isAdditionalInfoCollapsed: false,
@@ -40,8 +45,6 @@ class CallExecution extends Component {
         overlay: false,
         giftsOverlay: false,
         overlayError: '',
-        lat: '',
-        long: '',
         fetchingLocation: true,
         selectedProductId: 0, // This will be only set while opening the overlay, and unset while closing the overlay
         reminderPosition: 0, // This will be only set while opening the overlay, and unset while closing the overlay
@@ -65,86 +68,75 @@ class CallExecution extends Component {
             //     ProductTemplateId: 0
             // },
         ],
+        eDetailing: [
+            // this will be added in the final call param
+            // {
+            //     DetailingFileId: 1,
+            //     Duration: 0 // in seconds
+            // }
+        ],
         form_data: parse(stringify(callExecution)),
-        submitLoader: false,
-        isDateTimePickerVisible: true,
     }
 
     onClickProduct = (productTemplateId) => {
-        if(this.state.selectedProductId == null || this.state.selectedProducts[productTemplateId] == undefined) {
+        if(this.state.selectedProductId == null || this.state.selectedProductId == 0) {
+            // console.log(this.state.selectedProductId, this.state.selectedProducts, this.state.selectedProducts[productTemplateId], 'dimagh out')
             const samples = this.props.products.filter(product => product.ProductTemplateId == productTemplateId)[0]
-            this.setState({
+            return this.setState({
                 selectedProductId: productTemplateId,
-                samples: samples.Products || [],
-            }, console.log(this.state))
-        } else {
-            this.setState({
-                overlayError: 'You can not select another product.'
+                samples: samples.Products,
             })
-            setTimeout(() => {
-                this.setState({
-                    overlayError: ''
-                })
-            }, 5000)
         }
+        this.setState({
+            overlayError: 'You can not select another product.'
+        })
+        setTimeout(() => {
+            this.setState({
+                overlayError: ''
+            })
+        }, 5000)
     }
     onClickSample = (productId, IsReminder) => {
-        const productTemplate = this.props.products
-        .filter(product => product
-            .Products && product.Products
-            .filter(sample => sample.ProductId == productId).length > 0)
-        [0];
-
         var selectedProduct = null;
+        var productTemplate = null;
         this.props.products.map(product => {
-            product.Products && product.Products.map(sample => {
+            product.Products.map(sample => {
                 if(sample.ProductId === productId) {
                     selectedProduct = sample;
+                    productTemplate = product;
                 }
             })
         })
+        const { reminderPosition } = this.state;
+        let selectedProducts = this.state.selectedProducts
         let selectedSamples = this.state.selectedSamples;
+        let alreadySelectedProductAtThisPosition = selectedProducts
+        .filter(product => (product.reminderPosition && product.reminderPosition == reminderPosition))
+        if(alreadySelectedProductAtThisPosition.length > 0) {
+            delete selectedProducts[alreadySelectedProductAtThisPosition[0].ProductId];
+            delete selectedSamples[alreadySelectedProductAtThisPosition[0].ProductId];
+        }
+
         selectedSamples[productTemplate.ProductTemplateId] = {
-            IsReminder: (this.state.selectedProducts[productTemplate.ProductTemplateId] === undefined),
+            IsReminder: (selectedProducts[productTemplate.ProductTemplateId].IsReminder || false),
             ProductId: productId,
             name: selectedProduct.ProductName,
             SampleQty: 0,
             ProductTemplateId: productTemplate.ProductTemplateId
         }
-        this.setState((state) =>{
-            return {
-                selectedSamples: selectedSamples,
-            }
+        this.setState({
+            selectedProducts: selectedProducts,
+            selectedSamples: selectedSamples,
         })
-    }
-
-    renderProductsRow = ({item}) => {
-        if(this.state.selectedProducts.length === 0) {
-            
-        }
-        const {selectedProductId} = this.state
-        let style = styles.listItems;
-        style = selectedProductId === item.ProductTemplateId
-        ? {...style, ...styles.selectedItems}
-        : {...style, ...styles.unSelectedItem}
-        let titleStyle = selectedProductId === item.ProductTemplateId
-        ? styles.selectedTitle
-        : styles.unSelectedTitle
-        return (<ListItem
-            containerStyle={style}
-            titleStyle={titleStyle}
-            key={item.ProductTemplateId}
-            bottomDivider
-            // topDivider
-            onPress={() => this.onClickProduct(item.ProductTemplateId)}
-            title={item.ProductTemplateName} />)
     }
 
     handleOverlayClose = (unselect = false) => {
         if(unselect) {
             let selectedSamples = this.state.selectedSamples;
-            const {selectedProductId} = this.state
-            const removed = selectedSamples.splice(selectedProductId, 1)
+            const {selectedProductId, reminderPosition} = this.state
+            if(selectedProductId != 0) {
+                delete selectedSamples[selectedProductId];
+            }
             this.setState({
                 selectedSamples,
                 overlay: false,
@@ -152,46 +144,14 @@ class CallExecution extends Component {
             })
             return;
         }
-        const { selectedProductId, selectedProducts, reminderPosition } = this.state
-        if(selectedProducts[selectedProductId] === undefined) {
-            const selectedProduct = this.props.products.filter(product => product.ProductTemplateId == selectedProductId)[0]
-            selectedProducts[selectedProductId] = {
-                ProductId: selectedProduct.ProductTemplateId,
-                name: selectedProduct.ProductTemplateName,
-                DetailingSeconds: 0,
-                reminderPosition: reminderPosition,
-                IsReminder: true,
-            }
-        }
-
         this.setState({
             overlay: false,
             selectedProductId: 0,
-            selectedProducts: selectedProducts
-        }, () => console.log(this.state))
+        }
+        // , () => console.log(this.state.selectedProducts, 'asd', this.state.selectedSamples)
+        )
     }
 
-    renderSamplesRow = ({item}) => {
-        const { selectedSamples } = this.state
-
-        let selected = selectedSamples.filter(sample => sample.ProductId === item.ProductId)
-
-        let style = selected[0] === undefined
-        ? {...styles.listItems, ...styles.unSelectedItem}
-        : {...styles.selectedItem, ...styles.listItems}
-        let titleStyle = selected[0] === undefined
-        ? styles.unSelectedTitle
-        : styles.selectedTitle
-        return (<ListItem
-            key={RandomInteger()}
-            containerStyle={style}
-            titleStyle={titleStyle}
-            bottomDivider
-            // topDivider
-            onPress={() => this.onClickSample(item.ProductId)}
-            rightElement={selected[0] !== undefined ? <Counter start={selected[0].SampleQty} max={10} onChange={(number, type) => this.setSampleCount(number, type, item.ProductTemplateId)} /> : null}
-            title={item.ProductName} />)
-    }
     setSampleCount = (number, type, productTemplateId) => {
         let allSamples = this.state.selectedSamples;
         let sample = allSamples[productTemplateId];
@@ -215,48 +175,35 @@ class CallExecution extends Component {
         })
     }
     requestLocationPermission = async () => {
-    try {
-        const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        {
-            'title': 'Location Access Required',
-            'message': 'This App needs to Access your location'
-        })
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        this.callLocation();
-        } else {
-        alert("Permission Denied");
+        try {
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                {
+                    'title': 'Location Access Required',
+                    'message': 'This App needs to Access your location'
+                })
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                this.callLocation();
+            } else {
+                alert("Permission Denied");
+            }
+        } catch (err) {
+            alert("err",err);
+            console.warn(err)
         }
-    } catch (err) {
-        alert("err",err);
-        console.warn(err)
     }
-    }
-    static navigationOptions = ({ navigation }) => (navigationOption(navigation, 'Unplanned Call Details'))
  
     async componentDidMount() {
-        // let dailyCall = parse(stringify(callExecution));
-        // dailyCall.jsonDailyCall.CallStartTime = moment(callData.VisitStart).format('YYYY-MM-DD hh:mm:ss')
-        // dailyCall.jsonDailyCall.CallEndTime = moment(callData.VisitEnd).format('YYYY-MM-DD hh:mm:ss')
-        // dailyCall.jsonDailyCall.DoctorCode = callData.Doctor.DoctorCode
-        // dailyCall.jsonDailyCall.PlanDetailId = callData.PlanDetailId
-        // dailyCall.jsonDailyCall.DeviceDateTime = moment().format('YYYY-MM-DD hh:mm:ss')
-        // // dailyCall.jsonDailyCall.EmployeeId = moment().format('YYYY-MM-DD hh:mm:ss')
-        // dailyCall.EmployeeId = this.props.user.EmployeeId
-        // dailyCall.DailyCallId = callData.PlanDetailId
-        // console.log(dailyCall, 'afterChanges')
-        console.log(this.props.products)
-
-        // this.props.getDocHistory({
-        //     Token: getToken,
-        //     DoctorCode: callData.Doctor.DoctorCode,
-        //     EmployeeId: this.props.user.EmployeeId,
-        // });
-        // this.setState({
-        //     form_data: dailyCall,
-        // }, () => {console.log('checking all the values set', this.state, this.context)})
+        this.context.hideRefresh();
         this.requestLocationPermission()
-        
+        let dailyCall = parse(stringify(callExecution));
+        dailyCall.jsonDailyCall.DeviceDateTime = moment().format('YYYY-MM-DD hh:mm:ss')
+        dailyCall.EmployeeId = this.props.user.EmployeeId
+        dailyCall.DailyCallId = callData.PlanDetailId
+
+        this.setState({
+            form_data: dailyCall,
+        })
     }
 
     onChangeCallRemarks = (remarks) => {
@@ -299,11 +246,11 @@ class CallExecution extends Component {
                 dailyCall.jsonDailyCall.Longitude = currentLongitude;
                 this.setState({ form_data: dailyCall, fetchingLocation: false });
                 },
-                (error) => console.log(this.state.form_data.jsonDailyCall.Lattitude, this.state.form_data.jsonDailyCall.Longitude),
+                (error) => console.log(error, this.state.form_data.jsonDailyCall.Lattitude, this.state.form_data.jsonDailyCall.Longitude),
                 { enableHighAccuracy: true, timeout: 200000, maximumAge: 1000 }
         );
         this.watchID = navigator.geolocation.watchPosition((position) => {
-        //Will give you the location on location change
+            //Will give you the location on location change
             console.log(position);
             const currentLongitude = JSON.stringify(position.coords.longitude);
             //getting the Longitude from the location json
@@ -316,18 +263,17 @@ class CallExecution extends Component {
         });
     }
     componentWillUnmount = () => {
-        console.log('unmounting')
-        // this.setState({
-        //     form_data: callExecution,
-        // })
         navigator.geolocation.clearWatch(this.watchID);
+        this.context.showRefresh();
      }
 
     submitCall = async () => {
         await this.requestLocationPermission()
         let dailyCall = this.state.form_data;
+        dailyCall.Epoch = new Date().getTime();
         dailyCall.jsonSampleDetail = this.state.selectedSamples.filter(sample => sample !== undefined);
         dailyCall.jsonDailyCallDetail = this.state.selectedProducts.filter(product => product !== undefined)
+        dailyCall.jsonDailyCallEDetailing = this.state.eDetailing.filter(file => file !== undefined)
         if(dailyCall.jsonDailyCall.Lattitude == '0.0' || dailyCall.jsonDailyCall.Longitude == '0.0'){
             alert('Unable to capture your location, please try to move, refresh the application or open your location service if it is not.');
             return;
@@ -335,7 +281,7 @@ class CallExecution extends Component {
 
         if(this.context.state.isConnected) {
             this.props.submitCallSingle(dailyCall).then(response => {
-                this.props.navigation.goBack();
+                if(response == 1) this.props.navigation.goBack();
             }).catch(console.warn)
         } else {
             this.submitOffline(dailyCall).then(response => {
@@ -349,20 +295,6 @@ class CallExecution extends Component {
         this.props.submitOfflineCall(params).then(response => {
             this.props.navigation.goBack()
         })
-    }
-
-    renderGiftsRow = ({ item }) => {
-        const dailyCall = this.state.form_data
-        const selected = dailyCall.jsonGiftDetail
-        return (<ListItem
-            key={RandomInteger()}
-            containerStyle={styles.listItems}
-            titleStyle={styles.unSelectedTitle}
-            bottomDivider
-            onPress={() => this.onClickGift(item.GiftId)}
-            containerStyle={styles.listItems}
-            rightElement={(selected[0] !== undefined && selected[0].GiftId === item.GiftId) ? <Counter start={selected[0].GiftQty} max={5} onChange={(number, type) => this.onClickGift(item.GiftId, number)} /> : null}
-            title={item.GiftName} />)
     }
 
     onClickGift = (giftId, number = 0) => {
@@ -379,11 +311,11 @@ class CallExecution extends Component {
     }
 
     showGifts = () => {
-        console.log(32234)
         this.setState({
             giftsOverlay: true
         })
     }
+
     hideGifts = (unselect = false) => {
         if(unselect) {
             let dailyCall = this.state.form_data;
@@ -401,24 +333,25 @@ class CallExecution extends Component {
             giftsOverlay: false
         })
     }
-    showDateTimePicker = () => {
-        this.setState({ isDateTimePickerVisible: true });
-      };
-    
-      hideDateTimePicker = () => {
-        this.setState({ isDateTimePickerVisible: false });
-      };
-    
-      handleDatePicked = (date, field, callback) => {
-        console.log("A date has been picked: ", date, "field=>", field);
-        let callDetails = this.state.form_data
-        callDetails.jsonDailyCall[field] = moment(date).format('YYYY-MM-DD hh:mm:ss')
-        console.log(callDetails, 'Call Details')
+
+    updateDetailingSeconds = (fileId, seconds) => {
+        const { eDetailing } = this.state
+        if(eDetailing[fileId] == undefined) {
+            eDetailing[fileId] = {
+                DetailingFileId: fileId,
+                Duration: seconds
+            }
+        } else {
+            eDetailing[fileId].Duration = eDetailing[fileId].Duration == 0
+            ? seconds
+            : eDetailing[fileId].Duration + seconds;
+        }
         this.setState({
-            form_data: callDetails
-        }, () => console.log(this.state.form_data))
-        callback();
-      };
+            eDetailing
+        }
+        // , () => console.log('detailing seconds updated', this.state.eDetailing[fileId])
+        );
+    }
 
     render() {
         const {
@@ -426,64 +359,38 @@ class CallExecution extends Component {
             isAdditionalInfoCollapsed,
             isDocHistoryCollapsed,
             existingCall,
-            doctor_history,
         } = this.state;
         return (        
             <ImageBackgroundWrapper>
+                <CallExecutionButton disabled={this.props.submitLoader} onPress={this.submitCall}/>
+                {this.props.submitLoader == true ? <ScreenLoader /> : null}
                 <View style={styles.InputContainer}>
                     <KeyboardAwareScrollView
-                    contentContainerStyle={{justifyContent: 'center', display: 'flex' }}>
+                        contentContainerStyle={{justifyContent: 'center', display: 'flex' }}>
                         <CallPlanHeader />
                         <View style={{ flex: 1}}>
                             <View style={{width: '100%', height: 30, flexDirection: 'row', justifyContent: 'flex-end'}}>
-                                <View style={{width: '15%'}}>
-                                    {
-                                        this.context.state.isConnected === true ?
-                                        <Button
-                                            type="clear"
-                                            title="connected"
-                                            titleStyle={{fontSize: 12}}
-                                            icon={<MaterialCommunityIcon name={'signal-4g'} />}
-                                        />
-                                        : <Button
-                                            type="clear"
-                                            title="Unavailable"
-                                            titleStyle={{fontSize: 11, color: 'red'}}
-                                            icon={<MaterialCommunityIcon name={'wifi-off'} color="red" />}
-                                        />
-                                    }
-                                </View>
-
-                                <View style={{width: '10%'}}>
-
-                                    <Blink blinking={this.state.fetchingLocation} delay={300}>
-                                        <Button
-                                            type="clear"
-                                            title={this.state.fetchingLocation === true ? `Fetching` : `Fetched`}
-                                            disabled={this.state.fetchingLocation}
-                                            titleStyle={{fontSize: 12}}
-                                            buttonStyle={{width: '100%'}}
-                                            containerStyle={{width: '100%',}}
-                                            icon={<Icon2
-                                                name={this.state.fetchingLocation === true ? "location-searching" : 'location-on'}
-                                                size={15} 
-                                                color={this.state.fetchingLocation === true ? 'red' : 'green'} />}
-                                        />
-                                    </Blink>
-                                </View>
-
+                                <ConnectivityStatus />
+                                <LocationStatus isFetching={this.state.fetchingLocation} />
                             </View>
                             <Collapse
                                 isCollapsed={isKeyInfoCollapsed}
                                 toggler={() => this.onToggle('isKeyInfoCollapsed')}
                                 title="Key Call Information"
-                                Body={<Tab handleDatePicked={this.handleDatePicked} existingCall={false} showTimePicker={this.showDateTimePicker} onCallReasonChange={this.onCallReasonChange} navigate={this.props.navigation} data={this.state.form_data.jsonDailyCall}/>}  
-                                HeaderIcon={<Icon name="info-circle" size={40} color="#fff" />} />
+                                Body={<Tab
+                                        updateDetailingSeconds={this.updateDetailingSeconds}
+                                        existingCall={true}
+                                        onCallReasonChange={this.onCallReasonChange}
+                                        navigate={this.props.navigation}
+                                    />}  
+                                HeaderIcon={<FontAwesomeIcon name="info-circle" size={40} color={brandColors.green} />} />
                             <Collapse
                                 isCollapsed={isAdditionalInfoCollapsed}
                                 toggler={() => this.onToggle('isAdditionalInfoCollapsed')}
                                 title="Additional Information"
-                                Body={<AdditionalInfo
+                                HeaderIcon={<FontAwesomeIcon name="plus-square" size={40} color={brandColors.green} />}
+                                Body={
+                                    <AdditionalInfo
                                         existingCall={false}
                                         showGifts={this.showGifts}
                                         onChangeAdditionalNotes={this.onChangeAdditionalNotes}
@@ -491,13 +398,12 @@ class CallExecution extends Component {
                                         selectedProducts={this.state.selectedProducts}
                                         selectedSamples={this.state.selectedSamples}
                                         showProducts={this.showProductsOverlay}
-                                        selectedProduct={this.state.selectedProduct }
-                                        selectedSample={this.state.selectedProduct}
                                         navigate={this.props.navigation}
                                         selectedGift={this.state.form_data.jsonGiftDetail}
-                                        allGifts={this.props.gifts.gifts}
-                                    />}
-                                HeaderIcon={<Icon name="plus-square" size={40} color="#fff" />} />
+                                        allGifts={this.props.gifts}
+                                    />
+                                }
+                            />
                                 {
                                     existingCall && !!this.props.history.history ?
                                     <Collapse
@@ -505,133 +411,32 @@ class CallExecution extends Component {
                                         toggler={() => this.onToggle('isDocHistoryCollapsed')}
                                         title="Doctor Visit History"
                                         Body={ <DoctorHistory /> }
-                                        HeaderIcon={<Icon name="history" size={40} color="#fff" />}/>
+                                        HeaderIcon={<FontAwesomeIcon name="history" size={40} color="#fff" />}/>
                                         : null
                                 }
                         </View>
                     </KeyboardAwareScrollView>
-                    <Overlay
-                    borderRadius={15}
-                    width={'90%'}
-                    height={'90%'}
-                    onBackdropPress={() => this.setState({overlay: false})}
-                    isVisible={this.state.overlay}
-                    >
-                        <View style={{width:'100%', height: 450, display: 'flex', flexDirection: 'row', justifyContent: 'space-around'}}>
-                            <View style={styles.flatList}>
-                                <Text h3 h3Style={styles.listTitle}>Select Product</Text>
-                                <FlatList
-                                // contentContainerStyle={{height: 150}}
-                                keyExtractor={item => `${item.ProductTemplateId} + ${RandomInteger()}`}
-                                data={this.props.products}
-                                renderItem={this.renderProductsRow}
-                                />
-                            </View>
-                            <View style={styles.flatList}>
-                                <Text h3 h3Style={styles.listTitle}>Select Sample (Select Product First)</Text>
-                                <FlatList
-                                    contentContainerStyle={{height: 220}}
-                                    keyExtractor={item => `${item.ProductId} + ${RandomInteger()}`}
-                                    data={this.state.samples}
-                                    renderItem={this.renderSamplesRow}
-                                />
-                            </View>
-                        </View>
-                        <View style={{width:'98%', height: 150, display: 'flex', flex: 1, justifyContent: 'flex-end'}}>
-                            {
-                                this.state.overlayError != ''
-                                ?<View style={{width: '100%'}}>
-                                    <Text style={{fontSize: 14, fontWeight: 'bold', color: 'red'}}>{this.state.overlayError}</Text>
-                                </View>
-                                : null 
-                            }
-                            <View style={{flexDirection: 'row'}}>
-                                <View style={styles.flatList}>
-                                    <Button
-                                        buttonStyle={styles.button}
-                                        onPress={() => this.handleOverlayClose(true)}
-                                        title="Unselect"
-                                    />
-                                </View>
-                                <View style={styles.flatList}>
-                                <Button buttonStyle={styles.button} onPress={() => this.handleOverlayClose(false)} title="Done" />
-
-                                </View>
-                            </View>
-                        </View>
-                    </Overlay>
-                    <Overlay
-                        borderRadius={15}
-                        width={'75%'}
-                        onBackdropPress={() => this.hideGifts(true)}
+                    <ProductsSamplesModal
+                        samples={this.state.samples}
+                        productSelectionError={this.state.overlayError}
+                        selectedProducts={this.state.selectedProducts}
+                        selectedProductId={this.state.selectedProductId}
+                        reminderPosition={this.state.reminderPosition}
+                        selectedSamples={this.state.selectedSamples}
+                        isVisible={this.state.overlay}
+                        onPressProductHandler={this.onClickProduct}
+                        onPressSampleHanlder={this.onClickSample}
+                        setSamplesCountHandler={this.setSampleCount}
+                        onCloseHandler={this.handleOverlayClose}
+                    />
+                    <GiftsModal
                         isVisible={this.state.giftsOverlay}
-                    >
-                        <View style={{width:'100%', display: 'flex', flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                            <View style={{ width: '98%', marginHorizontal: 5}}>
-                                <Text h3 h3Style={styles.listTitle}>Select Gift</Text>
-                                <FlatList
-                                    contentContainerStyle={{height: 400}}
-                                    keyExtractor={ item => `${item.GiftId} + ${RandomInteger()}`}
-                                    data={this.props.gifts.gifts}
-                                    renderItem={this.renderGiftsRow}
-                                />
-                            </View>
-                        </View>
-                        <View style={{width:'98%', display: 'flex', flex: 1, justifyContent: 'flex-end'}}>
-                            <View style={{flexDirection: 'row'}}>
-
-                            <View style={styles.flatList}>
-                                <Button
-                                    buttonStyle={styles.button}
-                                    onPress={() => this.hideGifts(true)}
-                                    title="No need to select Gift"
-                                />
-                            </View>
-                            <View style={styles.flatList}>
-                                <Button
-                                    buttonStyle={styles.button}
-                                    onPress={() => this.hideGifts(false)}
-                                    title="Done" />
-                            </View>
-                            </View>
-                        </View>
-                    </Overlay>
+                        gifts={this.props.gifts}
+                        onCloseHandler={this.hideGifts}
+                        selectedGift={this.state.form_data.jsonGiftDetail}
+                        onPressGiftHandler={this.onClickGift}
+                    />
                 </View >
-                <Button raised buttonStyle={{
-                    width: 75,
-                    height: 75,
-                    borderRadius: 35,
-                    backgroundColor: brandColors.green,
-                    zIndex: 10000
-                }} containerStyle={{
-                            width: 75,
-                            height: 75,
-                            borderRadius: 40,
-                            backgroundColor: brandColors.green,
-                            position: 'absolute',
-                            right: 50,
-                            bottom:50,
-                            }}
-                            icon={<Icon2
-                                    name="check-circle" color={brandColors.darkBrown} size={55}
-                                    onPress={this.submitCall}
-                                />}
-                        disabled={this.props.submitLoader}
-                        />
-                        {this.props.submitLoader == true ?
-                            <View style={{
-                                position: 'absolute',
-                                left: 0,
-                                right: 0,
-                                top: 0,
-                                bottom: 0,
-                                alignItems: 'center',
-                                justifyContent: 'center'
-                              }}>
-                                <ActivityIndicator size='large' />
-                            </View>
-                            : null}
-                
             </ImageBackgroundWrapper>
         )
     }
@@ -657,47 +462,9 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 export default connect(mapStateToProps, mapDispatchToProps)(CallExecution)
 
 const styles = {
-    button: {
-        marginVertical: 5,
-        width: '100%',
-        backgroundColor: brandColors.lightGreen,
-        position: 'relative'
-    },
     InputContainer: {
         display: 'flex',
         flex: 1,
         height: 'auto'
-    },
-    flatList: {
-        width: '48%',
-        marginHorizontal: 5,
-    },
-    listTitle: {
-        backgroundColor: '#e3ded5',
-        borderTopLeftRadius: 15,
-        borderTopRightRadius: 15,
-        padding: 5,
-        width: '99.8%'
-    },
-    listItems: {
-        width: '99%',
-        height: 45,
-    },
-    selectedItem: {
-        // backgroundColor: 'black',
-        // backgroundColor: brandColors.lightGreen,
-    },
-    selectedItems: {
-        backgroundColor: brandColors.green,
-    },
-    unSelectedItem: {
-        backgroundColor: 'white',
-    },
-    selectedTitle: {
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
-    unSelectedTitle: {
-        fontSize: 16,
     }
 }

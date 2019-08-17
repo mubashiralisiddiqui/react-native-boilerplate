@@ -5,13 +5,11 @@ import { RandomInteger, styles, getNameFromSelectedSamples, getQuantityOfTheSele
 import FieldHeader from '../FieldHeader';
 
 const ProductField = ({
-    times = 1,
     onRemove = () => {},
     existingCall = false,
     products,
     showProducts,
     selectedSamples,
-    selectedProducts
 }) => {
 
     const onFocus = (selectedProduct) => {

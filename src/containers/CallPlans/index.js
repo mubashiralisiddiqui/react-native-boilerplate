@@ -40,8 +40,6 @@ class CallPlans extends Component {
         this.props.getDesignations();
         this.props.getSpecialities();
         this.props.getCities();
-        
-        this.animate(200);
         this.context.showRefresh()
     }
 

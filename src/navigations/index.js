@@ -13,7 +13,6 @@ import {
 
 import {
     Login,
-    AuthLoading,
     CallPlans,
     DoctorLocation,
     CallExecution,

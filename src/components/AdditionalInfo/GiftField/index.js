@@ -3,6 +3,7 @@ import { View, NativeModules, Keyboard } from 'react-native';
 import FieldHeader from '../FieldHeader';
 import { Input } from 'react-native-elements';
 import { styles, getQuantityOrNameOfSelectedGift } from '../../../constants';
+import { defaultPropValues, propTypes } from './defaultPropTypesValues'
 
 const GiftField = ({
     showGifts,
@@ -32,5 +33,8 @@ const GiftField = ({
         </View>
     );
 }
+
+GiftField.propTypes = propTypes
+GiftField.defaultProps = defaultPropValues;
 
 export default GiftField;

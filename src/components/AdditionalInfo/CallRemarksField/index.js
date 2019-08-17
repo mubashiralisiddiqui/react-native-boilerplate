@@ -3,7 +3,8 @@ import { View } from 'react-native';
 import FieldHeader from '../FieldHeader';
 import { styles, brandColors } from '../../../constants';
 import { CheckBox } from 'react-native-elements';
-
+import { propTypes } from './defaultPropTypesValues'
+ 
 const CallRemarksField = ({
     onChangeCallRemarks
 }) => {
@@ -73,4 +74,7 @@ const CallRemarksField = ({
         </View>
     );
 }
+
+CallRemarksField.propTypes = propTypes
+
 export default CallRemarksField;

@@ -3,7 +3,7 @@ import { View, Text, Dimensions } from 'react-native';
 import { Card } from 'react-native-elements'
 import { brandColors, RandomInteger } from '../../constants';
 
-const CallPlansListHeader = (props) => {
+const CallPlansListHeader = () => {
     const [width, setWidth] = useState(Dimensions.get('screen').width);
     const onLayout = (e) => {
         setWidth(Dimensions.get('screen').width)

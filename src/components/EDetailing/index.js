@@ -9,7 +9,6 @@ import RNFetchBlob from 'rn-fetch-blob'
 
 const EDetailing = ({
     files = [],
-    existingCall = false,
     onCloseFile,
 }) => {
     const [showFile, setShowFile] = useState(false)
@@ -37,13 +36,11 @@ const EDetailing = ({
 
     const download = async (url, name, id) => {
         let dirs = RNFetchBlob.fs.dirs
-        console.log(dirs.DocumentDir)
         const exists = await RNFetchBlob.fs.exists(`${dirs.DocumentDir}/${name}`)
         setDownloads(downloads => {
             downloads[id] = exists
             return downloads
           } )
-        console.log('exists=>', exists);
         if(!exists) {
             RNFetchBlob
             .config({
@@ -60,26 +57,24 @@ const EDetailing = ({
                   downloads[id] = true
                   return downloads
                 })
-              console.log('The file saved to ', res.path(), res)
             }).catch(console.log)
         }
     }
     const renderItem = ({item}) => {
-        download(`http://portal.hudsonpharma.com${item[0].FilePath}`, item[0].FileName, item[0].DetailingFileId);
-        console.log(downloads, 'status download')
+        download(`http://portal.hudsonpharma.com${item.FilePath}`, item.FileName, item.DetailingFileId);
         return (
             <ListItem
-                title={item[0] && item[0].FileName}
-                subtitle={item[0] && item[0].FileDescription}
+                title={item && item.FileName}
+                subtitle={item && item.FileDescription}
                 containerStyle={{backgroundColor: 'transparent', borderBottomWidth: 1, color: 'transparent'}}
                 titleStyle={{fontWeight: 'bold'}}
                 leftIcon={<Icon name="file-pdf" size={25} color={brandColors.green} />}
                 rightIcon={<MaterialIcon
                     size={25}
-                    color={downloads[item[0].DetailingFileId] != undefined && downloads[item[0].DetailingFileId] == true ? brandColors.green : 'red' }    
-                    name={downloads[item[0].DetailingFileId] != undefined && downloads[item[0].DetailingFileId] == true ? 'cloud-done' : 'cloud-download'} 
+                    color={downloads[item.DetailingFileId] != undefined && downloads[item.DetailingFileId] == true ? brandColors.green : 'red' }    
+                    name={downloads[item.DetailingFileId] != undefined && downloads[item.DetailingFileId] == true ? 'cloud-done' : 'cloud-download'} 
                         />}
-                onPress={() => showSelectedFile(item[0])}
+                onPress={() => showSelectedFile(item)}
             />
         )
     }
@@ -90,7 +85,7 @@ const EDetailing = ({
                 ? <FlatList
                     style={{width: '80%'}}
                     keyExtractor={() => RandomInteger()}
-                    data={files}
+                    data={files[0]}
                     renderItem={renderItem}
                 />
                 : <ListItem

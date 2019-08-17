@@ -1,15 +1,13 @@
 import React from 'react';
 import { ListItem, Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { brandColors, RandomInteger } from '../../../constants'
+import { brandColors } from '../../../constants';
+import { propTypes, defaultValues } from './defaultPropTypesValues'
 
 const FieldHeader = ({
-    key = RandomInteger(),
-    title = '',
-    field = 'productFieldsCount',
-    fieldType = 'product',
-    onRemove = () => {},
-    isFirst = true
+    key,
+    title,
+    onRemove
 }) => {
     return (
         <ListItem
@@ -28,6 +26,9 @@ const FieldHeader = ({
         />
     )
 }
+
+FieldHeader.propTypes = propTypes
+FieldHeader.defaultProps = defaultValues;
 
 export default FieldHeader;
 const inlineStyles = {

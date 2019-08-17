@@ -2,6 +2,7 @@ import React from 'react'
 import {Button} from 'react-native-elements';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import { brandColors } from '../../constants';
+import PropTypes from 'prop-types'
 
 const CallExecutionButton = ({
     onPress,
@@ -35,6 +36,11 @@ const CallExecutionButton = ({
             disabled={disabled}
         />
     );
+}
+
+CallExecutionButton.propTypes = {
+    onPress: PropTypes.func.isRequired,
+    disabled: PropTypes.bool,
 }
 
 export default CallExecutionButton;

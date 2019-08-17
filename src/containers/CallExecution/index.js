@@ -1,6 +1,3 @@
-/**
- *  start of Login container
- */
 import React, { Component } from 'react';
 import { View, PermissionsAndroid } from 'react-native'
 import { CallPlanHeader } from '../../components/Headers'

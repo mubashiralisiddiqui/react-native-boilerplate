@@ -3,11 +3,11 @@ import { View } from 'react-native';
 import FieldHeader from '../FieldHeader';
 import { Input } from 'react-native-elements';
 import { styles } from '../../../constants';
+import { defaultProps } from './defaultPropTypeValues'
 
 const NotesField = ({
     onChangeAdditionalNotes
 }) => {
-    
     return (
         <View style={styles.container}>
             <View style={{width: "95%"}}>
@@ -19,4 +19,7 @@ const NotesField = ({
         </View>
     );
 }
+
+NotesField.propTypes = defaultProps
+
 export default NotesField;
