@@ -15,6 +15,7 @@ import Tab from './Tabs';
 import AuthCheck from './AuthCheck';
 import SavedData from './SavedData';
 import CallExecutionUnplanned from './CallExecutionUnplanned'
+import WebView from './WebView'
 
 export {
     Login,
@@ -29,5 +30,6 @@ export {
     Tab,
     AuthCheck,
     SavedData,
-    CallExecutionUnplanned
+    CallExecutionUnplanned,
+    WebView,
 }

@@ -80,13 +80,13 @@ export const navigationOptions = [
     },{
         name: 'rsm_planner',
         label: 'Call Planner',
-        // navigateTo: 'NewDoctor',
+        navigateTo: 'WebView',
         icon: 'chart-pie',
         iconType: 'FontAwesome5'
     },{
         name: 'expense_manager',
         label: 'Expense Manager',
-        // navigateTo: 'DoctorLocation',
+        navigateTo: 'WebView',
         icon: 'cash-register',
         iconType: 'FontAwesome5'
     },{
