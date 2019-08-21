@@ -59,6 +59,8 @@ const ProductsSamplesModal = ({
             containerStyle={style}
             titleStyle={titleStyle}
             bottomDivider
+            disabled={item.OnHandQty == 0}
+            disabledStyle={{ backgroundColor: '' }}
             onPress={() => onPressSampleHanlder(item.ProductId)}
             rightElement={selected[0] !== undefined ? <Counter start={selected[0].SampleQty} max={10} onChange={(number, type) => setSamplesCountHandler(number, type, item.ProductTemplateId)} /> : null}
             title={item.ProductName} />)
@@ -102,14 +104,17 @@ const ProductsSamplesModal = ({
                             : null 
                         }
                         <View style={{flexDirection: 'row'}}>
-                            <View style={styles.flatList}>
+                            <View style={styles.buttonContainer}>
+                                <Button buttonStyle={styles.button} onPress={() => onCloseHandler(false)} title="Unselect Both" />
+                            </View>
+                            <View style={styles.buttonContainer}>
                                 <Button
                                     buttonStyle={styles.button}
                                     onPress={() => onCloseHandler(true)}
-                                    title="Unselect"
+                                    title="Unselect Samples"
                                 />
                             </View>
-                            <View style={styles.flatList}>
+                            <View style={styles.buttonContainer}>
                                 <Button buttonStyle={styles.button} onPress={() => onCloseHandler(false)} title="Done" />
                             </View>
                         </View>
@@ -128,6 +133,10 @@ const styles = {
         width: '100%',
         backgroundColor: brandColors.lightGreen,
         position: 'relative'
+    },
+    buttonContainer: {
+        width: '33%',
+        marginHorizontal: 5,
     },
     flatList: {
         width: '48%',

@@ -11,8 +11,6 @@ const NewDoctorForm = ({
     designations = [],
     specialities = [],
     setField = () => {},
-    selectField = () => {},
-    onPressSelection = () => {},
     cities = [],
 }) => {
     const [ fieldSelectionOverlay, setFieldSelectionOverlay ] = useState(false)

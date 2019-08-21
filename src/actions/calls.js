@@ -3,12 +3,11 @@ import {
     GET_CALLS_FAILURE,
     GET_CALLS_SUCCESS,
     SUBMIT_CALL,
-    SUBMIT_CALL_BULK,
-    SUBMIT_CALL_BULK_FAILURE,
-    SUBMIT_CALL_BULK_SUCCESS,
     SUBMIT_CALL_FAILURE,
     SUBMIT_CALL_SUCCESS,
-    CALLS_SYNCED,
+    GET_UNPLANNED_CALLS,
+    GET_UNPLANNED_CALLS_SUCCESS,
+    GET_UNPLANNED_CALLS_FAILURE,
 } from './types'
 
 export const getCalls = () => {
@@ -49,5 +48,25 @@ export function submitCallFailure(error) {
     return {
         type: SUBMIT_CALL_FAILURE,
         error
+    }
+}
+
+export function getUnplannedCalls() {
+    return {
+        type: GET_UNPLANNED_CALLS
+    }
+}
+
+export function getUnplannedCallsSuccess(unplanned_calls) {
+    return {
+        type: GET_UNPLANNED_CALLS_SUCCESS,
+        unplanned_calls,
+    }
+}
+
+export function getUnplannedCallsFailure(error) {
+    return {
+        type: GET_UNPLANNED_CALLS_FAILURE,
+        error,
     }
 }

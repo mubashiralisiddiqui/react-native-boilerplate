@@ -9,11 +9,13 @@ import { services } from '../../services'
 import { getLoginLoding, getLoginError } from '../../reducers/authReducer';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
+import { NetworkContext } from '../../components/NetworkProvider';
 
 class Login extends Component {
     static navigationOptions = {
         header: null,
     }
+    static contextType = NetworkContext;
     state = {
         LoginId: '',
         Password: '',
@@ -89,6 +91,11 @@ class Login extends Component {
             passwordIconColor: !this.state.secure === true ? brandColors.darkBrown : brandColors.green
         })
     }
+
+    componentDidMount() {
+        this.context.hideRefresh();
+    }
+
     render() {
         return (
             <ImageBackgroundWrapper>

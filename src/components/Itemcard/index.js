@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Dimensions } from 'react-native';
 import { Card, Button, Badge } from 'react-native-elements'
-import { brandColors, RandomInteger } from '../../constants';
+import { brandColors, RandomInteger, normalizeFont } from '../../constants';
 
 const ItemCard = ({
     name,
@@ -10,6 +10,7 @@ const ItemCard = ({
     status = 1,
     onPressHandler,
     isOffline = false,
+    isUnplanned = false,
 }) => {
     const [loading, setLoading] = useState(false);
     const [width, setWidth] = useState(Dimensions.get('screen').width);
@@ -39,6 +40,10 @@ const ItemCard = ({
                         : (status === true && isOffline === false)
                             ? <Badge status="success" value="Synced"/>
                             : null
+                    }
+                    { (isUnplanned == true)
+                        ? <Badge status="primary" value="Unplanned"/>
+                        : null
                     }
                     
                     <Text key={RandomInteger()} style={styles.text}>{ doctorClass }</Text>
@@ -98,7 +103,7 @@ const getStyles = (status, width) => {
             width: width/6
         },
         text: {
-            fontSize: 18,
+            fontSize: normalizeFont(18),
             color: !status ? brandColors.darkBrown : '#aaa',
         },
         cardContainer: {

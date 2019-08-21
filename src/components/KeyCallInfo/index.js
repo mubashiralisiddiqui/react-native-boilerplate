@@ -27,10 +27,12 @@ const KeyCallInfo = (props) => {
     const minimumDate = new Date();
     const user = useSelector(state => state.auth.user);
     const info = props.info ? props.info : keyCallInfo
-    console.log(props.info)
+    if(info.VisitStart == '' && info.VisitEnd == '') {
+        info.VisitStart = new Date()
+        info.VisitEnd = new Date()
+    }
     const { width, height } = Dimensions.get('window')
     const onFocus = (field) => {
-        console.log(showTimer, field)
         NativeModules.KeyboardFunctionalities.hideKeyboard()
         Keyboard.dismiss();
         setSettingTimer(field)
@@ -56,7 +58,7 @@ const KeyCallInfo = (props) => {
                 <Input editable={false} inputStyle={styles.inputStyle} labelStyle={styles.labelStyle} label="Doctor" placeholder="Doctor Name" value={info.Doctor && info.Doctor.DoctorName || ''}/>
                 <Input editable={false} inputStyle={styles.inputStyle} labelStyle={styles.labelStyle} label="SPO Name" placeholder="SPO Name" value={`${user.FullName || ''}`}/>
                 <Input editable={false} inputStyle={styles.inputStyle} labelStyle={styles.labelStyle} label="Address" placeholder="Doctor address" value={info.Doctor && info.Doctor.DoctorAddress || ''}/>
-                <CallReason onCallReasonChange={props.onCallReasonChange} />
+                <CallReason onCallReasonChange={(reason) => props.onCallReasonChange('CallReason', reason)} />
             </View>
         </View>
     )

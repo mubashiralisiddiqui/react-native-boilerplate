@@ -13,7 +13,7 @@ const CallRemarksField = ({
     const [negative, setNegative] = useState(false);
     const onchange = ( state ) => {
         if(state === 'neutral') {
-            onChangeCallRemarks('Neutral')
+            onChangeCallRemarks('Remarks', 'Neutral')
             setNeutral(true);
             setNegative(false);
             setPositive(false);
@@ -21,13 +21,13 @@ const CallRemarksField = ({
         }
         if(state === 'positive') {
             setPositive(true);
-            onChangeCallRemarks('Positive')
+            onChangeCallRemarks('Remarks', 'Positive')
             setNeutral(false);
             setNegative(false);
             return;
         }
         setNegative(true);
-        onChangeCallRemarks('Negative')
+        onChangeCallRemarks('Remarks', 'Negative')
         setNeutral(false);
         setPositive(false);
     }

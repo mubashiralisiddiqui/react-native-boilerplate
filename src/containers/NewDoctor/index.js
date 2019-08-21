@@ -1,3 +1,7 @@
+/**
+ * @file Container component that creates the request for new doctor.
+ * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+ */
 import React, { Component } from 'react';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { CallPlanHeader } from '../../components/Headers';
@@ -14,7 +18,26 @@ import { NetworkContext } from '../../components/NetworkProvider'
 import { createDoctorRequest } from '../../services/doctor';
 import { newDoctor } from '../../defaults'
 
+/**
+ * @class NewDoctor
+ * @classdesc This is a container class that handles the new doctor request
+ * @extends {Component}
+ * 
+ * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+ */
 class NewDoctor extends Component {
+
+    /**
+     * @name contextType
+     * @static
+     * @memberof NewDoctor
+     */
+    static contextType = NetworkContext
+    /**
+     * @name navigationOptions
+     * @static
+     * @memberof NewDoctor
+     */
     static navigationOptions = ({ navigation }) => (navigationOption(navigation, 'Add New Doctor'))
     state = {
         ...newDoctor,
@@ -51,8 +74,17 @@ class NewDoctor extends Component {
         fadeAnim: new Animated.Value(0)
     }
 
-    static contextType = NetworkContext
 
+    /**
+     * @name onSubmit
+     * @function
+     * @async
+     * @description It is responsible for validating the data, composing the page load and submit API request
+     * @this Component
+     * @returns { void }
+     * @memberof NewDoctor
+     * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+     */
     onSubmit = async () => {
         const payload = _.omit(this.state, ['errors', 'fadeAnim', 'validations']);
         const [errors, shouldSubmit] = validate(this.state.validations, payload);
@@ -76,6 +108,17 @@ class NewDoctor extends Component {
         }
     }
 
+    /**
+     * @name setField
+     * @function
+     * @description generalize method that sets the component state with dynamic key and value pair
+     * @param { string } field - key that needs to be set in state object
+     * @param { string } value - value that needs to be set agains the provided field
+     * @returns { void }
+     * @this Component
+     * @memberof NewDoctor
+     * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+     */
     setField = (field, value) => {
         let errors = this.state.errors;
         errors[field] = value != '' ? '' : `${field} is required`
@@ -84,6 +127,15 @@ class NewDoctor extends Component {
             errors: errors,
         })
     }
+
+    /**
+     * @name styles
+     * @function
+     * @description it returns the styling object for the component
+     * @returns { Object }
+     * @memberof NewDoctor
+     * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+     */
     styles = ()  => {
         return {
             styles: {
@@ -119,12 +171,13 @@ class NewDoctor extends Component {
         }
     }
 
-    onPressSelection = (type, Id) => {
-        this.setState({
-            [type]: Id
-        })
-    }
-
+    /**
+     * @name componentDidMount
+     * @description This method will be called as soon as the component gets mounted
+     * @returns {void}
+     * @author [Muhammad Nauman] <muhammad.nauman@hudsonpharma.com>
+     * @memberof NewDoctor
+     */
     componentDidMount() {
         Animated.timing(                  // Animate over time
             this.state.fadeAnim,            // The animated value to drive
@@ -138,6 +191,15 @@ class NewDoctor extends Component {
         })
 
     }
+
+    /**
+     * @name render
+     * @description renders the layout of the screen for New Doctor
+     * @this NewDoctor
+     * @author [Muhammad Nauman] <muhammad.nauman@hudsonpharma.com>
+     * @returns { void }
+     * @memberof NewDoctor
+     */
     render() {
         const { styles } = this.styles();
         return (
@@ -154,7 +216,6 @@ class NewDoctor extends Component {
                                 setField={this.setField}
                                 designations={this.props.desgnations}
                                 specialities={this.props.specialities}
-                                onPressSelection={this.onPressSelection}
                                 cities={this.props.cities}
                             />
                             <View style={{width: '100%', display: 'flex', flex:1, justifyContent:'flex-end' }}>
@@ -175,6 +236,14 @@ class NewDoctor extends Component {
     }
 }
 
+/**
+ * @const function mapStateToProps
+ * @description It will map the redux state to this component
+ * @param {*} state
+ * @returns Object
+ * @memberof NewDoctor
+ * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+ */
 const mapStateToProps = state => {
     return {
         loading: getDoctorRequestLoader(state),
@@ -185,6 +254,14 @@ const mapStateToProps = state => {
     }
 }
 
+/**
+ * @const function mapDispatchToProps
+ * @description It will actionable redux methods to this component
+ * @param {*} dispatch
+ * @returns Object
+ * @memberof NewDoctor
+ * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+ */
 const mapDispatchToProps = dispatch => bindActionCreators({
     createDoctor: createDoctorRequest
 }, dispatch)

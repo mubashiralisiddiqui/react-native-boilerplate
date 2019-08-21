@@ -8,6 +8,9 @@ import {
     SUBMIT_DOCTOR_REQUEST,
     SUBMIT_DOCTOR_REQUEST_FAILURE,
     SUBMIT_DOCTOR_REQUEST_SUCCESS,
+    GET_DOCTORS_BY_EMPLOYEE,
+    GET_DOCTORS_BY_EMPLOYEE_SUCCESS,
+    GET_DOCTORS_BY_EMPLOYEE_FAILURE,
  } from './types'
 
 export const getDesignations = () => {
@@ -68,6 +71,26 @@ export const submitDoctorRequestSuccess = (request) => {
 export const submitDoctorRequestFailure = (error) => {
     return {
         type: SUBMIT_DOCTOR_REQUEST_FAILURE,
+        error,
+    }
+}
+
+export const getDoctorsByEmployee = () => {
+    return {
+        type: GET_DOCTORS_BY_EMPLOYEE,
+    }
+}
+
+export const getDoctorsByEmployeeSuccess = (doctors) => {
+    return {
+        type: GET_DOCTORS_BY_EMPLOYEE_SUCCESS,
+        doctors
+    }
+}
+
+export const getDoctorsByEmployeeFailure = (error) => {
+    return {
+        type: GET_DOCTORS_BY_EMPLOYEE_FAILURE,
         error,
     }
 }

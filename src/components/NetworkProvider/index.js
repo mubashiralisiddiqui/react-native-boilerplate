@@ -3,13 +3,15 @@ import {NetInfo, View} from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
 import { parse, getStorage, setStorage, brandColors, stringify, authUser, getToken } from '../../constants';
-import { syncCall, getTodayCalls, updateCallStatus, updatedCalls } from '../../services/callServices';
+import { syncCall, getTodayCalls, updateCallStatus, updatedCalls, getTodayUnplannedCalls } from '../../services/callServices';
 import { Button } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import { getAllGifts } from '../../services/giftService';
 import { getProductsWithSamples } from '../../services/productService';
 import { getAllCities } from '../../services/city';
-import { getAllDesignations, getAllSpecialities } from '../../services/doctor';
+import { getAllDesignations, getAllSpecialities, getDoctorByEmployeeId } from '../../services/doctor';
+import { getUser, isRSM } from '../../reducers/authReducer';
+import { getEmployees } from '../../services/auth';
 
 export const NetworkContext = React.createContext({
     isConnected: false,
@@ -78,20 +80,29 @@ class NetworkProviderClass extends React.PureComponent {
         this.setState({
             isRefreshing: true
         })
-        const user = await this.props.getAuthUser();
+        this.SyncApp();
+    }
+
+    SyncApp = () => {
         const payload = {
             Token: getToken,
-            EmployeeId: user.EmployeeId
+            EmployeeId: this.props.user.EmployeeId
         }
-        await this.props.getTodayCalls(payload, true);
-        await this.props.getProductsWithSamples(payload, true);
-        await this.props.getAllGifts({}, true);
-        await this.props.getCities(true).then(console.log);
-        await this.props.getDesignations(true).then(console.log);
-        await this.props.getSpecialities(true).then(console.log);
-
-        this.setState({
-            isRefreshing: false,
+        Promise.all([
+            this.props.getTodayCalls(payload, true),
+            this.props.getProductsWithSamples(payload, true),
+            this.props.getAllGifts({}, true),
+            this.props.getCities(true),
+            this.props.getDesignations(true),
+            this.props.getSpecialities(true),
+            this.props.getUnplannedCalls(payload),
+            this.props.isRSM
+            ? this.props.getReportingEmployees(payload)
+            : this.props.getDoctorsByEmployee(payload),
+        ]).then(response => {
+            this.setState({
+                isRefreshing: false,
+            })
         })
     }
 
@@ -139,6 +150,8 @@ class NetworkProviderClass extends React.PureComponent {
 
 const mapStateToProps = state => {
     return {
+        user: getUser(state),
+        isRSM: isRSM(state),
     }
 }
 
@@ -152,6 +165,9 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     getCities: getAllCities,
     getDesignations: getAllDesignations,
     getSpecialities: getAllSpecialities,
+    getDoctorsByEmployee: getDoctorByEmployeeId,
+    getReportingEmployees: getEmployees,
+    getUnplannedCalls: getTodayUnplannedCalls,
 }, dispatch)
 
 export const NetworkProvider =  connect(mapStateToProps, mapDispatchToProps)(NetworkProviderClass)

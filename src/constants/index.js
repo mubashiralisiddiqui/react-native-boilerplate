@@ -7,7 +7,7 @@ import React from 'react'
 import { Icon } from 'react-native-elements';
 import moment from 'moment';
 import axios from 'axios';
-import { AsyncStorage, Dimensions } from 'react-native'
+import { AsyncStorage, Dimensions, Platform, PixelRatio } from 'react-native'
 import { loginSuccess } from '../actions/auth'
 import { services } from '../services'
 
@@ -60,9 +60,6 @@ export const navigationOptions = [
         label: 'Add New Doctor',
         navigateTo: 'NewDoctor',
     },{
-        name: 'downloads',
-        label: 'Downloads'
-    },{
         name: 'sample_details',
         label: 'Sample Details',
         navigateTo: 'Samples',
@@ -70,13 +67,6 @@ export const navigationOptions = [
         name: 'change_doctor_location',
         label: 'Change Dr Location',
         navigateTo: 'DoctorLocation'
-    },{
-        name: 'profile',
-        label: 'Profile'
-    },{
-        name: 'saved_data',
-        label: 'Saved Data',
-        navigateTo: 'SavedData'
     },{
         name: 'logout',
         label: 'Logout',
@@ -215,7 +205,6 @@ export const getNameFromSelectedSamples = (selectedSamples, productId) => {
 }
 
 export const getQuantityOfTheSelectedSamples = (selectedSamples, productId) => {
-    console.log(selectedSamples[productId], productId)
     if(selectedSamples[productId] === undefined) return '';
     return selectedSamples[productId].SampleQty;
 }
@@ -253,15 +242,16 @@ export const setDefault = (value, setDefault = '') => {
 export const userFullName = user => `${setDefault(user.FirstName)} ${setDefault(user.MiddleName)} ${setDefault(user.LastName)}`
 
 export const validate = (rules, values) => {
-    const fieldsThatHaveValidationRules = Object.keys(rules)
     const fieldsThatNeedsToValidate = Object.keys(values)
+    console.log(fieldsThatNeedsToValidate)
     let errors = {}
     fieldsThatNeedsToValidate.map(field => {
         let rulesToCheck = rules[field] || null;
         Object.keys(rulesToCheck || {}).map(rule => {
             switch(rule) {
                 case 'required': {
-                    if(`${values[field]}`.trim() == '' || values[field] == null) {
+                    console.log(values[field], values, field)
+                    if(`${values[field]}`.trim() == '' || values[field] == null || (!isNaN(values[field]) && values[field] == 0)) {
                         errors[field] = `${field} is required`
                     }
                     return;
@@ -293,4 +283,44 @@ export const validate = (rules, values) => {
         })
     })
     return [errors, _.isEmpty(errors)]
+}
+
+export const getDistance = (latitudeFrom, longitudeFrom, latitudeTo, longitudeTo, unit = 'meters') => {
+	if ((latitudeFrom == latitudeTo) && (longitudeFrom == longitudeTo)) {
+		return 0;
+	}
+    let radlatitudeFrom = Math.PI * latitudeFrom/180;
+    let radlatitudeTo = Math.PI * latitudeTo/180;
+    let theta = longitudeFrom - longitudeTo;
+    let radTheta = Math.PI * theta/180;
+    let distance = Math.sin(radlatitudeFrom) * Math.sin(radlatitudeTo) + Math.cos(radlatitudeFrom) * Math.cos(radlatitudeTo) * Math.cos(radTheta);
+    distance = distance > 1 ? 1 : distance;
+    distance = Math.acos(distance);
+    distance = distance * 180/Math.PI;
+    distance = distance * 60 * 1.1515 * 1609; // meters
+    if (unit=="K") { distance = distance * 1.609344 } // Kilometers
+    if (unit=="M") { distance = distance / 1609 } // miles
+    return distance;
+}
+
+export const RSM_ROLE_ID = 6;
+export const SPO_ROLE_ID = 7;
+
+export const getFilesFromProducts = (products, productId) => {
+    return products.filter(product => product.ProductTemplateId == productId)[0].Files
+}
+
+export function normalizeFont(size) {  
+    const {
+        width: SCREEN_WIDTH,
+        height: SCREEN_HEIGHT,
+    } = Dimensions.get('window');
+    // based on iphone 5s's scale
+    const scale = SCREEN_WIDTH / (320 * size);
+    console.log(Math.round(PixelRatio.roundToNearestPixel(size * scale)), 'font' )
+    if (Platform.OS === 'ios') {
+        return Math.round(PixelRatio.roundToNearestPixel(size * scale))
+    } else {
+        return Math.round(PixelRatio.roundToNearestPixel(size * scale)) + 12
+    }
 }

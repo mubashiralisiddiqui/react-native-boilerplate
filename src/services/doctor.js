@@ -5,6 +5,9 @@ import {
     stringify,
     AxiosSalesForce,
     post,
+    todayDate,
+    getAllStorageKeys,
+    dateFormatRegexGifts,
 } from '../constants'
 import { 
     getDesignations,
@@ -16,7 +19,11 @@ import {
     submitDoctorRequest,
     submitDoctorRequestSuccess,
     submitDoctorRequestFailure,
+    getDoctorsByEmployee,
+    getDoctorsByEmployeeSuccess,
+    getDoctorsByEmployeeFailure,
  } from '../actions/doctor'
+import { removeOldStorageEnteries } from './callServices';
 
  export const getAllDesignations = (refresh = false) => async (dispatch) => {
     dispatch(getDesignations())
@@ -57,4 +64,25 @@ export const createDoctorRequest = (params) => async (dispatch) => {
     }
     dispatch(submitDoctorRequestFailure('Phone Number already exists'))
     return response
+}
+
+export const getDoctorByEmployeeId = (params, refresh = false) => async (dispatch) => {
+    dispatch(getDoctorsByEmployee())
+    // let dataFromStorage = await getStorage(`doctorsByEmployee${todayDate()}`)
+    // if(dataFromStorage == null || refresh == true) {
+        return AxiosSalesForce
+        .post('GetDoctorsByEmployeeId', params)
+        .then(async (response) => {
+            const doctors = parse(response.data.d)
+            if(doctors.length > 0) {
+                await getAllStorageKeys(removeOldStorageEnteries, dateFormatRegexGifts);
+            }
+            dispatch(getDoctorsByEmployeeSuccess(doctors))
+            return response;
+        })
+        .catch(error => {
+            dispatch(getDoctorsByEmployeeFailure(error))
+            return error
+        })
+    // }
 }

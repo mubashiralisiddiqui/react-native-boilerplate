@@ -3,12 +3,11 @@ import {
   GET_CALLS_FAILURE,
   GET_CALLS_SUCCESS,
   SUBMIT_CALL,
-  SUBMIT_CALL_BULK,
-  SUBMIT_CALL_BULK_FAILURE,
-  SUBMIT_CALL_BULK_SUCCESS,
   SUBMIT_CALL_FAILURE,
   SUBMIT_CALL_SUCCESS,
-  CALLS_SYNCED,
+  GET_UNPLANNED_CALLS_SUCCESS,
+  GET_UNPLANNED_CALLS,
+  GET_UNPLANNED_CALLS_FAILURE,
 } from '../actions/types';
 
 const initialState = {
@@ -16,7 +15,8 @@ const initialState = {
   loading: false,
   error: '',
   submit_data: {},
-  submit_call_loader: false
+  submit_call_loader: false,
+  unplanned_calls: [],
 };
 
 export const callsReducer = (state = initialState, action) => {
@@ -61,13 +61,31 @@ export const callsReducer = (state = initialState, action) => {
         submit_call_loader: false
       }
     }
+    case GET_UNPLANNED_CALLS: {
+      return {
+        ...state,
+      }
+    }
+    case GET_UNPLANNED_CALLS_SUCCESS: {
+      return {
+        ...state,
+        unplanned_calls: action.unplanned_calls,
+      }
+    }
+    case GET_UNPLANNED_CALLS_FAILURE: {
+      return {
+        ...state,
+        error: action.error,
+      }
+    }
     default:
       return state;
   }
 }
 
 export const getCallsLoading = state => state.calls.loading;
-export const getCalls = state => {return state.calls.calls};
+export const getCalls = state => state.calls.calls;
+export const getUnplannedCalls = state => state.calls.unplanned_calls;
 export const getCallsError = state => state.calls.error;
 export const getSubmitData = state => state.calls.submit_data;
 export const getSubmitLoader = state => state.calls.submit_call_loader;

@@ -20,22 +20,16 @@ const AdditionalInfo = ({
     allGifts,
     existingCall,
 }) => {
-    const { Products } = existingCall ? navigate.getParam('call_info') : { Products: [] }
-    const [productFieldsCount, setProductFieldsCount] = useState(existingCall ? 2 : Products.length);
     const [reminderFieldsCount, setReminderFieldsCount] = useState(3);
-    console.log('these are selected samples from additional info', selectedSamples);
     
 
     return (
         <View style={styles.container}>
             <ProductField
                 showProducts={showProducts}
-                selectedProduct={selectedProducts}
                 selectedSamples={selectedSamples}
-                products={Products}
+                products={selectedProducts}
                 existingCall={existingCall}
-                times={productFieldsCount}
-                onRemove={() => setProductFieldsCount(productFieldsCount - 1)} 
             />
             {/* This functionality will be use in future when we have more products(hopefully) and 
                 will give the feasibility to SPO/RSM to have dynamic number of products par visit */}
@@ -45,8 +39,12 @@ const AdditionalInfo = ({
                 color={brandColors.lightGreen}
                 onPress={() => setProductFieldsCount(productFieldsCount + 1) }
             /> */}
-            <ReminderField selectedProduct={selectedProducts}
-                selectedSamples={selectedSamples} times={reminderFieldsCount} onRemove={() => setReminderFieldsCount(reminderFieldsCount - 1)} showProducts={showProducts}/>
+            {
+                existingCall
+                ? <ReminderField selectedProduct={selectedProducts}
+                    selectedSamples={selectedSamples} times={reminderFieldsCount} onRemove={() => setReminderFieldsCount(reminderFieldsCount - 1)} showProducts={showProducts}/>
+                : null
+            }
             {/* This functionality will be use in future when we have more products(hopefully) and 
                 will give the feasibility to SPO/RSM to have dynamic number of products par visit */}
             {/* <Icon

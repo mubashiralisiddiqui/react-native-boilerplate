@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, PermissionsAndroid } from 'react-native'
 import { CallPlanHeader } from '../../components/Headers'
-import { navigationOption, brandColors, parse, stringify } from '../../constants'
+import { navigationOption, brandColors, parse, stringify, getToken, RSM_ROLE_ID, SPO_ROLE_ID, getFilesFromProducts, validate } from '../../constants'
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import {
     Collapse,
@@ -15,7 +15,7 @@ import {
 } from '../../components';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { getDocHistory } from '../../services/historyService';
-import { submitCallSingle, getTodayCalls, submitOfflineCall } from '../../services/callServices';
+import { submitCallSingle, getTodayCalls, submitOfflineCall, getTodayUnplannedCalls } from '../../services/callServices';
 import { Tab } from '..';
 import { callExecution } from '../../defaults';
 import { connect } from 'react-redux';
@@ -29,8 +29,12 @@ import { getHistory } from '../../actions/history';
 import { NetworkContext } from '../../components/NetworkProvider'
 import GiftsModal from '../../components/GiftsModal';
 import ProductsSamplesModal from '../../components/ProductsSamplesModal';
+import { getDoctorByEmployeeId } from '../../services/doctor';
+import { getDoctors } from '../../reducers/doctorReducer';
+import { getEmployees } from '../../services/auth';
+import { getProductsWithSamples } from '../../services/productService';
 
-class CallExecution extends Component {
+class CallExecutionUnplanned extends Component {
     static contextType = NetworkContext
     static navigationOptions = ({ navigation }) => (
         navigationOption(navigation, 'Unplanned Call Details')
@@ -76,6 +80,15 @@ class CallExecution extends Component {
             // }
         ],
         form_data: parse(stringify(callExecution)),
+        selectedFiles: [],
+        validations: {
+            DoctorCode: {
+                required: true,
+            }
+        },
+        errors: {
+            DoctorCode: '',
+        },
     }
 
     onClickProduct = (productTemplateId) => {
@@ -83,7 +96,6 @@ class CallExecution extends Component {
             // console.log(this.state.selectedProductId, this.state.selectedProducts, this.state.selectedProducts[productTemplateId], 'dimagh out')
             const samples = this.props.products.filter(product => product.ProductTemplateId == productTemplateId)[0]
             return this.setState({
-                selectedProductId: productTemplateId,
                 samples: samples.Products,
             })
         }
@@ -107,26 +119,45 @@ class CallExecution extends Component {
                 }
             })
         })
-        const { reminderPosition } = this.state;
-        let selectedProducts = this.state.selectedProducts
-        let selectedSamples = this.state.selectedSamples;
+        let {selectedProducts, selectedSamples, eDetailing, reminderPosition} = this.state
         let alreadySelectedProductAtThisPosition = selectedProducts
         .filter(product => (product.reminderPosition && product.reminderPosition == reminderPosition))
         if(alreadySelectedProductAtThisPosition.length > 0) {
             delete selectedProducts[alreadySelectedProductAtThisPosition[0].ProductId];
             delete selectedSamples[alreadySelectedProductAtThisPosition[0].ProductId];
         }
+        let files = [];
+        if(selectedProducts[productTemplate.ProductTemplateId] == undefined) {
+            selectedProducts[productTemplate.ProductTemplateId] = {
+                ProductId: productTemplate.ProductTemplateId,
+                name: productTemplate.ProductTemplateName,
+                DetailingSeconds: 0,
+                isReminder: false,
+                reminderPosition: reminderPosition,
+            }
+            files = getFilesFromProducts(this.props.products, productTemplate.ProductTemplateId);
+            files
+            .map(file => {
+                eDetailing[file.DetailingFileId] = {
+                    DetailingFileId: file.DetailingFileId,
+                    Duration: 0,
+                }
+                return file;
+            })
+        }
 
         selectedSamples[productTemplate.ProductTemplateId] = {
-            IsReminder: (selectedProducts[productTemplate.ProductTemplateId].IsReminder || false),
+            IsReminder: (selectedProducts[productTemplate.ProductTemplateId] && selectedProducts[productTemplate.ProductTemplateId].IsReminder || false),
             ProductId: productId,
             name: selectedProduct.ProductName,
             SampleQty: 0,
             ProductTemplateId: productTemplate.ProductTemplateId
         }
         this.setState({
-            selectedProducts: selectedProducts,
-            selectedSamples: selectedSamples,
+            selectedProducts,
+            selectedSamples,
+            eDetailing,
+            selectedFiles: files
         })
     }
 
@@ -148,7 +179,7 @@ class CallExecution extends Component {
             overlay: false,
             selectedProductId: 0,
         }
-        // , () => console.log(this.state.selectedProducts, 'asd', this.state.selectedSamples)
+        , () => console.log(this.state.selectedProducts, this.state.selectedFiles, this.state.selectedSamples)
         )
     }
 
@@ -171,7 +202,7 @@ class CallExecution extends Component {
             selectedProductId: selectedProduct,
             samples: selectedProduct !== null
                 ? this.props.products.filter(product => product.ProductTemplateId == selectedProduct)[0].Products
-                : [] 
+                : []
         })
     }
     requestLocationPermission = async () => {
@@ -199,38 +230,18 @@ class CallExecution extends Component {
         let dailyCall = parse(stringify(callExecution));
         dailyCall.jsonDailyCall.DeviceDateTime = moment().format('YYYY-MM-DD hh:mm:ss')
         dailyCall.EmployeeId = this.props.user.EmployeeId
-        dailyCall.DailyCallId = callData.PlanDetailId
 
         this.setState({
             form_data: dailyCall,
         })
     }
 
-    onChangeCallRemarks = (remarks) => {
+    onChangeAdditionalInfoAttributes = (field, value) => {
         let dailyCall = this.state.form_data
-        dailyCall.jsonDailyCall.Remarks = remarks;
+        dailyCall.jsonDailyCall[field] = value
         this.setState({
-            form_data: dailyCall,
+            form_data: dailyCall
         })
-        console.log(this.state, 'Call Remarks changed')
-    }
-
-    onChangeAdditionalNotes = (text) => {
-        let dailyCall = this.state.form_data
-        dailyCall.jsonDailyCall.FeedBack = text;
-        this.setState({
-            form_data: dailyCall,
-        })
-        console.log(this.state, 'additional notes changed')
-    }
-
-    onCallReasonChange = (reason) => {
-        let dailyCall = this.state.form_data;
-        dailyCall.jsonDailyCall.CallReason = reason
-        this.setState({
-            form_data: dailyCall,
-        })
-        console.log(this.state, 'call reason changed')
     }
 
     callLocation(){
@@ -268,6 +279,10 @@ class CallExecution extends Component {
      }
 
     submitCall = async () => {
+        if(this.state.selectedProducts.length == 0) {
+            alert('Please select at least one product');
+            return;
+        }
         await this.requestLocationPermission()
         let dailyCall = this.state.form_data;
         dailyCall.Epoch = new Date().getTime();
@@ -278,22 +293,42 @@ class CallExecution extends Component {
             alert('Unable to capture your location, please try to move, refresh the application or open your location service if it is not.');
             return;
         }
-
-        if(this.context.state.isConnected) {
-            this.props.submitCallSingle(dailyCall).then(response => {
-                if(response == 1) this.props.navigation.goBack();
-            }).catch(console.warn)
+        const [errors, shouldSubmit] = validate(this.state.validations, dailyCall.jsonDailyCall);
+        if(shouldSubmit) {
+            if(this.context.state.isConnected) {
+                this.props.submitCallSingle(dailyCall).then(response => {
+                    if(response == 1) {
+                        this.props.getUnplannedCalls({
+                            EmployeeId: this.props.user.EmployeeId,
+                            Token: getToken,
+                        }, true)
+                        this.props.getAllProducts({
+                            EmployeeId: this.props.user.EmployeeId,
+                            Token: getToken,
+                        }, true)
+                        this.props.navigation.goBack();
+                    }
+                }).catch(error => {
+                    this.submitOffline(dailyCall)
+                    console.log(error)
+                })
+            } else {
+                this.submitOffline(dailyCall).then(response => {
+                    console.log(response)
+                })
+            }
         } else {
-            this.submitOffline(dailyCall).then(response => {
-                console.log(response)
+            this.setState({
+                errors
             })
         }
 
     }
 
     submitOffline = (params) => {
-        this.props.submitOfflineCall(params).then(response => {
+        return this.props.submitOfflineCall(params).then(response => {
             this.props.navigation.goBack()
+            return response
         })
     }
 
@@ -352,6 +387,47 @@ class CallExecution extends Component {
         // , () => console.log('detailing seconds updated', this.state.eDetailing[fileId])
         );
     }
+    showDateTimePicker = () => {
+        this.setState({ isDateTimePickerVisible: true });
+    };
+
+    hideDateTimePicker = () => {
+        this.setState({ isDateTimePickerVisible: false });
+    };
+
+    handleDatePicked = (date, field, callback) => {
+    let callDetails = this.state.form_data
+    callDetails.jsonDailyCall[field] = moment(date).format('YYYY-MM-DD hh:mm:ss')
+    if(field === 'CallStartTime') {
+        callDetails.jsonDailyCall.CallEndTime = moment(date).add(15, 'minute').format('YYYY-MM-DD hh:mm:ss')
+    }
+    this.setState({
+        form_data: callDetails
+    })
+    callback();
+    };
+
+    setMio = (employee) => {
+        let { form_data } = this.state
+        form_data.jsonDailyCall.JVEmployeeId = employee.Id
+        form_data.jsonDailyCall.SelectedEmployeeName = employee.Value
+        this.setState({
+            form_data
+        })
+        this.props.getDoctorsByEmployee({
+            EmployeeId: employee.Id
+        })
+    }
+
+    setDoctor = (doctor) => {
+        let { form_data } = this.state;
+        form_data.jsonDailyCall.DoctorCode = doctor.DoctorCode;
+        form_data.jsonDailyCall.SelectedDoctorName = doctor.DoctorName;
+        form_data.jsonDailyCall.SelectedDoctorAddress = doctor.DoctorAddress
+        this.setState({
+            form_data
+        }, () => console.log(this.state.form_data))
+    }
 
     render() {
         const {
@@ -378,10 +454,16 @@ class CallExecution extends Component {
                                 toggler={() => this.onToggle('isKeyInfoCollapsed')}
                                 title="Key Call Information"
                                 Body={<Tab
+                                        setDoctor={this.setDoctor}
+                                        setMio={this.setMio}
+                                        handleDatePicked={this.handleDatePicked}
                                         updateDetailingSeconds={this.updateDetailingSeconds}
-                                        existingCall={true}
-                                        onCallReasonChange={this.onCallReasonChange}
+                                        existingCall={false}
+                                        onCallReasonChange={this.onChangeAdditionalInfoAttributes}
                                         navigate={this.props.navigation}
+                                        files={this.state.selectedFiles}
+                                        data={this.state.form_data.jsonDailyCall}
+                                        errors={this.state.errors}
                                     />}  
                                 HeaderIcon={<FontAwesomeIcon name="info-circle" size={40} color={brandColors.green} />} />
                             <Collapse
@@ -393,8 +475,8 @@ class CallExecution extends Component {
                                     <AdditionalInfo
                                         existingCall={false}
                                         showGifts={this.showGifts}
-                                        onChangeAdditionalNotes={this.onChangeAdditionalNotes}
-                                        onChangeCallRemarks={this.onChangeCallRemarks}
+                                        onChangeAdditionalNotes={this.onChangeAdditionalInfoAttributes}
+                                        onChangeCallRemarks={this.onChangeAdditionalInfoAttributes}
                                         selectedProducts={this.state.selectedProducts}
                                         selectedSamples={this.state.selectedSamples}
                                         showProducts={this.showProductsOverlay}
@@ -448,7 +530,8 @@ const mapStateToProps = state => {
         user: getUser(state),
         submit_data: getSubmitData(state),
         history: getHistory(state),
-        submitLoader: getSubmitLoader(state)
+        submitLoader: getSubmitLoader(state),
+        doctors: getDoctors(state),
     }
 }
 
@@ -457,9 +540,13 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     submitCallSingle: submitCallSingle,
     getDocHistory: getDocHistory,
     submitOfflineCall: submitOfflineCall,
+    getDoctorsByEmployee: getDoctorByEmployeeId,
+    getReportingEmployees: getEmployees,
+    getUnplannedCalls: getTodayUnplannedCalls,
+    getAllProducts: getProductsWithSamples,
 }, dispatch)
 
-export default connect(mapStateToProps, mapDispatchToProps)(CallExecution)
+export default connect(mapStateToProps, mapDispatchToProps)(CallExecutionUnplanned)
 
 const styles = {
     InputContainer: {

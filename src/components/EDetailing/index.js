@@ -85,7 +85,7 @@ const EDetailing = ({
                 ? <FlatList
                     style={{width: '80%'}}
                     keyExtractor={() => RandomInteger()}
-                    data={files[0]}
+                    data={files}
                     renderItem={renderItem}
                 />
                 : <ListItem

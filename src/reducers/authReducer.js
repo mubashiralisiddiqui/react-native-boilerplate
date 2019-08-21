@@ -1,9 +1,11 @@
-import {LOGIN, LOGIN_CHECK, LOGIN_FAILURE, LOGIN_SUCCESS} from '../actions/types'
+import {LOGIN, LOGIN_CHECK, LOGIN_FAILURE, LOGIN_SUCCESS, GET_REPORTING_EMPLOYEES, GET_REPORTING_EMPLOYEES_SUCCESS, GET_REPORTING_EMPLOYEES_FAILURE} from '../actions/types'
+import { RSM_ROLE_ID, SPO_ROLE_ID } from '../constants';
 
 const initialState = {
     user: {},
     loading: false,
-    error: ''
+    error: '',
+    employees: [],
 };
 
 export const authReducer = (state = initialState, action) => {
@@ -32,11 +34,30 @@ export const authReducer = (state = initialState, action) => {
               ...state
           }
       }
+      case GET_REPORTING_EMPLOYEES: {
+          return {
+              ...state
+          }
+      }
+      case GET_REPORTING_EMPLOYEES_SUCCESS: {
+          return {
+              ...state,
+              employees: action.employees,
+          }
+      }
+      case GET_REPORTING_EMPLOYEES_FAILURE: {
+          return {
+              ...state
+          }
+      }
       default:
         return state;
     }
   }
 
   export const getLoginLoding = state => state.auth.loading
-  export const getLoginError = state => state.auth
-  export const getUser = state => {return state.auth.user}
+  export const getLoginError = state => state.auth.error
+  export const getUser = state => state.auth.user
+  export const getEmployees = state => state.auth.employees
+  export const isRSM = state => state.auth.user.RoleId == RSM_ROLE_ID;
+  export const isSPO = state => state.auth.user.RoleId == SPO_ROLE_ID;

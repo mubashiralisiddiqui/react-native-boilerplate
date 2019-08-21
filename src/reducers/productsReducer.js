@@ -28,5 +28,8 @@ export const productsReducer = (state = initialState, action) => {
 }
 
 // export const getCallsLoading = state => state.loading;
-export const getProducts = state => {return state.products.products};
-// export const getProductsError = state => state.error;
+export const getProducts = state => state.products.products;
+export const getSamples = state => {
+    let samples = state.products.products.map(product => product.Products)
+    return _.concat(...samples);
+}

@@ -1,7 +1,11 @@
+/**
+ * @file Container component that manages the online execution of daily call.
+ * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+ */
 import React, { Component } from 'react';
 import { View, PermissionsAndroid } from 'react-native'
 import { CallPlanHeader } from '../../components/Headers'
-import { navigationOption, brandColors, getToken, parse, stringify } from '../../constants'
+import { navigationOption, brandColors, getToken, parse, stringify, getDistance } from '../../constants'
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import { 
     Collapse,
@@ -15,7 +19,7 @@ import {
 } from '../../components';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { getDocHistory } from '../../services/historyService';
-import { submitCallSingle, getTodayCalls, submitOfflineCall } from '../../services/callServices';
+import { submitCallSingle, getTodayCalls, submitOfflineCall, getTodayUnplannedCalls } from '../../services/callServices';
 import { Tab } from '..';
 import { callExecution } from '../../defaults';
 import { connect } from 'react-redux';
@@ -29,9 +33,23 @@ import { getHistory } from '../../actions/history';
 import { NetworkContext } from '../../components/NetworkProvider'
 import GiftsModal from '../../components/GiftsModal';
 import ProductsSamplesModal from '../../components/ProductsSamplesModal';
+import { getProductsWithSamples } from '../../services/productService';
 
+/**
+ * @class CallExecution
+ * @classdesc This is a container class that handles that manages the centeralised state for
+ *            call execution screen
+ * @extends {Component}
+ * 
+ * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+ */
 class CallExecution extends Component {
+    /**
+     * @static
+     * @memberof CallExecution
+     */
     static contextType = NetworkContext
+    static navigationOptions = ({ navigation }) => (navigationOption(navigation, 'Call Details'))
     state = {
         isKeyInfoCollapsed: true,
         isAdditionalInfoCollapsed: false,
@@ -77,25 +95,42 @@ class CallExecution extends Component {
         form_data: parse(stringify(callExecution)),
     }
 
+    /**
+     * @name onClickProduct
+     * @function
+     * @memberof CallExecution
+     * @description Manages the state changes when user click to select a product
+     * @param { number } productTemplateId - Selected product's ID
+     * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+     */
     onClickProduct = (productTemplateId) => {
         if(this.state.selectedProductId == null || this.state.selectedProductId == 0) {
-            // console.log(this.state.selectedProductId, this.state.selectedProducts, this.state.selectedProducts[productTemplateId], 'dimagh out')
             const samples = this.props.products.filter(product => product.ProductTemplateId == productTemplateId)[0]
             this.setState({
                 selectedProductId: productTemplateId,
                 samples: samples.Products,
             })
-        } else {
-            this.setState({
-                overlayError: 'You can not select another product.'
-            })
-            setTimeout(() => {
-                this.setState({
-                    overlayError: ''
-                })
-            }, 5000)
+            return;
         }
+        this.setState({
+            overlayError: 'You can not select another product.'
+        }, () => setTimeout(() => {
+            this.setState({
+                overlayError: ''
+            })
+        }, 5000))
     }
+
+    /**
+     * @name onClickSample
+     * @function
+     * @description Manages the state changes when user click to select a sample, remember Product => Sample
+     * @param {number} productId - ID of the clicked sample
+     * @param {Boolean} IsReminder - Distinguish in between a reminder or regular product.
+     * @memberof CallExecution
+     * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+     * @todo Refactor this long shit
+     */
     onClickSample = (productId, IsReminder) => {
         var selectedProduct = null;
         var productTemplate = null;
@@ -116,15 +151,15 @@ class CallExecution extends Component {
             delete selectedProducts[alreadySelectedProductAtThisPosition[0].ProductId];
             delete selectedSamples[alreadySelectedProductAtThisPosition[0].ProductId];
         }
-        // if(selectedProducts[productTemplate.ProductTemplateId] == undefined) {
-        //     selectedProducts[productTemplate.ProductTemplateId] = {
-        //         ProductId: productTemplate.ProductTemplateId,
-        //         name: productTemplate.ProductTemplateName,
-        //         DetailingSeconds: 0,
-        //         isReminder: true,
-        //         reminderPosition: reminderPosition,
-        //     }
-        // }
+        if(selectedProducts[productTemplate.ProductTemplateId] == undefined) {
+            selectedProducts[productTemplate.ProductTemplateId] = {
+                ProductId: productTemplate.ProductTemplateId,
+                name: productTemplate.ProductTemplateName,
+                DetailingSeconds: 0,
+                isReminder: false,
+                reminderPosition: reminderPosition,
+            }
+        }
 
         selectedSamples[productTemplate.ProductTemplateId] = {
             IsReminder: (selectedProducts[productTemplate.ProductTemplateId].IsReminder || false),
@@ -139,6 +174,14 @@ class CallExecution extends Component {
         })
     }
 
+    /**
+     * @name handleOverlayClose
+     * @function
+     * @description Manages the state when the user closes the Product and Sample selection Modal
+     * @memberof CallExecution
+     * @param { Boolean } unselect - Whther the sample needs to get unselected or not
+     * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+     */
     handleOverlayClose = (unselect = false) => {
         if(unselect) {
             let selectedSamples = this.state.selectedSamples;
@@ -161,6 +204,13 @@ class CallExecution extends Component {
         )
     }
 
+    /**
+     * @name setSampleCount
+     * @function
+     * @description Manages the state when user tries to add sample count
+     * @this Component
+     * @memberof CallExecution
+     */
     setSampleCount = (number, type, productTemplateId) => {
         let allSamples = this.state.selectedSamples;
         let sample = allSamples[productTemplateId];
@@ -170,9 +220,29 @@ class CallExecution extends Component {
             selectedSamples: allSamples,
         })
     }
-    onToggle = (section) => {
+
+    /**
+     * @name onToggleCollapsedElement
+     * @function
+     * @description Manages the state when user tries to select section
+     * @this Component
+     * @param {string} section - section name that needs to be toggled
+     * @memberof CallExecution
+     * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+     */
+    onToggleCollapsedElement = (section) => {
         this.setState({[section]: !this.state[section]})
     }
+    
+    /**
+     * @name showProductsOverlay
+     * @function
+     * @description Manages the state that show/hide the product and sample selection overlays
+     * @this Component
+     * @param {number} selectedProduct - ID of the selected product (in case of Daily Call Product)
+     * @memberof CallExecution
+     * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+     */
     showProductsOverlay = (selectedProduct, reminderPosition = 0) => {
         this.setState({
             overlay: true,
@@ -183,6 +253,16 @@ class CallExecution extends Component {
                 : [] 
         })
     }
+    
+    /**
+     * @name requestLocationPermission
+     * @async
+     * @function
+     * @description Gather the Latitude and Longitude of the current position of user and sets the value to state accordingly
+     * @this CallExecution
+     * @memberof CallExecution
+     * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+     */
     requestLocationPermission = async () => {
         try {
             const granted = await PermissionsAndroid.request(
@@ -190,19 +270,22 @@ class CallExecution extends Component {
                 {
                     'title': 'Location Access Required',
                     'message': 'This App needs to Access your location'
-                })
-            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                this.callLocation();
-            } else {
-                alert("Permission Denied");
-            }
+                }
+            )
+
+            granted === PermissionsAndroid.RESULTS.GRANTED
+            ? this.callLocation()
+            : alert('You must allow this app to access your location. Would you like to')
+
         } catch (err) {
             alert("err",err);
             console.warn(err)
         }
     }
-    static navigationOptions = ({ navigation }) => (navigationOption(navigation, 'Call Details'))
  
+    /**
+     * @inheritdoc
+     */
     async componentDidMount() {
         this.context.hideRefresh();
         let dailyCall = parse(stringify(callExecution));
@@ -250,31 +333,22 @@ class CallExecution extends Component {
         
     }
 
-    onChangeCallRemarks = (remarks) => {
+    /**
+     * @name onChangeAdditionalInfoAttributes
+     * @function
+     * @description Manages the state changes of three different fields, Call Reason, Call Remarks and Additional Notes
+     * @this Component
+     * @param { string } field - field key for state change
+     * @param { string } value - value that needs to be set for the provided key (as field)
+     * @memberof CallExecution
+     * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+     */
+    onChangeAdditionalInfoAttributes = (field, value) => {
         let dailyCall = this.state.form_data
-        dailyCall.jsonDailyCall.Remarks = remarks;
+        dailyCall.jsonDailyCall[field] = value
         this.setState({
-            form_data: dailyCall,
+            form_data: dailyCall
         })
-        console.log(this.state, 'Call Remarks changed')
-    }
-
-    onChangeAdditionalNotes = (text) => {
-        let dailyCall = this.state.form_data
-        dailyCall.jsonDailyCall.FeedBack = text;
-        this.setState({
-            form_data: dailyCall,
-        })
-        console.log(this.state, 'additional notes changed')
-    }
-
-    onCallReasonChange = (reason) => {
-        let dailyCall = this.state.form_data;
-        dailyCall.jsonDailyCall.CallReason = reason
-        this.setState({
-            form_data: dailyCall,
-        })
-        console.log(this.state, 'call reason changed')
     }
 
     callLocation(){
@@ -306,11 +380,26 @@ class CallExecution extends Component {
             this.setState({ form_data: dailyCall, fetchingLocation: false });
         });
     }
+
+
+    /**
+     * @inheritdoc
+     */
     componentWillUnmount = () => {
         navigator.geolocation.clearWatch(this.watchID);
         this.context.showRefresh();
      }
 
+    /**
+     * @name submitCall
+     * @async
+     * @function
+     * @description Handler that will be called when user clicks on the call execution button
+     *              It compose the request payload necessary for the API call
+     * @this CallExecution
+     * @memberof CallExecution
+     * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+     */
     submitCall = async () => {
         await this.requestLocationPermission()
         let dailyCall = this.state.form_data;
@@ -322,25 +411,50 @@ class CallExecution extends Component {
             alert('Unable to capture your location, please try to move, refresh the application or open your location service if it is not.');
             return;
         }
+        // dailyCall.jsonDailyCall.Distance = getDistance(this.state.latitude, this.state.longitude);
 
         if(this.context.state.isConnected) {
-            this.props.submitCallSingle(dailyCall).then(response => {
-                if(response == 1) this.props.navigation.goBack();
-            }).catch(console.warn)
-        } else {
-            this.submitOffline(dailyCall).then(response => {
-                console.log(response)
-            })
+            const response = await this.props.submitCallSingle(dailyCall)
+            if(response == 1) {
+                this.props.getUnplannedCalls({
+                    EmployeeId: this.props.user.EmployeeId,
+                    Token: getToken,
+                }, true)
+                this.props.getAllProducts({
+                    EmployeeId: this.props.user.EmployeeId,
+                    Token: getToken,
+                }, true)
+                this.props.navigation.goBack();
+            }
+            return;
         }
-
+        this.submitOffline(dailyCall)
     }
 
-    submitOffline = (params) => {
-        this.props.submitOfflineCall(params).then(response => {
-            this.props.navigation.goBack()
-        })
+    /**
+     * @name submitOffline
+     * @async
+     * @function
+     * @description Handler that will be called if the user does not have the internet connection
+     * @this Component
+     * @memberof CallExecution
+     * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+     */
+    submitOffline = async (params) => {
+        const response = await this.props.submitOfflineCall(params)
+        this.props.navigation.goBack()        
     }
 
+    /**
+     * @name onClickGift
+     * @function
+     * @description Manages the state changes that appears when the user select the gift item
+     * @this Component
+     * @param { number } giftId - ID of the clicked gift item
+     * @param { number } number - quanity number of the clicked gift item
+     * @memberof CallExecution
+     * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+     */
     onClickGift = (giftId, number = 0) => {
         let dailyCall = this.state.form_data
         const selected = dailyCall.jsonGiftDetail
@@ -353,13 +467,30 @@ class CallExecution extends Component {
             form_data: dailyCall
         })
     }
-
+    
+    /**
+     * @name showGifts
+     * @function
+     * @description Handler to make gift selection modal appear on the screen
+     * @this Component
+     * @memberof CallExecution
+     * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+     */
     showGifts = () => {
         this.setState({
             giftsOverlay: true
         })
     }
 
+    /**
+     * @name hideGifts
+     * @function
+     * @description It will be called when the user closes the gift selection modal
+     * @param { Boolean } unselect - Decide whether to unselect the selected gift item while closing
+     * @this Component
+     * @memberof CallExecution
+     * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+     */
     hideGifts = (unselect = false) => {
         if(unselect) {
             let dailyCall = this.state.form_data;
@@ -378,6 +509,16 @@ class CallExecution extends Component {
         })
     }
 
+    /**
+     * @name updateDetailingSeconds
+     * @function
+     * @description It will update the time duration E-detailing has been displayed
+     * @param { Number } fileId - File ID of the selected file
+     * @param { Number } seconds - Duration in seconds
+     * @this Component
+     * @memberof CallExecution
+     * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+     */
     updateDetailingSeconds = (fileId, seconds) => {
         const { eDetailing } = this.state
         if(eDetailing[fileId] == undefined) {
@@ -397,6 +538,9 @@ class CallExecution extends Component {
         );
     }
 
+    /**
+     * @inheritdoc
+     */
     render() {
         const {
             isKeyInfoCollapsed,
@@ -419,26 +563,26 @@ class CallExecution extends Component {
                             </View>
                             <Collapse
                                 isCollapsed={isKeyInfoCollapsed}
-                                toggler={() => this.onToggle('isKeyInfoCollapsed')}
+                                toggler={() => this.onToggleCollapsedElement('isKeyInfoCollapsed')}
                                 title="Key Call Information"
                                 Body={<Tab
                                         updateDetailingSeconds={this.updateDetailingSeconds}
                                         existingCall={true}
-                                        onCallReasonChange={this.onCallReasonChange}
+                                        onCallReasonChange={this.onChangeAdditionalInfoAttributes}
                                         navigate={this.props.navigation}
                                     />}  
                                 HeaderIcon={<FontAwesomeIcon name="info-circle" size={40} color={brandColors.green} />} />
                             <Collapse
                                 isCollapsed={isAdditionalInfoCollapsed}
-                                toggler={() => this.onToggle('isAdditionalInfoCollapsed')}
+                                toggler={() => this.onToggleCollapsedElement('isAdditionalInfoCollapsed')}
                                 title="Additional Information"
                                 HeaderIcon={<FontAwesomeIcon name="plus-square" size={40} color={brandColors.green} />}
                                 Body={
                                     <AdditionalInfo
                                         existingCall={true}
                                         showGifts={this.showGifts}
-                                        onChangeAdditionalNotes={this.onChangeAdditionalNotes}
-                                        onChangeCallRemarks={this.onChangeCallRemarks}
+                                        onChangeAdditionalNotes={this.onChangeAdditionalInfoAttributes}
+                                        onChangeCallRemarks={this.onChangeAdditionalInfoAttributes}
                                         selectedProducts={this.state.selectedProducts}
                                         selectedSamples={this.state.selectedSamples}
                                         showProducts={this.showProductsOverlay}
@@ -454,7 +598,7 @@ class CallExecution extends Component {
                                     existingCall && !!this.props.history.history ?
                                     <Collapse
                                         isCollapsed={isDocHistoryCollapsed}
-                                        toggler={() => this.onToggle('isDocHistoryCollapsed')}
+                                        toggler={() => this.onToggleCollapsedElement('isDocHistoryCollapsed')}
                                         title="Doctor Visit History"
                                         Body={ <DoctorHistory /> }
                                         HeaderIcon={<FontAwesomeIcon name="history" size={40} color="#fff" />}/>
@@ -487,6 +631,15 @@ class CallExecution extends Component {
         )
     }
 }
+
+/**
+ * @const function mapStateToProps
+ * @description It will map the redux state to this component
+ * @param {*} state
+ * @returns Object
+ * @memberof CallExecution
+ * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+ */
 const mapStateToProps = state => {
     return {
         products: getProducts(state),
@@ -498,12 +651,23 @@ const mapStateToProps = state => {
     }
 }
 
+/**
+ * @const function mapDispatchToProps
+ * @description It will actionable redux methods to this component
+ * @param {*} dispatch
+ * @returns Object
+ * @memberof CallExecution
+ * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+ */
 const mapDispatchToProps = dispatch => bindActionCreators({
     getTodayCalls: getTodayCalls,
     submitCallSingle: submitCallSingle,
     getDocHistory: getDocHistory,
     submitOfflineCall: submitOfflineCall,
+    getUnplannedCalls: getTodayUnplannedCalls,
+    getAllProducts: getProductsWithSamples,
 }, dispatch)
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(CallExecution)
 

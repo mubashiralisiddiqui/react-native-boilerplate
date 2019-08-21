@@ -13,7 +13,6 @@ const ReminderField = ({
     selectedProduct,
     selectedSamples,
 }) => {
-    console.log('these are selected samples from reminder field', selectedSamples)
     const onFocus = (selectedProduct, position) => {
         Keyboard.dismiss();
         NativeModules.KeyboardFunctionalities.hideKeyboard()
@@ -25,7 +24,6 @@ const ReminderField = ({
                 rangeArray(times).map((value, key) => {
                     let product = selectedProduct.filter(product => product.reminderPosition && product.reminderPosition == (key + 1))
                     if(product.length > 0) product = product[0];
-                    console.log(product)
 
                     return (
                         <View key={ key + RandomInteger() } style={{width: "95%", paddingBottom: 10}}>

@@ -10,9 +10,9 @@ import {
     dateFormatRegexCalls,
     removeStorageMultiple
 } from '../constants'
-import { getCalls, getCallsFailure, getCallsSuccess, submitCallSuccess, submitCall, submitCallFailure } from '../actions/calls'
+import { getCalls, getCallsFailure, getCallsSuccess, submitCallSuccess, submitCall, submitCallFailure, getUnplannedCalls, getUnplannedCallsFailure, getUnplannedCallsSuccess } from '../actions/calls'
 import moment from 'moment'
-
+// FIXME: refactor this file
 export const getTodayCalls = (params, refresh = false) => {
     return async (dispatch) => {
         
@@ -31,6 +31,7 @@ export const getTodayCalls = (params, refresh = false) => {
                    
                     return response
                 }
+                dispatch(getCallsSuccess([]))
                 return [];
             }).catch(error => {
                 dispatch(getCallsFailure(error))
@@ -138,7 +139,7 @@ export const submitOfflineCall = (params) => {
         // set the execution date just to have a record to show to user when he executed the call
         params.call_execution_date = moment().format('YYYY-MM-DD hh:mm:ss')
         // set the params to store in offline calls
-        unSyncedData[jsonParams.DailyCallId] = params
+        unSyncedData[jsonParams.Epoch] = params
         
         dispatch(submitCallFailure('No Internet Connectivity'))
         setStorage('offlineCalls', stringify(unSyncedData));
@@ -164,4 +165,23 @@ export const removeOldStorageEnteries = (error, keys, regex) => {
 export const updatedCalls = (calls) => dispatch => {
     dispatch(getCallsSuccess(calls))
     return 1;
+}
+
+export const getTodayUnplannedCalls = (params, refresh = false) => async (dispatch) => {
+    dispatch(getUnplannedCalls())
+    let dataFromStorage = await getStorage(`unplannedCalls${todayDate()}`)
+    if(dataFromStorage == null || refresh == true) {
+        return get(`getTodayUnplannedExecutedCall`, {params})
+        .then(response => {
+            setStorage(`unplannedCalls${todayDate()}`);
+            dispatch(getUnplannedCallsSuccess(response))
+            return response
+        })
+        .catch(error => {
+            dispatch(getUnplannedCallsFailure(error))
+        })
+    }
+    dataFromStorage = parse(dataFromStorage)
+    dispatch(getUnplannedCallsSuccess(dataFromStorage))
+    return dataFromStorage
 }
