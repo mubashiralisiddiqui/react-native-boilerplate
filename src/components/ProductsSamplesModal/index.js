@@ -60,9 +60,9 @@ const ProductsSamplesModal = ({
             titleStyle={titleStyle}
             bottomDivider
             disabled={item.OnHandQty == 0}
-            disabledStyle={{ backgroundColor: '' }}
+            disabledStyle={{ backgroundColor: '#ece8e7' }}
             onPress={() => onPressSampleHanlder(item.ProductId)}
-            rightElement={selected[0] !== undefined ? <Counter start={selected[0].SampleQty} max={10} onChange={(number, type) => setSamplesCountHandler(number, type, item.ProductTemplateId)} /> : null}
+            rightElement={selected[0] !== undefined ? <Counter start={selected[0].SampleQty} max={item.OnHandQty} onChange={(number, type) => setSamplesCountHandler(number, type, item.ProductTemplateId)} /> : null}
             title={item.ProductName} />)
     }
 

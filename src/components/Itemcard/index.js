@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Dimensions } from 'react-native';
 import { Card, Button, Badge } from 'react-native-elements'
-import { brandColors, RandomInteger, normalizeFont } from '../../constants';
+import { brandColors, RandomInteger } from '../../constants';
 
 const ItemCard = ({
     name,
@@ -103,7 +103,7 @@ const getStyles = (status, width) => {
             width: width/6
         },
         text: {
-            fontSize: normalizeFont(18),
+            fontSize: 18,
             color: !status ? brandColors.darkBrown : '#aaa',
         },
         cardContainer: {

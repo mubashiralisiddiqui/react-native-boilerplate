@@ -293,6 +293,16 @@ class CallExecutionUnplanned extends Component {
             alert('Unable to capture your location, please try to move, refresh the application or open your location service if it is not.');
             return;
         }
+        if(dailyCall.jsonDailyCall.DoctorLat != 0 && dailyCall.jsonDailyCall.DoctorLong != 0) {
+            const distance = getDistance(
+                dailyCall.jsonDailyCall.DoctorLat,
+                dailyCall.jsonDailyCall.DoctorLong,
+                dailyCall.jsonDailyCall.Lattitude,
+                dailyCall.jsonDailyCall.Longitude,
+            )
+            dailyCall.jsonDailyCall.Distance = distance;
+            dailyCall.jsonDailyCall.IsInRange = Number(distance) < 200
+        }
         const [errors, shouldSubmit] = validate(this.state.validations, dailyCall.jsonDailyCall);
         if(shouldSubmit) {
             if(this.context.state.isConnected) {
@@ -423,7 +433,9 @@ class CallExecutionUnplanned extends Component {
         let { form_data } = this.state;
         form_data.jsonDailyCall.DoctorCode = doctor.DoctorCode;
         form_data.jsonDailyCall.SelectedDoctorName = doctor.DoctorName;
-        form_data.jsonDailyCall.SelectedDoctorAddress = doctor.DoctorAddress
+        form_data.jsonDailyCall.SelectedDoctorAddress = doctor.DoctorAddress;
+        form_data.jsonDailyCall.DoctorLat = doctor.Latitude
+        form_data.jsonDailyCall.DoctorLong = doctor.Longitude
         this.setState({
             form_data
         }, () => console.log(this.state.form_data))

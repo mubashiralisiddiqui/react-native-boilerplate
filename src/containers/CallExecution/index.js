@@ -313,6 +313,8 @@ class CallExecution extends Component {
         dailyCall.jsonDailyCall.DoctorCode = callData.Doctor.DoctorCode
         dailyCall.jsonDailyCall.PlanDetailId = callData.PlanDetailId
         dailyCall.jsonDailyCall.DeviceDateTime = moment().format('YYYY-MM-DD hh:mm:ss')
+        dailyCall.jsonDailyCall.DoctorLat = callData.Doctor.Latitude;
+        dailyCall.jsonDailyCall.DoctorLong = callData.Doctor.Longitude;
         // dailyCall.jsonDailyCall.EmployeeId = moment().format('YYYY-MM-DD hh:mm:ss')
         dailyCall.EmployeeId = this.props.user.EmployeeId
         dailyCall.DailyCallId = callData.PlanDetailId
@@ -410,6 +412,16 @@ class CallExecution extends Component {
         if(dailyCall.jsonDailyCall.Lattitude == '0.0' || dailyCall.jsonDailyCall.Longitude == '0.0'){
             alert('Unable to capture your location, please try to move, refresh the application or open your location service if it is not.');
             return;
+        }
+        if(dailyCall.jsonDailyCall.DoctorLat != 0 && dailyCall.jsonDailyCall.DoctorLong != 0) {
+            const distance = getDistance(
+                dailyCall.jsonDailyCall.DoctorLat,
+                dailyCall.jsonDailyCall.DoctorLong,
+                dailyCall.jsonDailyCall.Lattitude,
+                dailyCall.jsonDailyCall.Longitude,
+            )
+            dailyCall.jsonDailyCall.Distance = distance;
+            dailyCall.jsonDailyCall.IsInRange = Number(distance) < 200
         }
         // dailyCall.jsonDailyCall.Distance = getDistance(this.state.latitude, this.state.longitude);
 

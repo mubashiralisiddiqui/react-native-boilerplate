@@ -50,27 +50,51 @@ export const navigationOptions = [
     {
         name: 'call_plans',
         label: 'Call Plans',
-        navigateTo: 'CallPlans'
+        navigateTo: 'CallPlans',
+        icon: 'calendar-check',
+        iconType: 'FontAwesome5'
     },{
         name: 'unplanned_visits',
         label: 'Unplanned Visits',
         navigateTo: 'CallExecutionUnplanned',
+        icon: 'calendar-times',
+        iconType: 'FontAwesome5'
     },{
         name: 'add_doctor',
         label: 'Add New Doctor',
         navigateTo: 'NewDoctor',
+        icon: 'clinic-medical',
+        iconType: 'FontAwesome5'
     },{
         name: 'sample_details',
         label: 'Sample Details',
         navigateTo: 'Samples',
+        icon: 'medicinebox',
+        iconType: 'AntDesign'
     },{
         name: 'change_doctor_location',
         label: 'Change Dr Location',
-        navigateTo: 'DoctorLocation'
+        navigateTo: 'DoctorLocation',
+        icon: 'location-arrow',
+        iconType: 'FontAwesome5'
+    },{
+        name: 'rsm_planner',
+        label: 'Call Planner',
+        // navigateTo: 'NewDoctor',
+        icon: 'chart-pie',
+        iconType: 'FontAwesome5'
+    },{
+        name: 'expense_manager',
+        label: 'Expense Manager',
+        // navigateTo: 'DoctorLocation',
+        icon: 'cash-register',
+        iconType: 'FontAwesome5'
     },{
         name: 'logout',
         label: 'Logout',
-        navigateTo: 'Login'
+        navigateTo: 'Login',
+        icon: 'logout',
+        iconType: 'MaterialCommunityIcon',
     },
 ];
 

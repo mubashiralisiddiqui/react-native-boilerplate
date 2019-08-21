@@ -32,6 +32,10 @@ export const callExecution = {
         SelectedEmployeeName: '',
         SelectedDoctorName: '',
         SelectedDoctorAddress: '',
+        IsInRange: false,
+        Distance: 0,
+        DoctorLat: 0,
+        DoctorLong: 0,
     },
     jsonDailyCallDetail: [
         // {

@@ -12,6 +12,9 @@ import {
 import { Icon } from 'react-native-elements';
 import { ImageHeader } from '../components';
 import { navigationOptions, brandColors, RandomInteger } from '../constants'
+import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
+import AntDesignIcon from 'react-native-vector-icons/AntDesign';
+import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 class NavigationMenu extends Component {
     state = {
@@ -41,9 +44,33 @@ class NavigationMenu extends Component {
         );
     }
 
+    getIcon = ({icon, type}) => {
+        switch(type) {
+            case 'FontAwesome5': {
+                return (
+                    <FontAwesome5Icon name={icon} size={20} color={brandColors.darkBrown} />
+                )
+            }
+            case 'AntDesign': {
+                return (
+                    <AntDesignIcon name={icon} size={20}  color={brandColors.darkBrown} />
+                )
+            }
+            case 'MaterialCommunityIcon': {
+                return (
+                    <MaterialCommunityIcon name={icon} size={20}  color={brandColors.darkBrown} />
+                )
+            }
+            default: {
+                return null;
+            }
+        }
+    }
+
 
     render() {
         const { navigate } = this.props.navigation;
+        const CustomIcon = this.getIcon;
         return (
             <View style={styles.container}>
                 <ScrollView style={{ marginTop: 0, width: '100%' }}>
@@ -58,7 +85,8 @@ class NavigationMenu extends Component {
                                 onPress={() => option.navigateTo === 'Login' ? this.logout() : option.navigateTo && navigate(option.navigateTo)}
                                 style={styles.section}
                             >
-                                <Icon key={RandomInteger()} name='schedule' color={brandColors.darkBrown} />
+                                <CustomIcon  icon={ option.icon || '' } type={option.iconType || ''} />
+                                {/* <Icon key={RandomInteger()} name='schedule' color={brandColors.darkBrown} /> */}
                                 <View key={RandomInteger()} style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 5 }}>
                                     <Text key={RandomInteger()} style={styles.sectionHeadingStyle}>{option.label}</Text>
                                 </View>
