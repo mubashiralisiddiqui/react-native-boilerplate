@@ -1,9 +1,13 @@
+/**
+ * @file Container component that manages the online execution of daily call.
+ * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+ */
 import React, { Component } from 'react';
-import { View, PermissionsAndroid, ScrollView, InteractionManager } from 'react-native'
+import { View, PermissionsAndroid, ScrollView, Alert } from 'react-native'
 import { CallPlanHeader } from '../../components/Headers'
-import { navigationOption, brandColors, parse, stringify, getToken, getFilesFromProducts, validate } from '../../constants'
+import { navigationOption, brandColors, getToken, parse, stringify, getDistance } from '../../constants'
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import {
+import { 
     Collapse,
     AdditionalInfo,
     DoctorHistory,
@@ -13,12 +17,13 @@ import {
     ScreenLoader,
     CallExecutionButton,
 } from '../../components';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { getDocHistory } from '../../services/historyService';
 import { submitCallSingle, getTodayCalls, submitOfflineCall, getTodayUnplannedCalls } from '../../services/callServices';
 import { Tab } from '..';
 import { callExecution } from '../../defaults';
 import { connect } from 'react-redux';
-import { getProducts, getSamples } from '../../reducers/productsReducer';
+import { getProducts } from '../../reducers/productsReducer';
 import { bindActionCreators } from 'redux'
 import moment from 'moment';
 import { getGifts } from '../../reducers/giftsReducer';
@@ -27,18 +32,25 @@ import { getSubmitData, getSubmitLoader } from '../../reducers/callsReducers';
 import { getHistory } from '../../actions/history';
 import { NetworkContext } from '../../components/NetworkProvider'
 import GiftsModal from '../../components/GiftsModal';
-import { ProductsModal, SamplesModal } from '../../components/ProductsSamplesModal';
-import { getDoctorByEmployeeId } from '../../services/doctor';
-import { getDoctors } from '../../reducers/doctorReducer';
-import { getEmployees } from '../../services/auth';
+import ProductsSamplesModal from '../../components/ProductsSamplesModal';
 import { getProductsWithSamples } from '../../services/productService';
 import { RFValue } from 'react-native-responsive-fontsize';
 
-class CallExecutionUnplanned extends Component {
+/**
+ * @class CallExecution
+ * @classdesc This is a container class that handles that manages the centeralised state for
+ *            call execution screen
+ * @extends {Component}
+ * 
+ * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+ */
+class CallExecution extends Component {
+    /**
+     * @static
+     * @memberof CallExecution
+     */
     static contextType = NetworkContext
-    static navigationOptions = ({ navigation }) => (
-        navigationOption(navigation, 'Unplanned Call Details')
-    )
+    static navigationOptions = ({ navigation }) => (navigationOption(navigation, 'Call Details'))
     state = {
         isKeyInfoCollapsed: true,
         isAdditionalInfoCollapsed: false,
@@ -49,6 +61,8 @@ class CallExecutionUnplanned extends Component {
         overlay: false,
         giftsOverlay: false,
         overlayError: '',
+        lat: '',
+        long: '',
         fetchingLocation: true,
         selectedProductId: 0, // This will be only set while opening the overlay, and unset while closing the overlay
         reminderPosition: 0, // This will be only set while opening the overlay, and unset while closing the overlay
@@ -80,60 +94,95 @@ class CallExecutionUnplanned extends Component {
             // }
         ],
         form_data: parse(stringify(callExecution)),
-        selectedFiles: [],
-        validations: {
-            DoctorCode: {
-                required: true,
-            }
-        },
-        errors: {
-            DoctorCode: '',
-        },
-        position: 0,
-        samplesOverlay: false,
-        isReminder: false,
     }
 
+    /**
+     * @name onClickProduct
+     * @function
+     * @memberof CallExecution
+     * @description Manages the state changes when user click to select a product
+     * @param { number } productTemplateId - Selected product's ID
+     * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+     */
     onClickProduct = (productTemplateId) => {
-        let { selectedProducts, position, isReminder, selectedSamples } = this.state
-        let oldSelected = _.findIndex(selectedProducts, {position, IsReminder: isReminder})
-        if(oldSelected > 0) {
-            delete selectedProducts[oldSelected]
-            delete selectedSamples[oldSelected]
-        }
-        const product = _.find(this.props.products, ['ProductTemplateId', productTemplateId])
-        selectedProducts[productTemplateId] = {
-            ProductId: product.ProductTemplateId,
-            name: product.ProductTemplateName,
-            DetailingSeconds: 0,
-            IsReminder: this.state.isReminder,
-            position
+        if(this.state.selectedProductId == null || this.state.selectedProductId == 0) {
+            const samples = this.props.products.filter(product => product.ProductTemplateId == productTemplateId)[0]
+            this.setState({
+                selectedProductId: productTemplateId,
+                samples: samples.Products,
+            })
+            return;
         }
         this.setState({
-            selectedProducts,
-            selectedProductId: productTemplateId,
-            overlay: false,
-        })
+            overlayError: 'You can not select another product.'
+        }, () => setTimeout(() => {
+            this.setState({
+                overlayError: ''
+            })
+        }, 5000))
     }
-    onClickSample = (productId) => {
-        const selectedProduct = _.find(this.props.samples, ['ProductId', productId]);
-        const productTemplate = _.find(this.props.products, ['ProductTemplateId', selectedProduct.ProductTemplateId]);
 
-        let { selectedSamples } = this.state;
+    /**
+     * @name onClickSample
+     * @function
+     * @description Manages the state changes when user click to select a sample, remember Product => Sample
+     * @param {number} productId - ID of the clicked sample
+     * @param {Boolean} IsReminder - Distinguish in between a reminder or regular product.
+     * @memberof CallExecution
+     * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+     * @todo Refactor this long shit
+     */
+    onClickSample = (productId, IsReminder) => {
+        var selectedProduct = null;
+        var productTemplate = null;
+        this.props.products.map(product => {
+            product.Products.map(sample => {
+                if(sample.ProductId === productId) {
+                    selectedProduct = sample;
+                    productTemplate = product;
+                }
+            })
+        })
+        const { reminderPosition } = this.state;
+        let selectedProducts = this.state.selectedProducts
+        let selectedSamples = this.state.selectedSamples;
+        let alreadySelectedProductAtThisPosition = selectedProducts
+        .filter(product => (product.reminderPosition && product.reminderPosition == reminderPosition))
+        if(alreadySelectedProductAtThisPosition.length > 0) {
+            delete selectedProducts[alreadySelectedProductAtThisPosition[0].ProductId];
+            delete selectedSamples[alreadySelectedProductAtThisPosition[0].ProductId];
+        }
+        if(selectedProducts[productTemplate.ProductTemplateId] == undefined) {
+            selectedProducts[productTemplate.ProductTemplateId] = {
+                ProductId: productTemplate.ProductTemplateId,
+                name: productTemplate.ProductTemplateName,
+                DetailingSeconds: 0,
+                isReminder: false,
+                reminderPosition: reminderPosition,
+            }
+        }
 
         selectedSamples[productTemplate.ProductTemplateId] = {
-            IsReminder: this.state.isReminder,
+            IsReminder: (selectedProducts[productTemplate.ProductTemplateId].IsReminder || false),
             ProductId: productId,
             name: selectedProduct.ProductName,
             SampleQty: 0,
             ProductTemplateId: productTemplate.ProductTemplateId
         }
         this.setState({
-            selectedSamples
-        }, () => console.log(this.state.selectedSamples)
-        )
+            selectedProducts: selectedProducts,
+            selectedSamples: selectedSamples,
+        })
     }
 
+    /**
+     * @name handleOverlayClose
+     * @function
+     * @description Manages the state when the user closes the Product and Sample selection Modal
+     * @memberof CallExecution
+     * @param { Boolean } unselect - Whther the sample needs to get unselected or not
+     * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+     */
     handleOverlayClose = (unselect = false) => {
         if(unselect) {
             let selectedSamples = this.state.selectedSamples;
@@ -152,10 +201,17 @@ class CallExecutionUnplanned extends Component {
             overlay: false,
             selectedProductId: 0,
         }
-        // , () => console.log(this.state.selectedProducts, this.state.selectedFiles, this.state.selectedSamples)
+        // , () => console.log(this.state.selectedProducts, 'asd', this.state.selectedSamples)
         )
     }
 
+    /**
+     * @name setSampleCount
+     * @function
+     * @description Manages the state when user tries to add sample count
+     * @this Component
+     * @memberof CallExecution
+     */
     setSampleCount = (number, type, productTemplateId) => {
         let allSamples = this.state.selectedSamples;
         let sample = allSamples[productTemplateId];
@@ -165,63 +221,49 @@ class CallExecutionUnplanned extends Component {
             selectedSamples: allSamples,
         })
     }
+
+    /**
+     * @name onToggleCollapsedElement
+     * @function
+     * @description Manages the state when user tries to select section
+     * @this Component
+     * @param {string} section - section name that needs to be toggled
+     * @memberof CallExecution
+     * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+     */
     onToggleCollapsedElement = (section) => {
         this.setState({[section]: !this.state[section]})
     }
-    showProductsOverlay = (selectedProduct, position, type = 'planned') => {
+    
+    /**
+     * @name showProductsOverlay
+     * @function
+     * @description Manages the state that show/hide the product and sample selection overlays
+     * @this Component
+     * @param {number} selectedProduct - ID of the selected product (in case of Daily Call Product)
+     * @memberof CallExecution
+     * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+     */
+    showProductsOverlay = (selectedProduct, reminderPosition = 0) => {
         this.setState({
             overlay: true,
-            position: position,
+            reminderPosition: reminderPosition,
             selectedProductId: selectedProduct,
-            isReminder: type != 'planned'
-        }, () => console.log(this.state))
-    }
-    hideProductsOverlay = (unselect = false) => {
-        if(unselect) {
-            let { selectedProducts, selectedSamples, selectedProductId } = this.state
-            delete selectedProducts[selectedProductId];
-            delete selectedSamples[selectedProductId];
-            return this.setState({
-                selectedProducts,
-                selectedSamples,
-                overlay: false,
-                position: 0,
-                selectedProductId: 0,
-                isReminder: false
-            })
-        }
-        this.setState({
-            overlay: false,
-            position: 0,
-            selectedProductId: 0,
-            isReminder: false
+            samples: selectedProduct !== null
+                ? this.props.products.filter(product => product.ProductTemplateId == selectedProduct)[0].Products
+                : [] 
         })
     }
-    showSamplesOverlay = (selectedProduct, position) => {
-        this.setState({
-            samplesOverlay: true,
-            position,
-            selectedProductId: selectedProduct
-        })
-    }
-
-    handleSampleOverlayClose = (unselect = false) => {
-        if(unselect) {
-            let { selectedSamples, selectedProductId } = this.state
-            delete selectedSamples[selectedProductId];
-            this.setState({
-                selectedSamples,
-                samplesOverlay: false,
-                position: 0,
-                selectedProductId: 0,
-            });
-        }
-        this.setState({
-            samplesOverlay: false,
-            position: 0,
-            selectedProductId: 0,
-        })
-    }
+    
+    /**
+     * @name requestLocationPermission
+     * @async
+     * @function
+     * @description Gather the Latitude and Longitude of the current position of user and sets the value to state accordingly
+     * @this CallExecution
+     * @memberof CallExecution
+     * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+     */
     requestLocationPermission = async () => {
         try {
             const granted = await PermissionsAndroid.request(
@@ -229,33 +271,81 @@ class CallExecutionUnplanned extends Component {
                 {
                     'title': 'Location Access Required',
                     'message': 'This App needs to Access your location'
-                })
-            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                this.callLocation();
-            } else {
-                alert("Permission Denied");
-            }
+                }
+            )
+
+            granted === PermissionsAndroid.RESULTS.GRANTED
+            ? this.callLocation()
+            : alert('You must allow this app to access your location. Would you like to')
+
         } catch (err) {
             alert("err",err);
             console.warn(err)
         }
     }
  
-    componentDidMount() {
-        InteractionManager.runAfterInteractions(() => {
-
-        })
+    /**
+     * @inheritdoc
+     */
+    async componentDidMount() {
         this.context.hideRefresh();
-        this.requestLocationPermission()
         let dailyCall = parse(stringify(callExecution));
+        const callData = this.props.navigation.getParam('call_info')
+        let selectedProducts = [];
+        let eDetailings = [];
+        callData.Products.map(product => {
+            product.Files.map(file => {
+                eDetailings[file.DetailingFileId] = {
+                    DetailingFileId: file.DetailingFileId,
+                    Duration: 0,
+                }
+                return file;
+            })
+            selectedProducts[product.ProductId] = {
+                ProductId: product.ProductId,
+                name: product.ProductName,
+                DetailingSeconds: 0,
+                IsReminder: false,
+            }
+            return product;
+        })
+        dailyCall.jsonDailyCall.CallStartTime = moment(callData.VisitStart).format('YYYY-MM-DD hh:mm:ss')
+        dailyCall.jsonDailyCall.CallEndTime = moment(callData.VisitEnd).format('YYYY-MM-DD hh:mm:ss')
+        dailyCall.jsonDailyCall.DoctorCode = callData.Doctor.DoctorCode
+        dailyCall.jsonDailyCall.PlanDetailId = callData.PlanDetailId
         dailyCall.jsonDailyCall.DeviceDateTime = moment().format('YYYY-MM-DD hh:mm:ss')
+        dailyCall.jsonDailyCall.DoctorLat = callData.Doctor.Latitude;
+        dailyCall.jsonDailyCall.DoctorLong = callData.Doctor.Longitude;
+        // dailyCall.jsonDailyCall.EmployeeId = moment().format('YYYY-MM-DD hh:mm:ss')
         dailyCall.EmployeeId = this.props.user.EmployeeId
+        dailyCall.DailyCallId = callData.PlanDetailId
 
+        this.props.getDocHistory({
+            Token: getToken,
+            DoctorCode: callData.Doctor.DoctorCode,
+            EmployeeId: this.props.user.EmployeeId,
+        });
         this.setState({
             form_data: dailyCall,
-        })
+            selectedProducts: selectedProducts,
+            eDetailing: eDetailings,
+        }
+        // , () => {console.log('checking all the values set', this.state, this.context)}
+        )
+        this.requestLocationPermission()
+        
     }
 
+    /**
+     * @name onChangeAdditionalInfoAttributes
+     * @function
+     * @description Manages the state changes of three different fields, Call Reason, Call Remarks and Additional Notes
+     * @this Component
+     * @param { string } field - field key for state change
+     * @param { string } value - value that needs to be set for the provided key (as field)
+     * @memberof CallExecution
+     * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+     */
     onChangeAdditionalInfoAttributes = (field, value) => {
         let dailyCall = this.state.form_data
         dailyCall.jsonDailyCall[field] = value
@@ -293,16 +383,27 @@ class CallExecutionUnplanned extends Component {
             this.setState({ form_data: dailyCall, fetchingLocation: false });
         });
     }
+
+
+    /**
+     * @inheritdoc
+     */
     componentWillUnmount = () => {
         navigator.geolocation.clearWatch(this.watchID);
         this.context.showRefresh();
      }
 
+    /**
+     * @name submitCall
+     * @async
+     * @function
+     * @description Handler that will be called when user clicks on the call execution button
+     *              It compose the request payload necessary for the API call
+     * @this CallExecution
+     * @memberof CallExecution
+     * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+     */
     submitCall = async () => {
-        if(this.state.selectedProducts.length == 0) {
-            alert('Please select at least one product');
-            return;
-        }
         await this.requestLocationPermission()
         let dailyCall = this.state.form_data;
         dailyCall.Epoch = new Date().getTime();
@@ -323,45 +424,50 @@ class CallExecutionUnplanned extends Component {
             dailyCall.jsonDailyCall.Distance = distance;
             dailyCall.jsonDailyCall.IsInRange = Number(distance) < 200
         }
-        const [errors, shouldSubmit] = validate(this.state.validations, dailyCall.jsonDailyCall);
-        if(shouldSubmit) {
-            if(this.context.state.isConnected) {
-                this.props.submitCallSingle(dailyCall).then(response => {
-                    if(response == 1) {
-                        this.props.getUnplannedCalls({
-                            EmployeeId: this.props.user.EmployeeId,
-                            Token: getToken,
-                        }, true)
-                        this.props.getAllProducts({
-                            EmployeeId: this.props.user.EmployeeId,
-                            Token: getToken,
-                        }, true)
-                        this.props.navigation.goBack();
-                    }
-                }).catch(error => {
-                    this.submitOffline(dailyCall)
-                    console.log(error)
-                })
-            } else {
-                this.submitOffline(dailyCall).then(response => {
-                    console.log(response)
-                })
+        // dailyCall.jsonDailyCall.Distance = getDistance(this.state.latitude, this.state.longitude);
+
+        if(this.context.state.isConnected) {
+            const response = await this.props.submitCallSingle(dailyCall)
+            if(response == 1) {
+                this.props.getUnplannedCalls({
+                    EmployeeId: this.props.user.EmployeeId,
+                    Token: getToken,
+                }, true)
+                this.props.getAllProducts({
+                    EmployeeId: this.props.user.EmployeeId,
+                    Token: getToken,
+                }, true)
+                this.props.navigation.goBack();
             }
-        } else {
-            this.setState({
-                errors
-            })
+            return;
         }
-
+        this.submitOffline(dailyCall)
     }
 
-    submitOffline = (params) => {
-        return this.props.submitOfflineCall(params).then(response => {
-            this.props.navigation.goBack()
-            return response
-        })
+    /**
+     * @name submitOffline
+     * @async
+     * @function
+     * @description Handler that will be called if the user does not have the internet connection
+     * @this Component
+     * @memberof CallExecution
+     * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+     */
+    submitOffline = async (params) => {
+        const response = await this.props.submitOfflineCall(params)
+        this.props.navigation.goBack()        
     }
 
+    /**
+     * @name onClickGift
+     * @function
+     * @description Manages the state changes that appears when the user select the gift item
+     * @this Component
+     * @param { number } giftId - ID of the clicked gift item
+     * @param { number } number - quanity number of the clicked gift item
+     * @memberof CallExecution
+     * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+     */
     onClickGift = (giftId, number = 0) => {
         let dailyCall = this.state.form_data
         const selected = dailyCall.jsonGiftDetail
@@ -374,13 +480,30 @@ class CallExecutionUnplanned extends Component {
             form_data: dailyCall
         })
     }
-
+    
+    /**
+     * @name showGifts
+     * @function
+     * @description Handler to make gift selection modal appear on the screen
+     * @this Component
+     * @memberof CallExecution
+     * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+     */
     showGifts = () => {
         this.setState({
             giftsOverlay: true
         })
     }
 
+    /**
+     * @name hideGifts
+     * @function
+     * @description It will be called when the user closes the gift selection modal
+     * @param { Boolean } unselect - Decide whether to unselect the selected gift item while closing
+     * @this Component
+     * @memberof CallExecution
+     * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+     */
     hideGifts = (unselect = false) => {
         if(unselect) {
             let dailyCall = this.state.form_data;
@@ -399,6 +522,16 @@ class CallExecutionUnplanned extends Component {
         })
     }
 
+    /**
+     * @name updateDetailingSeconds
+     * @function
+     * @description It will update the time duration E-detailing has been displayed
+     * @param { Number } fileId - File ID of the selected file
+     * @param { Number } seconds - Duration in seconds
+     * @this Component
+     * @memberof CallExecution
+     * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+     */
     updateDetailingSeconds = (fileId, seconds) => {
         const { eDetailing } = this.state
         if(eDetailing[fileId] == undefined) {
@@ -417,50 +550,27 @@ class CallExecutionUnplanned extends Component {
         // , () => console.log('detailing seconds updated', this.state.eDetailing[fileId])
         );
     }
-    showDateTimePicker = () => {
-        this.setState({ isDateTimePickerVisible: true });
-    };
 
-    hideDateTimePicker = () => {
-        this.setState({ isDateTimePickerVisible: false });
-    };
-
-    handleDatePicked = (date, field, callback) => {
-    let callDetails = this.state.form_data
-    callDetails.jsonDailyCall[field] = moment(date).format('YYYY-MM-DD hh:mm:ss')
-    if(field === 'CallStartTime') {
-        callDetails.jsonDailyCall.CallEndTime = moment(date).add(15, 'minute').format('YYYY-MM-DD hh:mm:ss')
-    }
-    this.setState({
-        form_data: callDetails
-    })
-    callback();
-    };
-
-    setMio = (employee) => {
-        let { form_data } = this.state
-        form_data.jsonDailyCall.JVEmployeeId = employee.Id
-        form_data.jsonDailyCall.SelectedEmployeeName = employee.Value
-        this.setState({
-            form_data
-        })
-        this.props.getDoctorsByEmployee({
-            EmployeeId: employee.Id
-        })
+    confirmSubmit = () => {
+        Alert.alert(
+            'Call Execution',
+            'Are you sure you wan to execute this call?',
+            [
+            {
+                text: 'No',
+                style: 'cancel',
+            },
+            {
+                text: 'Yes',
+                onPress: () => this.submitCall()
+            },
+            ],
+        );
     }
 
-    setDoctor = (doctor) => {
-        let { form_data } = this.state;
-        form_data.jsonDailyCall.DoctorCode = doctor.DoctorCode;
-        form_data.jsonDailyCall.SelectedDoctorName = doctor.DoctorName;
-        form_data.jsonDailyCall.SelectedDoctorAddress = doctor.DoctorAddress;
-        form_data.jsonDailyCall.DoctorLat = doctor.Latitude
-        form_data.jsonDailyCall.DoctorLong = doctor.Longitude
-        this.setState({
-            form_data
-        }, () => console.log(this.state.form_data))
-    }
-
+    /**
+     * @inheritdoc
+     */
     render() {
         const {
             isKeyInfoCollapsed,
@@ -470,7 +580,7 @@ class CallExecutionUnplanned extends Component {
         } = this.state;
         return (        
             <ImageBackgroundWrapper>
-                <CallExecutionButton disabled={this.props.submitLoader} onPress={this.submitCall}/>
+                <CallExecutionButton disabled={this.props.submitLoader} onPress={this.confirmSubmit}/>
                 {this.props.submitLoader == true ? <ScreenLoader /> : null}
                 <View style={styles.InputContainer}>
                     <ScrollView
@@ -487,16 +597,10 @@ class CallExecutionUnplanned extends Component {
                                 toggler={this.onToggleCollapsedElement}
                                 title="Key Call Information"
                                 Body={<Tab
-                                        setDoctor={this.setDoctor}
-                                        setMio={this.setMio}
-                                        handleDatePicked={this.handleDatePicked}
                                         updateDetailingSeconds={this.updateDetailingSeconds}
-                                        existingCall={false}
+                                        existingCall={true}
                                         onCallReasonChange={this.onChangeAdditionalInfoAttributes}
                                         navigate={this.props.navigation}
-                                        files={this.state.selectedFiles}
-                                        data={this.state.form_data.jsonDailyCall}
-                                        errors={this.state.errors}
                                     />}  
                                 HeaderIcon={<FontAwesomeIcon name="info-circle" size={RFValue(40)} color={brandColors.lightGreen} />} />
                             <Collapse
@@ -504,17 +608,18 @@ class CallExecutionUnplanned extends Component {
                                 section="isAdditionalInfoCollapsed"
                                 toggler={this.onToggleCollapsedElement}
                                 title="Additional Information"
-                                HeaderIcon={<FontAwesomeIcon name="plus-square" size={RFValue(40)} color={brandColors.lightGreen} />}
+                                HeaderIcon={<FontAwesomeIcon name="plus-square" size={ RFValue(40) } color={brandColors.lightGreen} />}
                                 Body={
                                     <AdditionalInfo
-                                        existingCall={false}
+                                        existingCall={true}
                                         showGifts={this.showGifts}
                                         onChangeAdditionalNotes={this.onChangeAdditionalInfoAttributes}
                                         onChangeCallRemarks={this.onChangeAdditionalInfoAttributes}
                                         selectedProducts={this.state.selectedProducts}
                                         selectedSamples={this.state.selectedSamples}
                                         showProducts={this.showProductsOverlay}
-                                        showSamples={this.showSamplesOverlay}
+                                        selectedProduct={this.state.selectedProduct }
+                                        selectedSample={this.state.selectedProduct}
                                         navigate={this.props.navigation}
                                         selectedGift={this.state.form_data.jsonGiftDetail}
                                         allGifts={this.props.gifts}
@@ -529,28 +634,23 @@ class CallExecutionUnplanned extends Component {
                                         toggler={this.onToggleCollapsedElement}
                                         title="Doctor Visit History"
                                         Body={ <DoctorHistory /> }
-                                        HeaderIcon={<FontAwesomeIcon name="history" size={40} color="#fff" />}/>
+                                        HeaderIcon={<FontAwesomeIcon name="history" size={40} color={brandColors.lightGreen} />}/>
                                         : null
                                 }
                         </View>
                     </ScrollView>
-                    <ProductsModal
+                    <ProductsSamplesModal
+                        samples={this.state.samples}
+                        productSelectionError={this.state.overlayError}
                         selectedProducts={this.state.selectedProducts}
                         selectedProductId={this.state.selectedProductId}
                         reminderPosition={this.state.reminderPosition}
+                        selectedSamples={this.state.selectedSamples}
                         isVisible={this.state.overlay}
                         onPressProductHandler={this.onClickProduct}
-                        onCloseHandler={this.hideProductsOverlay}
-                        existingCall={false}
-                    />
-                    <SamplesModal
-                        selectedProductId={this.state.selectedProductId}
-                        reminderPosition={this.state.reminderPosition}
-                        selectedSamples={this.state.selectedSamples}
-                        isVisible={this.state.samplesOverlay}
                         onPressSampleHanlder={this.onClickSample}
                         setSamplesCountHandler={this.setSampleCount}
-                        onCloseHandler={this.handleSampleOverlayClose}
+                        onCloseHandler={this.handleOverlayClose}
                     />
                     <GiftsModal
                         isVisible={this.state.giftsOverlay}
@@ -564,31 +664,45 @@ class CallExecutionUnplanned extends Component {
         )
     }
 }
+
+/**
+ * @const function mapStateToProps
+ * @description It will map the redux state to this component
+ * @param {*} state
+ * @returns Object
+ * @memberof CallExecution
+ * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+ */
 const mapStateToProps = state => {
     return {
         products: getProducts(state),
-        samples: getSamples(state),
         gifts: getGifts(state),
         user: getUser(state),
         submit_data: getSubmitData(state),
         history: getHistory(state),
-        submitLoader: getSubmitLoader(state),
-        doctors: getDoctors(state),
+        submitLoader: getSubmitLoader(state)
     }
 }
 
+/**
+ * @const function mapDispatchToProps
+ * @description It will actionable redux methods to this component
+ * @param {*} dispatch
+ * @returns Object
+ * @memberof CallExecution
+ * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
+ */
 const mapDispatchToProps = dispatch => bindActionCreators({
     getTodayCalls: getTodayCalls,
     submitCallSingle: submitCallSingle,
     getDocHistory: getDocHistory,
     submitOfflineCall: submitOfflineCall,
-    getDoctorsByEmployee: getDoctorByEmployeeId,
-    getReportingEmployees: getEmployees,
     getUnplannedCalls: getTodayUnplannedCalls,
     getAllProducts: getProductsWithSamples,
 }, dispatch)
 
-export default connect(mapStateToProps, mapDispatchToProps)(CallExecutionUnplanned)
+
+export default connect(mapStateToProps, mapDispatchToProps)(CallExecution)
 
 const styles = {
     InputContainer: {

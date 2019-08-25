@@ -64,6 +64,7 @@ const EDetailing = ({
         download(`http://portal.hudsonpharma.com${item.FilePath}`, item.FileName, item.DetailingFileId);
         return (
             <ListItem
+                underlayColor='transparent'
                 title={item && item.FileName}
                 subtitle={item && item.FileDescription}
                 containerStyle={{backgroundColor: 'transparent', borderBottomWidth: 1, color: 'transparent'}}

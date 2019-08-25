@@ -1,12 +1,14 @@
 
 
-import React, { Fragment, Component } from 'react';
+import React, { Component } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { TextInput, Button } from '../../components';
 import LoginHoc from '../../containers/LoginHoc';
 import { Text, CheckBox } from 'react-native-elements';
 import { brandColors } from '../../constants';
 import { styles } from './styles';
+import { View } from 'react-native'
+import { RFValue } from 'react-native-responsive-fontsize';
 
 class LoginForm extends Component {
     render() {
@@ -23,8 +25,8 @@ class LoginForm extends Component {
                 errors,
             } = this.props;
             return (
-                <Fragment>
-                    <Text h1 style={styles.heading}>Login</Text>
+                <View style={{ width: '130%'}}>
+                    {/* <Text style={styles.heading}>Login</Text> */}
                     <TextInput
                         placeholder="Login ID"
                         keyboardType="email-address"
@@ -38,7 +40,7 @@ class LoginForm extends Component {
                             size={20}
                             name="user"
                             color={brandColors.darkBrown} />}
-                        error={errors.LoginId}    
+                        error={errors.LoginId}
                     />
                     <TextInput
                         placeholder="Password"
@@ -51,25 +53,21 @@ class LoginForm extends Component {
                         type="password"
                         leftIcon={
                             <Icon
-                                size={25}
+                                style={{ zIndex: 1000000000 }}
+                                size={ RFValue(25)}
                                 name="eye-slash"
                                 color={passwordIconColor}
                                 onPress={passwordVisible}
                             />}
                         error={errors.Password}
                     />
-                    {/* <CheckBox
-                        title="Keep me signed in"
-                        containerStyle={styles.checkbox}
-                        textStyle={styles.checkboxText}
-                    /> */}
                     <Button
                         loading={loading}
-                        Title="Login"
+                        Title="Submit"
                         onPress={(e) => onSubmit(e)}
                         rounded={true}
                     />
-                </Fragment >
+                </View>
             )
     }
 

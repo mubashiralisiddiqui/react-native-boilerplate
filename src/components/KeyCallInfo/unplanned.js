@@ -34,7 +34,7 @@ const KeyCallInfo = (props) => {
                 is24Hour={false}
                 mode="time"
                 minimumDate={minimumDate}
-                timePickerModeAndroid="clock"
+                timePickerModeAndroid="spinner"
                 isVisible={showTimer}
                 onConfirm={(date) => props.handleDatePicked(date, settingTimer, () => setShowTimer(false))}
                 onCancel={() => setShowTimer(false)}
@@ -62,6 +62,7 @@ export default KeyCallInfo;
 
 const inlineStyles = {
     cardcontainer: {
+        paddingTop: 10,
         display: 'flex',
         justifyContent: 'center',
         flexDirection: 'column',

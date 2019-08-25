@@ -10,6 +10,9 @@ import { getLoginLoding, getLoginError } from '../../reducers/authReducer';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
 import { NetworkContext } from '../../components/NetworkProvider';
+import { View } from 'react-native'
+import { Text, Card } from 'react-native-elements';
+import { RFValue } from 'react-native-responsive-fontsize';
 
 class Login extends Component {
     static navigationOptions = {
@@ -34,10 +37,10 @@ class Login extends Component {
         }
     }
     onChange = (key, value) => {
-        this.setState({[key] : value})
+        this.setState({ [key]: value })
     }
     onKeyEvent = (field, event) => {
-        if(field == 'LoginId' && event.nativeEvent.key === '@') {
+        if (field == 'LoginId' && event.nativeEvent.key === '@') {
             this.setState({
                 LoginId: `${this.state.LoginId}hudsonpharma-sales.com`
             })
@@ -55,7 +58,7 @@ class Login extends Component {
             loading: true,
         })
     }
-    
+
     onSubmit = () => {
         this.setState({
             errors: {
@@ -71,10 +74,10 @@ class Login extends Component {
                 }
             }
         })
-        if( !this.state.loading
+        if (!this.state.loading
             && this.state.errors.LoginId.message === ''
-            && this.state.errors.Password.message === '' ) {
-            const {LoginId, Password} = this.state;
+            && this.state.errors.Password.message === '') {
+            const { LoginId, Password } = this.state;
             this.props.loginUser({
                 LoginId,
                 Password,
@@ -86,6 +89,7 @@ class Login extends Component {
         }
     }
     showPassword = () => {
+        console.log(234)
         this.setState({
             secure: !this.state.secure,
             passwordIconColor: !this.state.secure === true ? brandColors.darkBrown : brandColors.green
@@ -100,23 +104,43 @@ class Login extends Component {
         return (
             <ImageBackgroundWrapper>
                 <KeyboardAwareScrollView contentContainerStyle={styles.InputContainer}>
-                    <ImageHeader
-                    />
-                    <LoginForm
-                        onKeyUp={this.onKeyEvent}
-                        email={this.state.LoginId}
-                        password={this.state.Password}
-                        loading={this.props.loading}
-                        onChange={this.onChange}
-                        onSubmit={this.onSubmit}
-                        showPassword={this.state.secure}
-                        passwordVisible={this.showPassword}
-                        passwordIconColor={this.state.passwordIconColor}
-                        errors={this.state.errors}
-                    />
+                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                        <Card containerStyle={{ borderRadius: 15, width: '75%', justifyContent: 'center', alignItems: 'center' }}>
+                            <ImageHeader
+                            />
+                            <Text style={{ textAlign: 'center', fontFamily: 'Lato-HeavyItalic', fontSize: RFValue(30) }}>Login</Text>
+                            <LoginForm
+                                onKeyUp={this.onKeyEvent}
+                                email={this.state.LoginId}
+                                password={this.state.Password}
+                                loading={this.props.loading}
+                                onChange={this.onChange}
+                                onSubmit={this.onSubmit}
+                                showPassword={this.state.secure}
+                                passwordVisible={this.showPassword}
+                                passwordIconColor={this.state.passwordIconColor}
+                                errors={this.state.errors}
+                            />
+                        </Card>
+                    </View>
+                    {/* <View style={{display: 'flex', verticalAlign: 'center'}}>
+
+                        <LoginForm
+                            onKeyUp={this.onKeyEvent}
+                            email={this.state.LoginId}
+                            password={this.state.Password}
+                            loading={this.props.loading}
+                            onChange={this.onChange}
+                            onSubmit={this.onSubmit}
+                            showPassword={this.state.secure}
+                            passwordVisible={this.showPassword}
+                            passwordIconColor={this.state.passwordIconColor}
+                            errors={this.state.errors}
+                        />
+                    </View> */}
                 </KeyboardAwareScrollView >
             </ImageBackgroundWrapper>
-        )                                                                                                                                                                           
+        )
     }
 }
 const mapStateToProps = state => {
@@ -135,7 +159,6 @@ export default connect(mapStateToProps, mapDispatchToProps)(Login)
 
 const styles = {
     InputContainer: {
-        display: 'flex',
-        justifyContent: 'center',
+        flex: 1,
     }
 }

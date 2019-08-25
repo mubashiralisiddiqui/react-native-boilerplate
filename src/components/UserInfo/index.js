@@ -9,8 +9,8 @@ const UserInfo = () => {
     
     return (
         <View>
-            <Text h4 style={{ fontWeight: 'bold', textAlign: 'center'}}>{ `${setDefault(user.FullName)}` }</Text>
-            <Text h5 style={{ fontWeight: 'bold',  textAlign: 'center'}}>{ `${user.LoginId}` }</Text>
+            <Text h4 style={{ fontFamily: 'Lato-Regular', textAlign: 'center'}}>{ `${setDefault(user.FullName)}` }</Text>
+            <Text h5 style={{ fontFamily: 'Lato-Semibold',  textAlign: 'center'}}>{ `${user.LoginId}` }</Text>
         </View>
     );
 }

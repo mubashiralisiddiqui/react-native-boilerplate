@@ -42,15 +42,17 @@ const WebViewStack = createStackNavigator({
     WebView
 })
 
+const SamplesStack = createStackNavigator({
+    Samples,
+})
 const AppStack = createStackNavigator({
     DoctorLocation,
-    Samples,
-    SavedData,
 })
 // drawer stack passing Appstack in drawe so that all can be accessible in our  drawerstack
 const RootStack = createDrawerNavigator({
     CallPlans: CallPlansStack,
     NewDoct: AddNewDoctorStack,
+    Samples: SamplesStack,
     Main: AppStack,
     Web: WebViewStack,
 },
@@ -59,6 +61,10 @@ const RootStack = createDrawerNavigator({
     {
         unmountInactiveRoutes: true,
         contentComponent: DrawerContent,
+        contentOptions: {
+            activeTintColor: '#fff',
+            activeBackgroundColor: '#6b52ae',
+        },
         // initialRouteName: 'SelectInterpreterScreen'
     }
 )
@@ -74,7 +80,7 @@ export default createAppContainer(createSwitchNavigator(
     {
         App: RootStack, // the whole app routes
         Auth: AuthStack, // when user logout
-        AuthCheck: AuthCheck // where we decid where to switch app or auth
+        AuthCheck: AuthCheck, // where we decid where to switch app or auth
     },
     {
         

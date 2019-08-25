@@ -4,6 +4,7 @@ import { Button } from 'react-native-elements';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { NetworkContext } from '../../components/NetworkProvider'
 import { brandColors } from '../../constants';
+import { RFValue } from 'react-native-responsive-fontsize';
 
 const ConnectivityStatus = () => {
     const { isConnected, effectiveType } = useContext(NetworkContext).state;
@@ -33,13 +34,13 @@ const ConnectivityStatus = () => {
                 <Button
                     type="clear"
                     title="Connected"
-                    titleStyle={{color: brandColors.lightGreen, fontSize: 11}}
+                    titleStyle={{color: brandColors.lightGreen, fontSize: RFValue(11)}}
                     icon={<MaterialCommunityIcon name={getIcon()} color={brandColors.lightGreen} />}
                 />
                 : <Button
                     type="clear"
                     title="Unavailable"
-                    titleStyle={{fontSize: 11, color: 'red'}}
+                    titleStyle={{fontSize: RFValue(11), color: 'red'}}
                     icon={<MaterialCommunityIcon name={getIcon()} color="red" />}
                 />
             }

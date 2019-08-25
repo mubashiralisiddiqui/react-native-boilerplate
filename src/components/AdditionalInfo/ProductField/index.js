@@ -10,17 +10,22 @@ const ProductField = ({
     products,
     showProducts,
     selectedSamples,
+    showSamples,
 }) => {
-    const onFocus = (selectedProduct) => {
+    const onFocus = (selectedProduct, position, type = 'product') => {
         NativeModules.KeyboardFunctionalities.hideKeyboard()
         Keyboard.dismiss();
-        showProducts(selectedProduct);
+        
+        type == 'product'
+        ? showProducts(selectedProduct, position)
+        : showSamples(selectedProduct, position)
     }
-    const sortedArray = Object.keys(products).sort()
+    const sortedArray = Object.keys(products)
     return (
         <View style={styles.container}>
             {
-                (array_count(products) == 2) ? products.map((product, key) => {
+                existingCall ? sortedArray.map((product, key) => {
+                    if(!products[product].IsReminder)
                     return (
                         <View key={ RandomInteger() } style={{width: "95%", paddingBottom: 10}}>
                             <FieldHeader
@@ -30,14 +35,14 @@ const ProductField = ({
                                 isFirst={ key === 0 ? true : false }
                                 onRemove={onRemove}
                             />
-                            <Input onFocus={() => onFocus(existingCall ? product.ProductId : null)} labelStyle={styles.labelStyle} key={ RandomInteger() } label={`Product ${key + 1}`} placeholder="Product Name" value={product.name} />
+                            <Input editable={!existingCall} onFocus={() => onFocus(existingCall ? products[product].ProductId : null, key + 1)} labelStyle={styles.labelStyle} key={ RandomInteger() } label={`Product ${key + 1}`} placeholder="Product Name" value={products[product].name} />
                             <View key={ RandomInteger() } style={{flex:1, flexDirection: 'row'}}>
                                 <View key={ RandomInteger() } style={{width: "50%"}}>
                                     {/* product.ProductId here is ProductTemplateId in database */}
-                                    <Input onFocus={() => onFocus(product.ProductId)} labelStyle={styles.labelStyle} key={ RandomInteger() } label={`Sample ${key + 1}`} placeholder="Sample Name" value={getNameFromSelectedSamples(selectedSamples, product.ProductId)}/> 
+                                    <Input onFocus={() => onFocus(products[product].ProductId, key + 1, 'samples')} labelStyle={styles.labelStyle} key={ RandomInteger() } label={`Sample ${key + 1}`} placeholder="Sample Name" value={getNameFromSelectedSamples(selectedSamples, products[product].ProductId)}/> 
                                 </View>
                                 <View key={ RandomInteger() } style={{width: "50%"}}>
-                                    <Input onFocus={() => onFocus(product.ProductId)} labelStyle={styles.labelStyle} key={ RandomInteger() } label="Quantity"  placeholder="Quantity" value={`${getQuantityOfTheSelectedSamples(selectedSamples, product.ProductId)}`} />
+                                    <Input onFocus={() => onFocus(products[product].ProductId, key + 1, 'samples')} labelStyle={styles.labelStyle} key={ RandomInteger() } label="Quantity"  placeholder="Quantity" value={`${getQuantityOfTheSelectedSamples(selectedSamples, products[product].ProductId)}`} />
                                 </View>
                             </View>
                         </View>
@@ -54,14 +59,14 @@ const ProductField = ({
                                     isFirst={ index === 0 ? true : false }
                                     onRemove={onRemove}
                                 />
-                                <Input onFocus={() => onFocus(existingCall ? product.ProductId : null)} labelStyle={styles.labelStyle} key={ RandomInteger() } label={`Product ${index + 1}`} placeholder="Product Name" value={product.name} />
+                                <Input onFocus={() => onFocus( product.ProductId, index + 1)} labelStyle={styles.labelStyle} key={ RandomInteger() } label={`Product ${index + 1}`} placeholder="Product Name" value={product.name} />
                                 <View key={ RandomInteger() } style={{flex:1, flexDirection: 'row'}}>
                                     <View key={ RandomInteger() } style={{width: "50%"}}>
                                         {/* product.ProductId here is ProductTemplateId in database */}
-                                        <Input onFocus={() => onFocus(product.ProductId)} labelStyle={styles.labelStyle} key={ RandomInteger() } label={`Sample ${index + 1}`} placeholder="Sample Name" value={getNameFromSelectedSamples(selectedSamples, product.ProductId)}/> 
+                                        <Input onFocus={() => onFocus(product.ProductId, index + 1, 'samples')} labelStyle={styles.labelStyle} key={ RandomInteger() } label={`Sample ${index + 1}`} placeholder="Sample Name" value={getNameFromSelectedSamples(selectedSamples, product.ProductId)}/> 
                                     </View>
                                     <View key={ RandomInteger() } style={{width: "50%"}}>
-                                        <Input onFocus={() => onFocus(product.ProductId)} labelStyle={styles.labelStyle} key={ RandomInteger() } label="Quantity"  placeholder="Quantity" value={`${getQuantityOfTheSelectedSamples(selectedSamples, product.ProductId)}`} />
+                                        <Input onFocus={() => onFocus(product.ProductId, index + 1, 'samples')} labelStyle={styles.labelStyle} key={ RandomInteger() } label="Quantity"  placeholder="Quantity" value={`${getQuantityOfTheSelectedSamples(selectedSamples, product.ProductId)}`} />
                                     </View>
                                 </View>
                             </View>
@@ -76,14 +81,14 @@ const ProductField = ({
                                 isFirst={ index === 0 ? true : false }
                                 onRemove={onRemove}
                             />
-                            <Input onFocus={() => onFocus(existingCall ? product.ProductId : null)} labelStyle={styles.labelStyle} key={ RandomInteger() } label={`Product ${index + 1}`} placeholder="Product Name" value={''} />
+                            <Input onFocus={() => onFocus(null, index + 1)} labelStyle={styles.labelStyle} key={ RandomInteger() } label={`Product ${index + 1}`} placeholder="Product Name" value={''} />
                             <View key={ RandomInteger() } style={{flex:1, flexDirection: 'row'}}>
                                 <View key={ RandomInteger() } style={{width: "50%"}}>
                                     {/* product.ProductId here is ProductTemplateId in database */}
-                                    <Input onFocus={() => onFocus(null)} labelStyle={styles.labelStyle} key={ RandomInteger() } label={`Sample ${index + 1}`} placeholder="Sample Name" value={getNameFromSelectedSamples(selectedSamples, 0)}/> 
+                                    <Input onFocus={() => onFocus(null, index + 1, 'samples')} labelStyle={styles.labelStyle} key={ RandomInteger() } label={`Sample ${index + 1}`} placeholder="Sample Name" value={getNameFromSelectedSamples(selectedSamples, 0)}/> 
                                 </View>
                                 <View key={ RandomInteger() } style={{width: "50%"}}>
-                                    <Input onFocus={() => onFocus(null)} labelStyle={styles.labelStyle} key={ RandomInteger() } label="Quantity"  placeholder="Quantity" value={`${getQuantityOfTheSelectedSamples(selectedSamples, 0)}`} />
+                                    <Input onFocus={() => onFocus(null, index + 1, 'samples')} labelStyle={styles.labelStyle} key={ RandomInteger() } label="Quantity"  placeholder="Quantity" value={`${getQuantityOfTheSelectedSamples(selectedSamples, 0)}`} />
                                 </View>
                             </View>
                         </View>

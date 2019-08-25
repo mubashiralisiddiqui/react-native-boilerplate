@@ -2,14 +2,14 @@
 * This file includes all the custom helper functions. All these methods will not be available
 * directly to use, make sure to import them first before the usage.
 */
-
 import React from 'react'
-import { Icon } from 'react-native-elements';
+import { Icon, Button } from 'react-native-elements';
 import moment from 'moment';
 import axios from 'axios';
-import { AsyncStorage, Dimensions, Platform, PixelRatio } from 'react-native'
+import { AsyncStorage, Dimensions, View } from 'react-native'
 import { loginSuccess } from '../actions/auth'
 import { services } from '../services'
+import { RFValue } from 'react-native-responsive-fontsize';
 
 /* 
 * Theme colors as designed in the logo composition. All the colors used in the application are derived from here.
@@ -90,6 +90,12 @@ export const navigationOptions = [
         icon: 'cash-register',
         iconType: 'FontAwesome5'
     },{
+        name: 'training_portal',
+        label: 'Training Portal',
+        navigateTo: 'WebView',
+        icon: 'clipboard-list',
+        iconType: 'FontAwesome5'
+    },{
         name: 'logout',
         label: 'Logout',
         navigateTo: 'Login',
@@ -106,26 +112,30 @@ export const navigationOption = (navigation, title) => {
     return {
         title: title,
         headerStyle: {
-            backgroundColor: brandColors.lightGreen,
+            backgroundColor: brandColors.darkBrown,
         },
-        headerTintColor: brandColors.darkBrown,
+        headerTintColor: brandColors.lightGreen,
         titleStyle: {
-            textAlign: 'center',
-            alignSelf: 'center'
+            // textAlign: 'center',
+            // alignSelf: 'center'
         },
         headerTitleStyle: {
-            fontWeight: 'bold',
-            fontSize: 15,
+            fontFamily: 'Lato-Regular',
+            fontSize: RFValue(15),
             textAlign: 'center',
             flex: 1,
+            marginRight: RFValue(88)
         },
-        headerLeft: <Icon
-            name="align-left"
-            type="font-awesome"
-            size={20}
-            color={brandColors.darkBrown}
-            iconStyle={{ paddingLeft: 10 }}
-            onPress={() => { navigation.openDrawer(); }}
+        headerLeft: <View style={{marginHorizontal:RFValue(140)}}></View>,
+        headerLeft: <Button
+            type='clear'
+            onPress={navigation.openDrawer}
+            icon={<Icon
+                name="align-left"
+                type="font-awesome"
+                size={RFValue(25)}
+                color={brandColors.lightGreen}
+            />}
         />,
     }
 }
@@ -139,9 +149,10 @@ export const styles = {
         paddingVertical: 10,
     },
     labelStyle: {
-        fontWeight: 'bold',
-        fontSize: 14,
+        fontFamily: 'Lato-HeavyItalic',
+        fontSize: RFValue(16),
         color: brandColors.darkBrown,
+        fontWeight: 'normal'
     },
     inputStyle: {
         color: 'gray'
@@ -332,19 +343,4 @@ export const SPO_ROLE_ID = 7;
 
 export const getFilesFromProducts = (products, productId) => {
     return products.filter(product => product.ProductTemplateId == productId)[0].Files
-}
-
-export function normalizeFont(size) {  
-    const {
-        width: SCREEN_WIDTH,
-        height: SCREEN_HEIGHT,
-    } = Dimensions.get('window');
-    // based on iphone 5s's scale
-    const scale = SCREEN_WIDTH / (320 * size);
-    console.log(Math.round(PixelRatio.roundToNearestPixel(size * scale)), 'font' )
-    if (Platform.OS === 'ios') {
-        return Math.round(PixelRatio.roundToNearestPixel(size * scale))
-    } else {
-        return Math.round(PixelRatio.roundToNearestPixel(size * scale)) + 12
-    }
 }

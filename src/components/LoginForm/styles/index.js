@@ -1,9 +1,11 @@
 import { brandColors } from '../../../constants'
+import { RFValue } from 'react-native-responsive-fontsize';
 export const styles = {
     heading: {
-        fontWeight: 'bold',
+        fontFamily: 'Lato-Medium',
         textAlign: 'center',
-        color: brandColors.darkBrown
+        color: brandColors.darkBrown,
+        fontSize: RFValue(30)
     },
     checkbox: {
         height: 50,
@@ -12,8 +14,4 @@ export const styles = {
         flex: 1,
         flexDirection: 'column'
     },
-    checkboxText: {
-        fontSize: 20,
-        color: brandColors.darkBrown,
-    }
 }

@@ -19,6 +19,7 @@ const AdditionalInfo = ({
     selectedGift,
     allGifts,
     existingCall,
+    showSamples
 }) => {
     const [reminderFieldsCount, setReminderFieldsCount] = useState(3);
     
@@ -30,6 +31,7 @@ const AdditionalInfo = ({
                 selectedSamples={selectedSamples}
                 products={selectedProducts}
                 existingCall={existingCall}
+                showSamples={showSamples}
             />
             {/* This functionality will be use in future when we have more products(hopefully) and 
                 will give the feasibility to SPO/RSM to have dynamic number of products par visit */}
@@ -41,8 +43,14 @@ const AdditionalInfo = ({
             /> */}
             {
                 existingCall
-                ? <ReminderField selectedProduct={selectedProducts}
-                    selectedSamples={selectedSamples} times={reminderFieldsCount} onRemove={() => setReminderFieldsCount(reminderFieldsCount - 1)} showProducts={showProducts}/>
+                ? <ReminderField
+                    selectedProduct={selectedProducts}
+                    selectedSamples={selectedSamples}
+                    times={reminderFieldsCount}
+                    onRemove={() => setReminderFieldsCount(reminderFieldsCount - 1)}
+                    showProducts={showProducts}
+                    showSamples={showSamples}
+                />
                 : null
             }
             {/* This functionality will be use in future when we have more products(hopefully) and 

@@ -4,6 +4,7 @@ import { Button } from 'react-native-elements';
 import { Blink } from '..'
 import { brandColors } from '../../constants';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import { RFValue } from 'react-native-responsive-fontsize';
 
 const LocationStatus = ({
     isFetching = true,
@@ -15,7 +16,7 @@ const LocationStatus = ({
                     type="clear"
                     title={isFetching === true ? `Fetching` : `Fetched`}
                     disabled={isFetching}
-                    titleStyle={{color: isFetching ? 'red' : brandColors.lightGreen, fontSize: 11}}
+                    titleStyle={{color: isFetching ? 'red' : brandColors.lightGreen, fontSize: RFValue(11)}}
                     buttonStyle={{width: '100%'}}
                     containerStyle={{width: '100%',}}
                     icon={<MaterialIcon

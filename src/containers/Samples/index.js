@@ -1,5 +1,5 @@
-import React, { Component } from 'react'
-import { FlatList, View, Dimensions } from 'react-native';
+import React, { PureComponent } from 'react'
+import { View, Dimensions } from 'react-native';
 import { ImageBackgroundWrapper } from '../../components';
 import { CallPlanHeader } from '../../components/Headers';
 import { navigationOption, RandomInteger, brandColors } from '../../constants';
@@ -8,8 +8,9 @@ import { bindActionCreators } from 'redux'
 import { getSamples } from '../../reducers/productsReducer';
 import { Text, Divider, Card } from 'react-native-elements';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { RFValue } from 'react-native-responsive-fontsize';
 
-class Samples extends Component {
+class Samples extends PureComponent {
     static navigationOptions = ({ navigation }) => (navigationOption(navigation, 'Samples'))
 
     state = {
@@ -44,10 +45,10 @@ class Samples extends Component {
                         >
                             <View onLayout={this.onLayout} key={RandomInteger()} style={styles.viewContainer}> 
                                 <View key={RandomInteger()} style={styles.itemSecondLast}>
-                                    <Text key={RandomInteger()} style={styles.text}>Sample Name</Text>
+                                    <Text key={RandomInteger()} style={styles.textTitle}>Sample Name</Text>
                                 </View>
                                 <View  key={RandomInteger()} style={styles.itemLast}>
-                                    <Text key={RandomInteger()} style={styles.text}>On Hand Quantity</Text>
+                                    <Text key={RandomInteger()} style={styles.textTitle}>On Hand Quantity</Text>
                                 </View>
                             </View>
                         </Card>
@@ -84,12 +85,6 @@ const mapStateToProps = state => {
  * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
  */
 const mapDispatchToProps = dispatch => bindActionCreators({
-    // getTodayCalls: getTodayCalls,
-    // submitCallSingle: submitCallSingle,
-    // getDocHistory: getDocHistory,
-    // submitOfflineCall: submitOfflineCall,
-    // getUnplannedCalls: getTodayUnplannedCalls,
-    // getAllProducts: getProductsWithSamples,
 }, dispatch)
 const getStyles = () => {
     return {
@@ -113,19 +108,23 @@ const getStyles = () => {
             alignItems: 'center',
             width: '50%'
         },
+        textTitle: {
+            fontSize: RFValue(18),
+            fontFamily: 'Lato-MediumItalic',
+            color: brandColors.lightGreen,
+        },
         text: {
-            fontSize: 15,
-            fontWeight: 'bold',
+            fontSize: RFValue(16),
+            fontFamily: 'Lato-Regular',
             color: brandColors.darkBrown,
         },
         cardContainer: {
-            backgroundColor: '#ece8e7',
+            backgroundColor: brandColors.darkBrown,
             shadowColor: brandColors.lightGreen,
             borderRadius: 10,
             shadowOffset: { width: 0, height: 4 },
             shadowOpacity: 0.8,
             shadowRadius: 4,
-            opacity: 0.7,
             width: '80%',
             justifyContent: 'center',
             display: 'flex',

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View } from 'react-native'
 import { Text, CheckBox} from 'react-native-elements';
 import { brandColors } from '../../constants'
+import { RFValue } from 'react-native-responsive-fontsize';
 
 const CallReason = ({
     onCallReasonChange
@@ -22,7 +23,7 @@ const CallReason = ({
     }
     return (
         <View style={{width: '100%', flex: 1, flexDirection: 'row'}}>
-            <Text style={{fontSize: 14, color: brandColors.darkBrown, fontWeight: 'bold', paddingLeft: 10}}>Reason</Text>
+            <Text style={{fontSize: RFValue(14), color: brandColors.darkBrown, fontWeight: 'bold', paddingLeft: 10}}>Reason</Text>
             <View style={{width: '50%'}}>
                 <CheckBox
                     containerStyle={{ backgroundColor: 'transparent'}}

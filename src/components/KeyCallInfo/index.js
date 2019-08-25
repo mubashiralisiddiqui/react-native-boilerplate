@@ -75,6 +75,7 @@ const inlineStyles = {
         alignItems: 'center',
         height: 'auto',
         paddingLeft: 0,
+        paddingTop: 5
     },
     formContainer: {
         // width: width < height ? parseInt(width / 1.2) : parseInt(width / 1.2),

@@ -12,6 +12,7 @@ import { getAllCities } from '../../services/city';
 import { getAllDesignations, getAllSpecialities, getDoctorByEmployeeId } from '../../services/doctor';
 import { getUser, isRSM } from '../../reducers/authReducer';
 import { getEmployees } from '../../services/auth';
+import { RFValue } from 'react-native-responsive-fontsize';
 
 export const NetworkContext = React.createContext({
     isConnected: false,
@@ -138,7 +139,7 @@ class NetworkProviderClass extends React.PureComponent {
                             disabled={!this.state.isConnected}
                             title="Refresh"
                             onPress={this.handleRefresh}
-                            titleStyle={{color: brandColors.lightGreen, fontSize: 10}}
+                            titleStyle={{color: brandColors.lightGreen, fontSize: RFValue(10)}}
                             icon={<Icon name="refresh" size={20} color={brandColors.lightGreen} />}
                         />
                     </View> : null

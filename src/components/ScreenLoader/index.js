@@ -5,7 +5,7 @@ import { brandColors } from '../../constants';
 const ScreenLoader = () => {
     return (
         <View style={{
-            zIndex:10000000,
+            zIndex:1000000000,
             position: 'absolute',
             left: 0,
             right: 0,

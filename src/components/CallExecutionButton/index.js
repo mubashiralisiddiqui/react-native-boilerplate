@@ -15,13 +15,13 @@ const CallExecutionButton = ({
             width: 75,
             height: 75,
             borderRadius: 37,
-            backgroundColor: brandColors.green,
+            backgroundColor: brandColors.lightGreen,
             }}
             containerStyle={{
                 width: 75,
                 height: 75,
                 borderRadius: 40,
-                backgroundColor: brandColors.green,
+                backgroundColor: brandColors.lightGreen,
                 position: 'absolute',
                 right: 50,
                 bottom:50,

@@ -1,22 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, FlatList, NativeModules, Keyboard, Switch } from 'react-native';
-import { Input, Overlay, Text, ListItem, Button } from 'react-native-elements';
-import { RandomInteger, brandColors } from '../../constants';
+import { Input, Overlay, Text, ListItem } from 'react-native-elements';
+import { RandomInteger, brandColors, styles } from '../../constants';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import CitiesModal from '../CitiesModal';
 import ImageBackgroundWrapper from '../ImageBackground';
+import { useSelector } from 'react-redux'
+import { RFValue } from 'react-native-responsive-fontsize';
 
 const NewDoctorForm = ({
     data = {},
-    designations = [],
-    specialities = [],
-    setField = () => {},
-    cities = [],
+    setField,
 }) => {
+    const [designations, specialities] = useSelector(state => (
+        [state.doctor.designations, state.doctor.specialities]
+    ))
     const [ fieldSelectionOverlay, setFieldSelectionOverlay ] = useState(false)
     const [ fieldToSelect, setFieldToSelect ] = useState('')
-    const [ designationsLocal, setDesignationsLocal ] = useState(designations)
-    const [ specialitiesLocal, setSpecialitiesLocal ] = useState(specialities)
+    const [ designationsLocal, setDesignationsLocal ] = useState(designations.slice(0, 30))
+    const [ specialitiesLocal, setSpecialitiesLocal ] = useState(specialities.slice(0, 30))
     const [ citiesModal, setCitiesModal ] = useState(false);
 
     const citiesModalVisibilityHandler = () => {
@@ -34,10 +36,6 @@ const NewDoctorForm = ({
         setFieldSelectionOverlay(true);
     }
 
-    useEffect(() => {
-        setDesignationsLocal(designations)
-    }, [fieldSelectionOverlay])  
-
     const searchDesignation = (value) => {
         if(value != '') {
            let result = fieldToSelect == 'Designation'
@@ -50,7 +48,9 @@ const NewDoctorForm = ({
 
            fieldToSelect == 'Designation' ? setDesignationsLocal(result) : setSpecialitiesLocal(result)
         } else {
-            setDesignationsLocal(designations)
+            fieldToSelect == 'Designation' ? 
+            setDesignationsLocal(designations.slice(0, 30))
+            : setDesignationsLocal(designations.slice(0, 30))
         }
     }
 
@@ -62,9 +62,10 @@ const NewDoctorForm = ({
                 title={item.Value}
                 bottomDivider
                 onPress={ () => {
-                    console.log(234234)
                         setField(type, item.Id)
                         setFieldToSelect('')
+                        setDesignationsLocal(designations.slice(0, 20))
+                        setSpecialitiesLocal(specialities.slice(0, 20))
                         setFieldSelectionOverlay(false)
                     }
                 }
@@ -76,7 +77,7 @@ const NewDoctorForm = ({
             <View style={{width: '50%'}}>
                 <Input
                     label="Name"
-                    labelStyle={{ color: brandColors.darkBrown}}
+                    labelStyle={styles.labelStyle}
                     placeholder="Enter Doctor full name"
                     value={data.DoctorName}
                     onChangeText={(value) => setField('DoctorName', value)}
@@ -84,7 +85,7 @@ const NewDoctorForm = ({
                 />
                 <Input
                     label="Phone"
-                    labelStyle={{ color: brandColors.darkBrown}}
+                    labelStyle={styles.labelStyle}
                     placeholder="Enter Phone number"
                     keyboardType='number-pad'
                     value={data.Phone}
@@ -93,7 +94,7 @@ const NewDoctorForm = ({
                 />
                 <Input
                     label="City"
-                    labelStyle={{ color: brandColors.darkBrown}}
+                    labelStyle={styles.labelStyle}
                     placeholder="Select Doctor City"
                     keyboardType='number-pad'
                     value={data.CityName}
@@ -102,7 +103,7 @@ const NewDoctorForm = ({
                 />
                 <Input
                     label="Designation"
-                    labelStyle={{ color: brandColors.darkBrown}}
+                    labelStyle={styles.labelStyle}
                     placeholder="Select Designation"
                     value={data.Designation}
                     onFocus={ () => onFocus('Designation')}
@@ -112,7 +113,7 @@ const NewDoctorForm = ({
             <View style={{width: '50%'}}>
                 <Input
                     label="Email"
-                    labelStyle={{ color: brandColors.darkBrown}}
+                    labelStyle={styles.labelStyle}
                     placeholder="Enter Doctor email address"
                     keyboardType='email-address'
                     value={data.Email}
@@ -121,27 +122,26 @@ const NewDoctorForm = ({
                 />
                 <Input
                     label="Address (Optional)"
-                    labelStyle={{ color: brandColors.darkBrown}}
+                    labelStyle={styles.labelStyle}
                     placeholder="Enter address"
                     value={data.DoctorAddress}
                     onChangeText={(value) => setField('DoctorAddress', value)}
                 />
                 <Input
                     label="Speciality"
-                    labelStyle={{ color: brandColors.darkBrown}}
+                    labelStyle={styles.labelStyle}
                     placeholder="Select Speciality"
                     value={data.Speciality}
                     onFocus={ () => onFocus('Speciality')}
                     errorMessage={data.errors.Speciality || ''}
                 />
-                <Text style={{ color: brandColors.darkBrown, marginVertical: 3, marginHorizontal: 10, fontSize: 12, fontWeight: '900'}}>
+                <Text style={{ color: brandColors.darkBrown, marginVertical: 3, marginHorizontal: 10, fontSize: RFValue(15), fontFamily: 'Lato-HeavyItalic'}}>
                     Is KOL?
                 </Text><Switch value={data.IsKOL} trackColor={brandColors.green} thumbColor={data.IsKOL ? brandColors.lightGreen : 'lightgrey'} onValueChange={(value) => setField('IsKOL', value)}/>
             </View>
             <CitiesModal
                 isVisible={citiesModal}
-                vivibilityHandler={citiesModalVisibilityHandler}
-                cities={cities}
+                visibilityHandler={citiesModalVisibilityHandler}
                 onPressHandler={setField}
             />
             <Overlay
@@ -153,15 +153,15 @@ const NewDoctorForm = ({
                 height='90%'
                 children={
                     <ImageBackgroundWrapper>
-                        <Text h3 h3Style={styles.listTitle}>
+                        <Text style={inlineStyles.listTitle}>
                             { `Select Doctor's ${fieldToSelect}`  }
                         </Text>
-                        <Input label="Search" placeholder="Search designation" onChangeText={searchDesignation} />
+                        <Input label="Search" placeholder={`Search for more ${fieldToSelect}s`} onChangeText={searchDesignation} />
                         <KeyboardAwareScrollView style={{ borderRadius: 10, }} behavior="padding">
                             <View style={{width:'100%', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
                                 <View style={{ width: '98%', marginHorizontal: 5}}>
                                     <FlatList
-                                        initialNumToRender={50}
+                                        initialNumToRender={30}
                                         keyExtractor={ item => `${item.Id} + ${RandomInteger()}`}
                                         data={fieldToSelect === 'Designation' ?  designationsLocal : specialitiesLocal }
                                         renderItem={({item}) => renderRow(item, fieldToSelect)}
@@ -176,20 +176,16 @@ const NewDoctorForm = ({
         </View>
     )
 }
-const styles = {
-    flatList: {
-        width: '90%',
-        marginHorizontal: 5,
-    },
+const inlineStyles = {
     listTitle: {
-        backgroundColor: '#ece8e7',
+        backgroundColor: brandColors.darkBrown,
+        // backgroundColor: '#ece8e7',
         borderRadius: 10,
         padding: 5,
         width: '99.8%',
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: brandColors.darkBrown,
-        opacity: 0.5,
+        fontFamily: 'Lato-MediumItalic',
+        fontSize: RFValue(16),
+        color: brandColors.lightGreen,
     },
 }
 export default NewDoctorForm;

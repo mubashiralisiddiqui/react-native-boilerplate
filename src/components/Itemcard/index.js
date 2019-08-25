@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Dimensions } from 'react-native';
 import { Card, Button, Badge } from 'react-native-elements'
 import { brandColors, RandomInteger } from '../../constants';
+import { RFValue } from 'react-native-responsive-fontsize';
 
 const ItemCard = ({
     name,
@@ -11,6 +12,7 @@ const ItemCard = ({
     onPressHandler,
     isOffline = false,
     isUnplanned = false,
+    call,
 }) => {
     const [loading, setLoading] = useState(false);
     const [width, setWidth] = useState(Dimensions.get('screen').width);
@@ -20,7 +22,7 @@ const ItemCard = ({
     const onPress = () => {
         setLoading(true);
         setTimeout(() => {
-            onPressHandler();
+            onPressHandler(call);
             setLoading(false)
         }, 0)
     }
@@ -74,18 +76,18 @@ const getStyles = (status, width) => {
             display: 'flex',
             justifyContent: 'flex-start',
             flexDirection: 'row',
-            height: 40,
+            height: 35,
             paddingLeft: 0,
         },
         itemFirst: {
-            height: 40,
+            height: 35,
             justifyContent: 'center',
             marginLeft: 0,
             alignItems: 'center',
             width: width/4
         },
         itemSecond: {
-            height: 40,
+            height: 35,
             flexGrow: 1,
             justifyContent: 'center',
             marginLeft: 10,
@@ -94,7 +96,7 @@ const getStyles = (status, width) => {
             width: width/10
         },
         item: {
-            height: 40,
+            height: 35,
             marginLeft: 10,
             flexGrow: 1,
             justifyContent: 'center',
@@ -103,8 +105,10 @@ const getStyles = (status, width) => {
             width: width/6
         },
         text: {
-            fontSize: 18,
+            fontSize: RFValue(16),
             color: !status ? brandColors.darkBrown : '#aaa',
+            fontFamily: 'Lato-Regular',
+            textAlign: 'center'
         },
         cardContainer: {
             backgroundColor: 'transparent',

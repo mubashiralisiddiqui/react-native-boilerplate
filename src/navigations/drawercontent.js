@@ -9,12 +9,12 @@ import {
     Alert,
     ScrollView,
 } from 'react-native';
-import { Icon } from 'react-native-elements';
 import { ImageHeader } from '../components';
 import { navigationOptions, brandColors, RandomInteger } from '../constants'
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons'
+import { RFValue } from 'react-native-responsive-fontsize';
 
 class NavigationMenu extends Component {
     state = {
@@ -48,17 +48,17 @@ class NavigationMenu extends Component {
         switch(type) {
             case 'FontAwesome5': {
                 return (
-                    <FontAwesome5Icon name={icon} size={20} color={brandColors.darkBrown} />
+                    <FontAwesome5Icon name={icon} size={20} color={brandColors.lightGreen} />
                 )
             }
             case 'AntDesign': {
                 return (
-                    <AntDesignIcon name={icon} size={20}  color={brandColors.darkBrown} />
+                    <AntDesignIcon name={icon} size={20}  color={brandColors.lightGreen} />
                 )
             }
             case 'MaterialCommunityIcon': {
                 return (
-                    <MaterialCommunityIcon name={icon} size={20}  color={brandColors.darkBrown} />
+                    <MaterialCommunityIcon name={icon} size={20}  color={brandColors.lightGreen} />
                 )
             }
             default: {
@@ -67,28 +67,50 @@ class NavigationMenu extends Component {
         }
     }
 
+    navigateIt = (to) => {
+        console.log(this.props.navigation)
+        switch(to) {
+            case 'Login': {
+                this.logout()
+                return;
+            }
+            case 'WebView': {
+                this.props.navigation.push(to)
+                return;
+            }
+            default: {
+                return this.props.navigation.navigate(to)
+            }
+        }
+        // if(to != 'Login') {
+        //     this.props.navigation.navigate(to)
+        //     return
+        // }
+        // this.logout()
+    }
+
 
     render() {
-        const { navigate } = this.props.navigation;
         const CustomIcon = this.getIcon;
         return (
             <View style={styles.container}>
                 <ScrollView style={{ marginTop: 0, width: '100%' }}>
-                    <View style={{ alignItems: 'center', marginBottom: 20 }}>
+                    {/* <View style={{ alignItems: 'center' }}> */}
                         <ImageHeader
                             verticalHeight={0}
                         />
-                    </View>
+                    {/* </View> */}
                     {
                         navigationOptions.map((option, index) => {
-                            return (<TouchableOpacity key={RandomInteger()}
-                                onPress={() => option.navigateTo === 'Login' ? this.logout() : option.navigateTo && navigate(option.navigateTo)}
+                            return (
+                            <TouchableOpacity key={index}
+                                onPress={() => this.navigateIt(option.navigateTo)}
                                 style={styles.section}
                             >
                                 <CustomIcon  icon={ option.icon || '' } type={option.iconType || ''} />
                                 {/* <Icon key={RandomInteger()} name='schedule' color={brandColors.darkBrown} /> */}
-                                <View key={RandomInteger()} style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 5 }}>
-                                    <Text key={RandomInteger()} style={styles.sectionHeadingStyle}>{option.label}</Text>
+                                <View key={index} style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 5 }}>
+                                    <Text key={index} style={styles.sectionHeadingStyle}>{option.label}</Text>
                                 </View>
                             </TouchableOpacity>)
                         })
@@ -104,28 +126,28 @@ class NavigationMenu extends Component {
 const styles = new StyleSheet.create({
 
     container: {
-        paddingTop: 20,
-        flex: 1,
-        justifyContent: 'space-between',
-        alignItems: 'center',
+        // paddingTop: 20,
+        // flex: 1,
+        // justifyContent: 'space-between',
+        // alignItems: 'center',
         width: '100%'
     },
 
     sectionHeadingStyle: {
         paddingHorizontal: 5,
         color: brandColors.darkBrown,
-        fontSize: 16,
+        fontSize: RFValue(16),
         textAlignVertical: 'center',
         textAlign: 'left',
-        fontWeight: 'bold'
+        fontFamily: 'Lato-Heavy'
     },
     section: {
         display: 'flex',
         flexDirection: 'row',
         paddingVertical: 20,
-        marginLeft: 20,
+        marginLeft: 10,
         borderBottomColor: '#a9b1bc',
-        borderBottomWidth: 0.5,
+        // borderBottomWidth: 0.5,
         justifyContent: 'flex-start',
         alignItems: 'center'
     },

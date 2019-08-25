@@ -84,7 +84,8 @@ const styles = {
         marginHorizontal: 5,
     },
     listTitle: {
-        backgroundColor: '#ece8e7',
+        backgroundColor: brandColors.darkBrown,
+        // backgroundColor: '#ece8e7',
         borderRadius: 10,
         padding: 5,
         width: '99.8%'

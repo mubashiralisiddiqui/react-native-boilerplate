@@ -2,6 +2,7 @@ import React, {useState} from 'react'
 import { View, Text, Dimensions } from 'react-native';
 import { Card } from 'react-native-elements'
 import { brandColors, RandomInteger } from '../../constants';
+import { RFValue } from 'react-native-responsive-fontsize';
 
 const CallPlansListHeader = () => {
     const [width, setWidth] = useState(Dimensions.get('screen').width);
@@ -69,18 +70,19 @@ const getStyles = (width) => {
             width: width/6
         },
         text: {
-            fontSize: 18,
-            fontWeight: 'bold',
-            color: brandColors.darkBrown,
+            fontSize: RFValue(18),
+            color: brandColors.lightGreen,
+            fontFamily: 'Lato-MediumItalic'
         },
         cardContainer: {
-            backgroundColor: '#ece8e7',
+            backgroundColor: brandColors.darkBrown,
+            // backgroundColor: '#ece8e7',
             shadowColor: brandColors.lightGreen,
             borderRadius: 10,
             shadowOffset: { width: 0, height: 4 },
             shadowOpacity: 0.8,
             shadowRadius: 4,
-            opacity: 0.5,
+            opacity: 0.9,
         }
     }
 }

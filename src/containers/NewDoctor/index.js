@@ -11,8 +11,7 @@ import { Button } from 'react-native-elements';
 import { navigationOption, brandColors, stringify, validate } from '../../constants';
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux';
-import { getDoctorRequestLoader, getDesignations, getSpecialities } from '../../reducers/doctorReducer';
-import { getCities } from '../../reducers/cityReducer';
+import { getDoctorRequestLoader } from '../../reducers/doctorReducer';
 import { getUser } from '../../reducers/authReducer';
 import { NetworkContext } from '../../components/NetworkProvider'
 import { createDoctorRequest } from '../../services/doctor';
@@ -247,9 +246,6 @@ class NewDoctor extends Component {
 const mapStateToProps = state => {
     return {
         loading: getDoctorRequestLoader(state),
-        desgnations: getDesignations(state),
-        specialities: getSpecialities(state),        
-        cities: getCities(state),
         user: getUser(state)
     }
 }

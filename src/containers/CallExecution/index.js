@@ -3,11 +3,11 @@
  * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
  */
 import React, { Component } from 'react';
-import { View, PermissionsAndroid } from 'react-native'
+import { View, PermissionsAndroid, ScrollView, Alert } from 'react-native'
 import { CallPlanHeader } from '../../components/Headers'
 import { navigationOption, brandColors, getToken, parse, stringify, getDistance } from '../../constants'
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import { 
+import {
     Collapse,
     AdditionalInfo,
     DoctorHistory,
@@ -17,13 +17,12 @@ import {
     ScreenLoader,
     CallExecutionButton,
 } from '../../components';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { getDocHistory } from '../../services/historyService';
 import { submitCallSingle, getTodayCalls, submitOfflineCall, getTodayUnplannedCalls } from '../../services/callServices';
 import { Tab } from '..';
 import { callExecution } from '../../defaults';
 import { connect } from 'react-redux';
-import { getProducts } from '../../reducers/productsReducer';
+import { getProducts, getSamples } from '../../reducers/productsReducer';
 import { bindActionCreators } from 'redux'
 import moment from 'moment';
 import { getGifts } from '../../reducers/giftsReducer';
@@ -32,8 +31,9 @@ import { getSubmitData, getSubmitLoader } from '../../reducers/callsReducers';
 import { getHistory } from '../../actions/history';
 import { NetworkContext } from '../../components/NetworkProvider'
 import GiftsModal from '../../components/GiftsModal';
-import ProductsSamplesModal from '../../components/ProductsSamplesModal';
+import { ProductsModal, SamplesModal } from '../../components/ProductsSamplesModal';
 import { getProductsWithSamples } from '../../services/productService';
+import { RFValue } from 'react-native-responsive-fontsize';
 
 /**
  * @class CallExecution
@@ -93,6 +93,10 @@ class CallExecution extends Component {
             // }
         ],
         form_data: parse(stringify(callExecution)),
+        position: 0,
+        samplesOverlay: false,
+        isReminder: false,
+        selectedFiles: [],
     }
 
     /**
@@ -104,21 +108,30 @@ class CallExecution extends Component {
      * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
      */
     onClickProduct = (productTemplateId) => {
-        if(this.state.selectedProductId == null || this.state.selectedProductId == 0) {
-            const samples = this.props.products.filter(product => product.ProductTemplateId == productTemplateId)[0]
-            this.setState({
-                selectedProductId: productTemplateId,
-                samples: samples.Products,
-            })
-            return;
+        let { selectedProducts, position, isReminder, selectedSamples, selectedFiles } = this.state
+        let oldSelected = _.findIndex(selectedProducts, {position, IsReminder: isReminder})
+        if(oldSelected > 0) {
+            delete selectedProducts[oldSelected]
+            delete selectedSamples[oldSelected]
+            selectedFiles = _.filter(selectedFiles, ['ProductTemplateId', productTemplateId])
         }
+        const product = _.find(this.props.products, ['ProductTemplateId', productTemplateId])
+        selectedProducts[productTemplateId] = {
+            ProductId: product.ProductTemplateId,
+            name: product.ProductTemplateName,
+            DetailingSeconds: 0,
+            IsReminder: this.state.isReminder,
+            position
+        }
+        selectedFiles = _.concat(selectedFiles, product.Files)
+        // let filesNotIncluded = _.differenceWith(selectedFiles, product.Files, _.isEqual)
+        // if(! _.isEmpty(filesNotIncluded)) selectedFiles = [ ...selectedFiles, ...filesNotIncluded ];
         this.setState({
-            overlayError: 'You can not select another product.'
-        }, () => setTimeout(() => {
-            this.setState({
-                overlayError: ''
-            })
-        }, 5000))
+            selectedProducts,
+            selectedProductId: productTemplateId,
+            overlay: false,
+            selectedFiles,
+        })
     }
 
     /**
@@ -129,48 +142,22 @@ class CallExecution extends Component {
      * @param {Boolean} IsReminder - Distinguish in between a reminder or regular product.
      * @memberof CallExecution
      * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
-     * @todo Refactor this long shit
      */
-    onClickSample = (productId, IsReminder) => {
-        var selectedProduct = null;
-        var productTemplate = null;
-        this.props.products.map(product => {
-            product.Products.map(sample => {
-                if(sample.ProductId === productId) {
-                    selectedProduct = sample;
-                    productTemplate = product;
-                }
-            })
-        })
-        const { reminderPosition } = this.state;
-        let selectedProducts = this.state.selectedProducts
-        let selectedSamples = this.state.selectedSamples;
-        let alreadySelectedProductAtThisPosition = selectedProducts
-        .filter(product => (product.reminderPosition && product.reminderPosition == reminderPosition))
-        if(alreadySelectedProductAtThisPosition.length > 0) {
-            delete selectedProducts[alreadySelectedProductAtThisPosition[0].ProductId];
-            delete selectedSamples[alreadySelectedProductAtThisPosition[0].ProductId];
-        }
-        if(selectedProducts[productTemplate.ProductTemplateId] == undefined) {
-            selectedProducts[productTemplate.ProductTemplateId] = {
-                ProductId: productTemplate.ProductTemplateId,
-                name: productTemplate.ProductTemplateName,
-                DetailingSeconds: 0,
-                isReminder: false,
-                reminderPosition: reminderPosition,
-            }
-        }
+    onClickSample = (productId) => {
+        const selectedProduct = _.find(this.props.samples, ['ProductId', productId]);
+        const productTemplate = _.find(this.props.products, ['ProductTemplateId', selectedProduct.ProductTemplateId]);
+
+        let { selectedSamples } = this.state;
 
         selectedSamples[productTemplate.ProductTemplateId] = {
-            IsReminder: (selectedProducts[productTemplate.ProductTemplateId].IsReminder || false),
+            IsReminder: this.state.isReminder,
             ProductId: productId,
             name: selectedProduct.ProductName,
             SampleQty: 0,
             ProductTemplateId: productTemplate.ProductTemplateId
         }
         this.setState({
-            selectedProducts: selectedProducts,
-            selectedSamples: selectedSamples,
+            selectedSamples
         })
     }
 
@@ -243,14 +230,60 @@ class CallExecution extends Component {
      * @memberof CallExecution
      * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
      */
-    showProductsOverlay = (selectedProduct, reminderPosition = 0) => {
+    showProductsOverlay = (selectedProduct, position, type = 'planned') => {
         this.setState({
             overlay: true,
-            reminderPosition: reminderPosition,
+            position: position,
             selectedProductId: selectedProduct,
-            samples: selectedProduct !== null
-                ? this.props.products.filter(product => product.ProductTemplateId == selectedProduct)[0].Products
-                : [] 
+            isReminder: type != 'planned'
+        }, () => console.log(this.state))
+    }
+
+    hideProductsOverlay = (unselect = false) => {
+        if(unselect) {
+            let { selectedProducts, selectedSamples, selectedProductId } = this.state
+            delete selectedProducts[selectedProductId];
+            delete selectedSamples[selectedProductId];
+            return this.setState({
+                selectedProducts,
+                selectedSamples,
+                overlay: false,
+                position: 0,
+                selectedProductId: 0,
+                isReminder: false
+            })
+        }
+        this.setState({
+            overlay: false,
+            position: 0,
+            selectedProductId: 0,
+            isReminder: false
+        })
+    }
+
+    showSamplesOverlay = (selectedProduct, position) => {
+        this.setState({
+            samplesOverlay: true,
+            position,
+            selectedProductId: selectedProduct
+        })
+    }
+
+    handleSampleOverlayClose = (unselect = false) => {
+        if(unselect) {
+            let { selectedSamples, selectedProductId } = this.state
+            delete selectedSamples[selectedProductId];
+            this.setState({
+                selectedSamples,
+                samplesOverlay: false,
+                position: 0,
+                selectedProductId: 0,
+            });
+        }
+        this.setState({
+            samplesOverlay: false,
+            position: 0,
+            selectedProductId: 0,
         })
     }
     
@@ -292,7 +325,8 @@ class CallExecution extends Component {
         const callData = this.props.navigation.getParam('call_info')
         let selectedProducts = [];
         let eDetailings = [];
-        callData.Products.map(product => {
+        let files = [];
+        callData.Products.map((product, index) => {
             product.Files.map(file => {
                 eDetailings[file.DetailingFileId] = {
                     DetailingFileId: file.DetailingFileId,
@@ -300,11 +334,13 @@ class CallExecution extends Component {
                 }
                 return file;
             })
+            files.push(product.Files)
             selectedProducts[product.ProductId] = {
                 ProductId: product.ProductId,
                 name: product.ProductName,
                 DetailingSeconds: 0,
                 IsReminder: false,
+                position: index + 1
             }
             return product;
         })
@@ -328,6 +364,7 @@ class CallExecution extends Component {
             form_data: dailyCall,
             selectedProducts: selectedProducts,
             eDetailing: eDetailings,
+            selectedFiles: _.concat(files)
         }
         // , () => {console.log('checking all the values set', this.state, this.context)}
         )
@@ -550,6 +587,23 @@ class CallExecution extends Component {
         );
     }
 
+    confirmSubmit = () => {
+        Alert.alert(
+            'Call Execution',
+            'Are you sure you wan to execute this call?',
+            [
+            {
+                text: 'No',
+                style: 'cancel',
+            },
+            {
+                text: 'Yes',
+                onPress: () => this.submitCall()
+            },
+            ],
+        );
+    }
+
     /**
      * @inheritdoc
      */
@@ -562,10 +616,10 @@ class CallExecution extends Component {
         } = this.state;
         return (        
             <ImageBackgroundWrapper>
-                <CallExecutionButton disabled={this.props.submitLoader} onPress={this.submitCall}/>
+                <CallExecutionButton disabled={this.props.submitLoader} onPress={this.confirmSubmit}/>
                 {this.props.submitLoader == true ? <ScreenLoader /> : null}
                 <View style={styles.InputContainer}>
-                    <KeyboardAwareScrollView
+                    <ScrollView
                         contentContainerStyle={{justifyContent: 'center', display: 'flex' }}>
                         <CallPlanHeader />
                         <View style={{ flex: 1}}>
@@ -574,21 +628,24 @@ class CallExecution extends Component {
                                 <LocationStatus isFetching={this.state.fetchingLocation} />
                             </View>
                             <Collapse
+                                section="isKeyInfoCollapsed"
                                 isCollapsed={isKeyInfoCollapsed}
-                                toggler={() => this.onToggleCollapsedElement('isKeyInfoCollapsed')}
+                                toggler={this.onToggleCollapsedElement}
                                 title="Key Call Information"
                                 Body={<Tab
                                         updateDetailingSeconds={this.updateDetailingSeconds}
                                         existingCall={true}
                                         onCallReasonChange={this.onChangeAdditionalInfoAttributes}
                                         navigate={this.props.navigation}
+                                        files={this.state.selectedFiles}
                                     />}  
-                                HeaderIcon={<FontAwesomeIcon name="info-circle" size={40} color={brandColors.green} />} />
+                                HeaderIcon={<FontAwesomeIcon name="info-circle" size={RFValue(40)} color={brandColors.lightGreen} />} />
                             <Collapse
                                 isCollapsed={isAdditionalInfoCollapsed}
-                                toggler={() => this.onToggleCollapsedElement('isAdditionalInfoCollapsed')}
+                                section="isAdditionalInfoCollapsed"
+                                toggler={this.onToggleCollapsedElement}
                                 title="Additional Information"
-                                HeaderIcon={<FontAwesomeIcon name="plus-square" size={40} color={brandColors.green} />}
+                                HeaderIcon={<FontAwesomeIcon name="plus-square" size={ RFValue(40) } color={brandColors.lightGreen} />}
                                 Body={
                                     <AdditionalInfo
                                         existingCall={true}
@@ -598,6 +655,7 @@ class CallExecution extends Component {
                                         selectedProducts={this.state.selectedProducts}
                                         selectedSamples={this.state.selectedSamples}
                                         showProducts={this.showProductsOverlay}
+                                        showSamples={this.showSamplesOverlay}
                                         selectedProduct={this.state.selectedProduct }
                                         selectedSample={this.state.selectedProduct}
                                         navigate={this.props.navigation}
@@ -609,27 +667,33 @@ class CallExecution extends Component {
                                 {
                                     existingCall && !!this.props.history.history ?
                                     <Collapse
+                                        section="isDocHistoryCollapsed"
                                         isCollapsed={isDocHistoryCollapsed}
-                                        toggler={() => this.onToggleCollapsedElement('isDocHistoryCollapsed')}
+                                        toggler={this.onToggleCollapsedElement}
                                         title="Doctor Visit History"
                                         Body={ <DoctorHistory /> }
-                                        HeaderIcon={<FontAwesomeIcon name="history" size={40} color="#fff" />}/>
+                                        HeaderIcon={<FontAwesomeIcon name="history" size={40} color={brandColors.lightGreen} />}/>
                                         : null
                                 }
                         </View>
-                    </KeyboardAwareScrollView>
-                    <ProductsSamplesModal
-                        samples={this.state.samples}
-                        productSelectionError={this.state.overlayError}
+                    </ScrollView>
+                    <ProductsModal
                         selectedProducts={this.state.selectedProducts}
                         selectedProductId={this.state.selectedProductId}
                         reminderPosition={this.state.reminderPosition}
-                        selectedSamples={this.state.selectedSamples}
                         isVisible={this.state.overlay}
                         onPressProductHandler={this.onClickProduct}
+                        onCloseHandler={this.hideProductsOverlay}
+                        existingCall={true}
+                    />
+                    <SamplesModal
+                        selectedProductId={this.state.selectedProductId}
+                        reminderPosition={this.state.reminderPosition}
+                        selectedSamples={this.state.selectedSamples}
+                        isVisible={this.state.samplesOverlay}
                         onPressSampleHanlder={this.onClickSample}
                         setSamplesCountHandler={this.setSampleCount}
-                        onCloseHandler={this.handleOverlayClose}
+                        onCloseHandler={this.handleSampleOverlayClose}
                     />
                     <GiftsModal
                         isVisible={this.state.giftsOverlay}
@@ -655,6 +719,7 @@ class CallExecution extends Component {
 const mapStateToProps = state => {
     return {
         products: getProducts(state),
+        samples: getSamples(state),
         gifts: getGifts(state),
         user: getUser(state),
         submit_data: getSubmitData(state),

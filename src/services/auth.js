@@ -9,12 +9,13 @@ export const loginUser = (params, onSuccess, onFailure) => {
         return post('loginUser', params).then(response => {
             if(response.length > 0) {
                 let user = response[0];
-                user.FullName = userFullName(user);
+                user.FullName = userFullName(user).replace('.', '');
                 dispatch(loginSuccess(user))
                 setStorage('user', JSON.stringify(user))
                 onSuccess();
                 return;
             }
+            dispatch(loginFailure())
             onFailure();
         }).catch(error => dispatch(loginFailure()))
     }

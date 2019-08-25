@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     View, Keyboard, NativeModules
 } from 'react-native';
@@ -12,19 +12,20 @@ const ReminderField = ({
     showProducts,
     selectedProduct,
     selectedSamples,
+    showSamples,
 }) => {
-    const onFocus = (selectedProduct, position) => {
-        Keyboard.dismiss();
+    const onFocus = (selectedProduct, position, type = 'product') => {
         NativeModules.KeyboardFunctionalities.hideKeyboard()
-        showProducts(selectedProduct, position);
+        Keyboard.dismiss();
+        type == 'product'
+        ? showProducts(selectedProduct, position, 'reminder')
+        : showSamples(selectedProduct, position, 'reminder');
     }
     return (
         <View style={styles.container}>
             {
                 rangeArray(times).map((value, key) => {
-                    let product = selectedProduct.filter(product => product.reminderPosition && product.reminderPosition == (key + 1))
-                    if(product.length > 0) product = product[0];
-
+                    let product = _.find(selectedProduct, { position: key + 1, IsReminder: true }) || []
                     return (
                         <View key={ key + RandomInteger() } style={{width: "95%", paddingBottom: 10}}>
                             <FieldHeader
@@ -34,13 +35,13 @@ const ReminderField = ({
                                 isFirst={ key === 0 ? true : false }
                                 onRemove={onRemove}
                             />
-                            <Input onFocus={() => onFocus(product.length > 0 ? product.ProductId : null, key + 1)} labelStyle={styles.labelStyle} label={`Reminder ${key+1}`} placeholder="Product Name" value={product.name || ''} />
+                            <Input onFocus={() => onFocus(product.ProductId || null, key + 1)} labelStyle={styles.labelStyle} label={`Reminder ${key+1}`} placeholder="Product Name" value={product.name || ''} />
                             <View key={ RandomInteger() } style={{flex:1, flexDirection: 'row'}}>
                                 <View key={ RandomInteger() } style={{width: "50%"}}>
-                                    <Input onFocus={() => onFocus(null)} labelStyle={styles.labelStyle} key={ key + RandomInteger() } label={`Sample ${key + 1}`} placeholder="Sample Name" value={getNameFromSelectedSamples(selectedSamples, product.ProductId)} />
+                                    <Input editable={!_.isEmpty(product)} onFocus={() => onFocus( product.ProductId || null, key + 1, 'sample')} labelStyle={styles.labelStyle} key={ key + RandomInteger() } label={`Sample ${key + 1}`} placeholder="Sample Name" value={getNameFromSelectedSamples(selectedSamples, product.ProductId)} />
                                 </View>
                                 <View key={ RandomInteger() } style={{width: "50%"}}>
-                                    <Input onFocus={() => onFocus(null)} labelStyle={styles.labelStyle} key={ RandomInteger() } label="Quantity" placeholder="Quantity" value={`${getQuantityOfTheSelectedSamples(selectedSamples, product.ProductId)}`} />
+                                    <Input editable={!_.isEmpty(product)} onFocus={() => onFocus(product.ProductId || null, key + 1, 'sample')} labelStyle={styles.labelStyle} key={ RandomInteger() } label="Quantity" placeholder="Quantity" value={`${getQuantityOfTheSelectedSamples(selectedSamples, product.ProductId)}`} />
                                 </View>
                             </View>
                         </View>

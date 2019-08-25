@@ -2,8 +2,8 @@
  * @file Container component that shows the home screen with a daily call listing
  * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
  */
-import React, { Component } from 'react';
-import { View, ScrollView } from 'react-native';
+import React, { PureComponent } from 'react';
+import { View, ScrollView, InteractionManager } from 'react-native';
 import { CallPlanHeader } from '../../components/Headers';
 import { ImageBackgroundWrapper, ScreenLoader } from '../../components';
 import { navigationOption, authUser, getToken } from '../../constants'
@@ -21,6 +21,7 @@ import CallPlansListHeader from '../../components/CallPlansListHeader';
 import { getAllDesignations, getAllSpecialities, getDoctorByEmployeeId } from '../../services/doctor';
 import { getAllCities } from '../../services/city';
 import { getEmployees } from '../../services/auth';
+import { RFValue } from 'react-native-responsive-fontsize';
 
 /**
  * @class CallPlans
@@ -30,7 +31,7 @@ import { getEmployees } from '../../services/auth';
  * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
  */
 
-class CallPlans extends Component {
+class CallPlans extends PureComponent {
 
     /**
      * @static
@@ -56,32 +57,41 @@ class CallPlans extends Component {
      * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
      * @memberof CallPlans
      */
-    async componentDidMount() {
-        const user = this.props.user;
-        const userDataPayload = {
-            Token: getToken,
-            EmployeeId: user.EmployeeId,
-        }
-        Promise.all([
-            this.props.getTodayCalls(userDataPayload),
-            this.props.getProductsWithSamples(userDataPayload),
-            this.props.getAllGifts(),
-            this.props.getDesignations(),
-            this.props.getSpecialities(),
-            this.props.getCities(),
-            this.props.getUnplannedCalls(userDataPayload),
-            this.props.isRSM
-            ? this.props.getReportingEmployees(userDataPayload)
-            : this.props.getDoctorsByEmployee(userDataPayload),
-        ]).then(response => {
-            console.log(response)
-            this.context.showRefresh()
+    componentDidMount() {
+        InteractionManager.runAfterInteractions(() => {
+            console.log(RFValue(15), RFValue(18), RFValue(20))
+            const user = this.props.user;
+            const userDataPayload = {
+                Token: getToken,
+                EmployeeId: user.EmployeeId,
+            }
+            Promise.all([
+                this.props.getTodayCalls(userDataPayload),
+                this.props.getProductsWithSamples(userDataPayload),
+                this.props.getAllGifts(),
+                this.props.getDesignations(),
+                this.props.getSpecialities(),
+                this.props.getCities(),
+                this.props.getUnplannedCalls(userDataPayload),
+                this.props.isRSM
+                ? this.props.getReportingEmployees(userDataPayload)
+                : this.props.getDoctorsByEmployee(userDataPayload),
+            ])
+            .then(response => {
+                
+                this.context.showRefresh()
+            })
         })
-        // TODO: need to remove this if everything works just fine.
-        // this.props.getTodayCalls({
-        //     Token: getToken,
-        //     EmployeeId: user.EmployeeId,
-        // });
+            // TODO: need to remove this if everything works just fine.
+            const user = this.props.user;
+        //     const userDataPayload = {
+        //         Token: getToken,
+        //         EmployeeId: user.EmployeeId,
+        //     }
+        //     this.props.getTodayCalls({
+        //         Token: getToken,
+        //         EmployeeId: user.EmployeeId,
+        //     });
         // this.props.getProductsWithSamples({
         //     Token: getToken,
         //     EmployeeId: user.EmployeeId
@@ -151,12 +161,13 @@ class CallPlans extends Component {
                         {
                             this.props.calls.map((call, i) => {
                                 return (<ItemCard
+                                    call={call}
                                     key={i}
                                     name={`${call.Doctor.DoctorName}`}
                                     category={call.TeamName}
                                     doctorClass={call.Doctor.ClassName}
                                     loading={this.state.loadingButton}
-                                    onPressHandler={() => this.onPress(call)}
+                                    onPressHandler={this.onPress}
                                     status={call.IsExecuted}
                                     isOffline={call.IsExecutedOffline && call.IsExecutedOffline}
                                 />)
@@ -165,12 +176,13 @@ class CallPlans extends Component {
                         {
                             this.props.unplannedCalls.map((call, i) => {
                                 return (<ItemCard
+                                    call={call}
                                     key={i}
                                     name={`${call.Doctor.DoctorName}`}
                                     category={call.TeamName}
                                     doctorClass={call.Doctor.ClassName}
                                     loading={this.state.loadingButton}
-                                    onPressHandler={() => this.onPress(call)}
+                                    onPressHandler={this.onPress}
                                     status={call.IsExecuted}
                                     isOffline={call.IsExecutedOffline && call.IsExecutedOffline}
                                     isUnplanned={true}

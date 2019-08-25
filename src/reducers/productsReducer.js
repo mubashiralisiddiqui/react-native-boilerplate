@@ -2,6 +2,7 @@ import { GET_PRODUCTS, GET_PRODUCTS_FAILURE, GET_PRODUCTS_SUCCESS } from '../act
 
 const initialState = {
   products: [],
+  samples: [],
 };
 
 export const productsReducer = (state = initialState, action) => {
@@ -20,6 +21,7 @@ export const productsReducer = (state = initialState, action) => {
         return {
             ...state,
             products: action.products,
+            samples: _.concat(...(action.products.map(product => product.Products)))
         }
     }
     default:
@@ -29,7 +31,4 @@ export const productsReducer = (state = initialState, action) => {
 
 // export const getCallsLoading = state => state.loading;
 export const getProducts = state => state.products.products;
-export const getSamples = state => {
-    let samples = state.products.products.map(product => product.Products)
-    return _.concat(...samples);
-}
+export const getSamples = state => state.products.samples;

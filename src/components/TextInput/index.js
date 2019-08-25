@@ -9,14 +9,13 @@ const InputText = (
         placeholder = "Login ID",
         keyboardType = "default",
         handleChange = () => ({}),
-        underlineColor = "",
         secureTextEntry = false,
         value,
         leftIcon,
         onKeyUp,
         type,
-        error
-
+        error,
+        focus,
     }
 ) => {
     return (
@@ -37,7 +36,10 @@ const InputText = (
                     autoCapitalize={'none'}
                     onKeyPress={(e) => onKeyUp(type === 'password' ? 'Password' : 'LoginId', e)}
                     errorMessage={error.message}
-                    />
+                    onSubmitEditing={ () => onKeyUp(type === 'password' ? 'Password' : 'LoginId', 'enter')}
+                    blurOnSubmit={type !== 'password'}
+                    focus={focus && focus}
+                />
             </View>
         </View>
     )

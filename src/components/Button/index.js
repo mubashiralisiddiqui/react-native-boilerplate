@@ -6,6 +6,7 @@ import {
     Text,
     ActivityIndicator
 } from 'react-native';
+import { RFValue } from 'react-native-responsive-fontsize';
 
 
 const Button = (props) => {
@@ -15,7 +16,7 @@ const Button = (props) => {
         return {
 
             borderRadius: rounded ? 30 : 0,
-            width: '80%',
+            width: '100%',
             height: 50,
             backgroundColor: backgroundColor || '#8dc23c',
             justifyContent: 'center',
@@ -39,14 +40,14 @@ const Button = (props) => {
                 onPress={onPress}
                 style={getButtonStylings()}
             >
+                <Text style={{ textAlign: 'left', color: 'white', fontSize: RFValue(18), fontFamily: 'Lato-MediumItalic' }}>
+                        {Title}
+                </Text>
                 {loading ?
                     <ActivityIndicator
                         color="white"
                     />
-                    :
-                    <Text style={{ color: 'white', fontSize: 18, fontWeight: '700' }}>
-                        {Title}
-                    </Text>
+                    : null
                 }
 
                 {icon}
@@ -60,19 +61,19 @@ export default Button;
 const styles = new StyleSheet.create({
     container: {
         justifyContent: 'center',
-        width: '100%',
+        // width: '100%',
         alignItems: 'center',
         paddingVertical: 10,
 
     },
     button: {
         borderRadius: 30,
-        width: '80%',
+        width: '100%',
         height: 50,
         backgroundColor: '#8dc23c',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'row'
+        // justifyContent: 'center',
+        // alignItems: 'center',
+        // flexDirection: 'row'
 
     }
 })

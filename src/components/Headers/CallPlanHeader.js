@@ -3,13 +3,13 @@ import React from 'react';
 import { View, Image } from 'react-native';
 import { brandColors } from '../../constants';
 import  UserInfo  from '../UserInfo';
-import { RefreshNow } from '..'
+import { RFValue } from 'react-native-responsive-fontsize';
 
 const ImageHeader = () => {
     return (
             <View style={styles.container}>
                 <Image
-                    style={{ resizeMode: 'contain' }}
+                    style={{ width: RFValue(250), resizeMode: 'contain', height: RFValue(125) }}
                     source={ require('../../assets/images/HPLogo.png') }
                 />
                 <UserInfo />

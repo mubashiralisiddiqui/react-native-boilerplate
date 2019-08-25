@@ -3,6 +3,7 @@ import { ListItem, Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { brandColors } from '../../../constants';
 import { propTypes, defaultValues } from './defaultPropTypesValues'
+import { RFValue } from 'react-native-responsive-fontsize';
 
 const FieldHeader = ({
     key,
@@ -34,15 +35,15 @@ export default FieldHeader;
 const inlineStyles = {
     textStyle: (type) => {
         return {
-            fontWeight: type === 'title' ? 'bold' : 'normal',
-            color: brandColors.green,
-            fontSize: type === 'title' ? 18 : 10,
+            fontFamily: type === 'title' ? 'Lato-MediumItalic' : 'Lato-Regular',
+            color: brandColors.lightGreen,
+            fontSize: type === 'title' ? RFValue(16) : RFValue(10),
             paddingLeft: 5
         }
     },
     listItemContainer: {
         borderRadius: 5,
-        height: 50,
+        height: 40,
         padding: 2,
         backgroundColor: brandColors.darkBrown
     }
