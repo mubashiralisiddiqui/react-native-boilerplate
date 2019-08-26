@@ -39,14 +39,14 @@ export default class Tab extends Component {
       <TabView
         navigationState={this.state}
         renderScene={this.renderScene}
-        onIndexChange={index => this.setState({ index })}
+        onIndexChange={index => console.log || this.setState({ index })}
         initialLayout={{ width: Dimensions.get('window').width }}
         renderTabBar={props =>
           <TabBar
+            onTabPress={({ route }) => this.setState({ index: _.findIndex(this.state.routes, ['key', route.key])})}
             {...props}
             indicatorStyle={{ backgroundColor: brandColors.darkBrown }}
             style={{ backgroundColor: brandColors.lightGreen }}
-            swipeVelocityImpact={1.0}
           />
         }
       />

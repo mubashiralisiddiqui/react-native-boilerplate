@@ -17,7 +17,6 @@ import {
     ScreenLoader,
     CallExecutionButton,
 } from '../../components';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { getDocHistory } from '../../services/historyService';
 import { submitCallSingle, getTodayCalls, submitOfflineCall, getTodayUnplannedCalls } from '../../services/callServices';
 import { Tab } from '..';

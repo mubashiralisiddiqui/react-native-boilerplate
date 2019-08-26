@@ -3,10 +3,9 @@
  * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
  */
 import React, { Component } from 'react';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { CallPlanHeader } from '../../components/Headers';
 import { NewDoctorForm, ImageBackgroundWrapper } from '../../components';
-import { View, Animated } from 'react-native';
+import { View, Animated, ScrollView } from 'react-native';
 import { Button } from 'react-native-elements';
 import { navigationOption, brandColors, stringify, validate } from '../../constants';
 import { bindActionCreators } from 'redux'
@@ -204,7 +203,7 @@ class NewDoctor extends Component {
         return (
             <Animated.View style={{...styles.container, opacity: this.state.fadeAnim}}>
                 <ImageBackgroundWrapper>
-                    <KeyboardAwareScrollView
+                    <ScrollView
                         style={styles.scrollContainer}
                         showsVerticalScrollIndicator={false}
                     >
@@ -228,7 +227,7 @@ class NewDoctor extends Component {
                                     title="Add" />
                             </View>
                         </View>
-                    </KeyboardAwareScrollView>
+                    </ScrollView>
                 </ImageBackgroundWrapper>
             </Animated.View>
         )

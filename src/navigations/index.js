@@ -21,7 +21,9 @@ import {
     AuthCheck,
     SavedData,
     CallExecutionUnplanned,
-    WebView,
+    Planner,
+    Expense,
+    Training,
 } from '../containers';
 import DrawerContent from './drawercontent'
 
@@ -38,9 +40,16 @@ const AddNewDoctorStack = createStackNavigator({
     NewDoctor,
 })
 
-const WebViewStack = createStackNavigator({
-    WebView
+const CallPlannerStack = createStackNavigator({
+    Planner,
 })
+const ExpenseManagerStack = createStackNavigator({
+    Expense,
+})
+const TrainingPortalStack = createStackNavigator({
+    Training,
+})
+
 
 const SamplesStack = createStackNavigator({
     Samples,
@@ -54,7 +63,9 @@ const RootStack = createDrawerNavigator({
     NewDoct: AddNewDoctorStack,
     Samples: SamplesStack,
     Main: AppStack,
-    Web: WebViewStack,
+    Expense: ExpenseManagerStack,
+    Training: TrainingPortalStack,
+    Planner: CallPlannerStack,
 },
     // drawer component mean we are using our custom drawer if we dont use it by defautl 
     // drawer path will be shown in side menu like Main which is current in drawer

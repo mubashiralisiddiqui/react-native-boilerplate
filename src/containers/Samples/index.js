@@ -1,23 +1,38 @@
-import React, { PureComponent } from 'react'
-import { View, Dimensions } from 'react-native';
+import React, { PureComponent, Fragment } from 'react'
+import { View, Dimensions, ScrollView } from 'react-native';
 import { ImageBackgroundWrapper } from '../../components';
 import { CallPlanHeader } from '../../components/Headers';
 import { navigationOption, RandomInteger, brandColors } from '../../constants';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
-import { getSamples } from '../../reducers/productsReducer';
-import { Text, Divider, Card } from 'react-native-elements';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { getSamples, getProducts } from '../../reducers/productsReducer';
+import { Text, Card, Button } from 'react-native-elements';
 import { RFValue } from 'react-native-responsive-fontsize';
+import FontAwesomIcon from 'react-native-vector-icons/FontAwesome'
+import { NetworkContext } from '../../components/NetworkProvider';
 
 class Samples extends PureComponent {
     static navigationOptions = ({ navigation }) => (navigationOption(navigation, 'Samples'))
+    static contextType = NetworkContext
 
     state = {
-        width: Dimensions.get('screen').width
+        width: Dimensions.get('screen').width,
+        // samples: _.groupBy(this.props.samples, sample => sample.ProductTemplateId),
+        // selected: ''
+    }
+
+    onPressHead = (index) => {
+        this.setState({
+            selected: index == this.state.selected ? '' : Number(index)
+        })
     }
 
     componentDidMount() {
+        this.context.hideRefresh();
+        // console.log(this.props.samples, 'asdasd')
+    }
+    componentWillUnMount() {
+        this.context.showRefresh();
         // console.log(this.props.samples, 'asdasd')
     }
 
@@ -32,11 +47,7 @@ class Samples extends PureComponent {
         return (
             <ImageBackgroundWrapper>
                 <CallPlanHeader />
-                {/* <ScrollView> */}
-                {/* <View style={{width: '100%', justifyContent: 'center'}}> */}
-                    
-                    
-                    <KeyboardAwareScrollView contentContainerStyle={{ width: '100%', display: 'flex',
+                    <ScrollView contentContainerStyle={{ width: '100%', display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center',
                         flexDirection: 'column'}}>
@@ -55,7 +66,7 @@ class Samples extends PureComponent {
                         {
                             this.props.samples.map(sample => <_render item={sample} />)
                         }
-                    </KeyboardAwareScrollView>
+                    </ScrollView>
             </ImageBackgroundWrapper>
         )
     }
@@ -73,6 +84,7 @@ class Samples extends PureComponent {
 const mapStateToProps = state => {
     return {
         samples: getSamples(state),
+        products: getProducts(state),
     }
 }
 
@@ -89,12 +101,22 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 const getStyles = () => {
     return {
         viewContainer: {
-            // display: 'flex',
             justifyContent: 'flex-start',
             flexDirection: 'row',
             width: '100%',
             height: 15,
             paddingLeft: 0,
+        },
+        itemHead: {
+            height: 15,
+            justifyContent: 'center',
+            width: '50%'
+        },
+        itemHeadIcon: {
+            height: 15,
+            justifyContent: 'center',
+            alignItems: 'flex-end',
+            width: '50%'
         },
         itemSecondLast: {
             height: 15,
@@ -113,6 +135,12 @@ const getStyles = () => {
             fontFamily: 'Lato-MediumItalic',
             color: brandColors.lightGreen,
         },
+        textHead: {
+            fontSize: RFValue(16),
+            fontFamily: 'Lato-MediumItalic',
+            color: brandColors.lightGreen,
+            textAlign: 'left',
+        },
         text: {
             fontSize: RFValue(16),
             fontFamily: 'Lato-Regular',
@@ -125,7 +153,7 @@ const getStyles = () => {
             shadowOffset: { width: 0, height: 4 },
             shadowOpacity: 0.8,
             shadowRadius: 4,
-            width: '80%',
+            width: '60%',
             justifyContent: 'center',
             display: 'flex',
             justifyContent: 'center',
@@ -136,7 +164,7 @@ const getStyles = () => {
             backgroundColor: 'transparent',
             // shadowColor: brandColors.lightGreen,
             borderRadius: 1,
-            width: '80%',
+            width: '60%',
             flex: 1,
             alignItems: 'center',
             justifyContent: 'center',
@@ -159,6 +187,33 @@ _render = ({ item }) => {
                 </View>
             </View>
         </Card>
+        
+    )
+}
+_renderProductHead = ({ item, products, index, selected, onPress }) => {
+    const styles = getStyles()
+    return (
+        // <View>
+            <Fragment>
+            <Card key={RandomInteger()}
+                containerStyle={styles.cardContainer}
+            >
+                <View onLayout={this.onLayout} key={RandomInteger()} style={styles.viewContainer}> 
+                    <View key={RandomInteger()} style={styles.itemHead}>
+                        <Text key={RandomInteger()} style={styles.textHead}>{_.find(products, ['ProductTemplateId', Number(index)]).ProductTemplateName}</Text>
+                    </View>
+                    <View  key={RandomInteger()} style={styles.itemHeadIcon}>
+                        <Button type="clear" onPress={() => onPress(index)} icon={<FontAwesomIcon style={{alignItems: 'center'}} name={selected == index ? 'arrow-up' : 'arrow-down'} size={RFValue(20)} color={brandColors.lightGreen} />} />
+                    </View>
+                </View>
+            </Card>
+            {
+                selected == index
+                ? _.map(item, sample => <_render item={sample} />)
+                : null
+
+            }
+        </Fragment>
         
     )
 }

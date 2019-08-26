@@ -68,14 +68,9 @@ class NavigationMenu extends Component {
     }
 
     navigateIt = (to) => {
-        console.log(this.props.navigation)
         switch(to) {
             case 'Login': {
                 this.logout()
-                return;
-            }
-            case 'WebView': {
-                this.props.navigation.push(to)
                 return;
             }
             default: {

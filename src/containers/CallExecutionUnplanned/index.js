@@ -95,12 +95,14 @@ class CallExecutionUnplanned extends Component {
     }
 
     onClickProduct = (productTemplateId) => {
-        let { selectedProducts, position, isReminder, selectedSamples } = this.state
+        let { selectedProducts, position, isReminder, selectedSamples, selectedFiles } = this.state
         let oldSelected = _.findIndex(selectedProducts, {position, IsReminder: isReminder})
         if(oldSelected > 0) {
             delete selectedProducts[oldSelected]
             delete selectedSamples[oldSelected]
+            selectedFiles = _.dropWhile(selectedFiles, ['ProductId', oldSelected])
         }
+
         const product = _.find(this.props.products, ['ProductTemplateId', productTemplateId])
         selectedProducts[productTemplateId] = {
             ProductId: product.ProductTemplateId,
@@ -109,7 +111,9 @@ class CallExecutionUnplanned extends Component {
             IsReminder: this.state.isReminder,
             position
         }
+        selectedFiles = _.concat(selectedFiles, product.Files)
         this.setState({
+            selectedFiles,
             selectedProducts,
             selectedProductId: productTemplateId,
             overlay: false,
@@ -242,18 +246,17 @@ class CallExecutionUnplanned extends Component {
     }
  
     componentDidMount() {
-        InteractionManager.runAfterInteractions(() => {
-
-        })
-        this.context.hideRefresh();
-        this.requestLocationPermission()
-        let dailyCall = parse(stringify(callExecution));
-        dailyCall.jsonDailyCall.DeviceDateTime = moment().format('YYYY-MM-DD hh:mm:ss')
-        dailyCall.EmployeeId = this.props.user.EmployeeId
-
-        this.setState({
-            form_data: dailyCall,
-        })
+        // InteractionManager.runAfterInteractions(() => {
+            this.context.hideRefresh();
+            this.requestLocationPermission()
+            let dailyCall = parse(stringify(callExecution));
+            dailyCall.jsonDailyCall.DeviceDateTime = moment().format('YYYY-MM-DD hh:mm:ss')
+            dailyCall.EmployeeId = this.props.user.EmployeeId
+    
+            this.setState({
+                form_data: dailyCall,
+            })
+        // })
     }
 
     onChangeAdditionalInfoAttributes = (field, value) => {
@@ -534,31 +537,43 @@ class CallExecutionUnplanned extends Component {
                                 }
                         </View>
                     </ScrollView>
-                    <ProductsModal
-                        selectedProducts={this.state.selectedProducts}
-                        selectedProductId={this.state.selectedProductId}
-                        reminderPosition={this.state.reminderPosition}
-                        isVisible={this.state.overlay}
-                        onPressProductHandler={this.onClickProduct}
-                        onCloseHandler={this.hideProductsOverlay}
-                        existingCall={false}
-                    />
-                    <SamplesModal
-                        selectedProductId={this.state.selectedProductId}
-                        reminderPosition={this.state.reminderPosition}
-                        selectedSamples={this.state.selectedSamples}
-                        isVisible={this.state.samplesOverlay}
-                        onPressSampleHanlder={this.onClickSample}
-                        setSamplesCountHandler={this.setSampleCount}
-                        onCloseHandler={this.handleSampleOverlayClose}
-                    />
-                    <GiftsModal
-                        isVisible={this.state.giftsOverlay}
-                        gifts={this.props.gifts}
-                        onCloseHandler={this.hideGifts}
-                        selectedGift={this.state.form_data.jsonGiftDetail}
-                        onPressGiftHandler={this.onClickGift}
-                    />
+                    {
+                        this.state.overlay
+                        ? <ProductsModal
+                            selectedProducts={this.state.selectedProducts}
+                            selectedProductId={this.state.selectedProductId}
+                            reminderPosition={this.state.reminderPosition}
+                            isVisible={this.state.overlay}
+                            onPressProductHandler={this.onClickProduct}
+                            onCloseHandler={this.hideProductsOverlay}
+                            existingCall={false}
+                        />
+                        : null
+                    }
+                    {
+                        this.state.samplesOverlay
+                        ? <SamplesModal
+                            selectedProductId={this.state.selectedProductId}
+                            reminderPosition={this.state.reminderPosition}
+                            selectedSamples={this.state.selectedSamples}
+                            isVisible={this.state.samplesOverlay}
+                            onPressSampleHanlder={this.onClickSample}
+                            setSamplesCountHandler={this.setSampleCount}
+                            onCloseHandler={this.handleSampleOverlayClose}
+                        />
+                        : null
+                    }
+                    {
+                        this.state.giftsOverlay
+                        ? <GiftsModal
+                            isVisible={this.state.giftsOverlay}
+                            gifts={this.props.gifts}
+                            onCloseHandler={this.hideGifts}
+                            selectedGift={this.state.form_data.jsonGiftDetail}
+                            onPressGiftHandler={this.onClickGift}
+                        />
+                        : null
+                    }
                 </View >
             </ImageBackgroundWrapper>
         )

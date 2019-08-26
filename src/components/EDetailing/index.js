@@ -5,7 +5,8 @@ import { ListItem, Overlay } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import { PDF } from '../../components';
-import RNFetchBlob from 'rn-fetch-blob'
+import RNFetchBlob from 'rn-fetch-blob';
+import Video from '../Video'
 
 const EDetailing = ({
     files = [],
@@ -15,6 +16,7 @@ const EDetailing = ({
     const [orientation, setOrientation] = useState('')
     const [selectedFile, setSelectedFile] = useState({})
     const [downloads, setDownloads] = useState([]);
+    const [type, setType] = useState('')
     useEffect(() => {
         Dimensions.addEventListener('change', () => {
             const newOrientation = getOrientation();
@@ -25,6 +27,7 @@ const EDetailing = ({
 
     const showSelectedFile = (file) => {
         setSelectedFile(file)
+        setType(file.FileType)
         setShowFile(true)
     }
 
@@ -35,6 +38,7 @@ const EDetailing = ({
     }
 
     const download = async (url, name, id) => {
+        console.log(url, name, id)
         let dirs = RNFetchBlob.fs.dirs
         const exists = await RNFetchBlob.fs.exists(`${dirs.DocumentDir}/${name}`)
         setDownloads(downloads => {
@@ -67,7 +71,7 @@ const EDetailing = ({
                 underlayColor='transparent'
                 title={item && item.FileName}
                 subtitle={item && item.FileDescription}
-                containerStyle={{backgroundColor: 'transparent', borderBottomWidth: 1, color: 'transparent'}}
+                containerStyle={{backgroundColor: 'transparent', borderBottomWidth: 1}}
                 titleStyle={{fontWeight: 'bold'}}
                 leftIcon={<Icon name="file-pdf" size={25} color={brandColors.green} />}
                 rightIcon={<MaterialIcon
@@ -79,6 +83,8 @@ const EDetailing = ({
             />
         )
     }
+    const [paused, setPaused] = useState(false)
+
     return (
         <View style={{display: 'flex', flex: 1, alignItems: 'center'}}>
             {
@@ -97,6 +103,7 @@ const EDetailing = ({
                     titleStyle={{fontWeight: 'bold'}}
                 />
             }
+            
             <Overlay
                 animationType="slide"
                 isVisible={showFile}
@@ -105,7 +112,7 @@ const EDetailing = ({
                 width="95%"
                 height="95%"
                 borderRadius={15}
-                children={<PDF onClose={onCloseFileModal} file={selectedFile}/>}
+                children={ type == 'pdf' ? <PDF onClose={onCloseFileModal} file={selectedFile}/> : <Video onClose={onCloseFileModal} file={selectedFile} setPaused={setPaused} paused={paused} /> }
                 onRequestClose={() => console.log('closed')}
             />
         </View>

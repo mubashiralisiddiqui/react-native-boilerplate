@@ -3,7 +3,7 @@
  * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
  */
 import React, { Component } from 'react';
-import { View, PermissionsAndroid, ScrollView, Alert } from 'react-native'
+import { View, PermissionsAndroid, ScrollView, Alert, InteractionManager } from 'react-native'
 import { CallPlanHeader } from '../../components/Headers'
 import { navigationOption, brandColors, getToken, parse, stringify, getDistance } from '../../constants'
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
@@ -108,13 +108,15 @@ class CallExecution extends Component {
      * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
      */
     onClickProduct = (productTemplateId) => {
+        console.log(2143)
         let { selectedProducts, position, isReminder, selectedSamples, selectedFiles } = this.state
         let oldSelected = _.findIndex(selectedProducts, {position, IsReminder: isReminder})
         if(oldSelected > 0) {
             delete selectedProducts[oldSelected]
             delete selectedSamples[oldSelected]
-            selectedFiles = _.filter(selectedFiles, ['ProductTemplateId', productTemplateId])
+            selectedFiles = _.dropWhile(selectedFiles, ['ProductTemplateId', oldSelected])
         }
+        console.log(selectedFiles, 'deleted')
         const product = _.find(this.props.products, ['ProductTemplateId', productTemplateId])
         selectedProducts[productTemplateId] = {
             ProductId: product.ProductTemplateId,
@@ -124,6 +126,7 @@ class CallExecution extends Component {
             position
         }
         selectedFiles = _.concat(selectedFiles, product.Files)
+        console.log(selectedFiles, 'set')
         // let filesNotIncluded = _.differenceWith(selectedFiles, product.Files, _.isEqual)
         // if(! _.isEmpty(filesNotIncluded)) selectedFiles = [ ...selectedFiles, ...filesNotIncluded ];
         this.setState({
@@ -320,55 +323,57 @@ class CallExecution extends Component {
      * @inheritdoc
      */
     async componentDidMount() {
-        this.context.hideRefresh();
-        let dailyCall = parse(stringify(callExecution));
-        const callData = this.props.navigation.getParam('call_info')
-        let selectedProducts = [];
-        let eDetailings = [];
-        let files = [];
-        callData.Products.map((product, index) => {
-            product.Files.map(file => {
-                eDetailings[file.DetailingFileId] = {
-                    DetailingFileId: file.DetailingFileId,
-                    Duration: 0,
+        // InteractionManager.runAfterInteractions(() => {
+            this.context.hideRefresh();
+            let dailyCall = parse(stringify(callExecution));
+            const callData = this.props.navigation.getParam('call_info')
+            let selectedProducts = [];
+            let eDetailings = [];
+            let files = [];
+            callData.Products.map((product, index) => {
+                product.Files.map(file => {
+                    eDetailings[file.DetailingFileId] = {
+                        DetailingFileId: file.DetailingFileId,
+                        Duration: 0,
+                    }
+                    return file;
+                })
+                files.push(product.Files)
+                selectedProducts[product.ProductId] = {
+                    ProductId: product.ProductId,
+                    name: product.ProductName,
+                    DetailingSeconds: 0,
+                    IsReminder: false,
+                    position: index + 1
                 }
-                return file;
+                return product;
             })
-            files.push(product.Files)
-            selectedProducts[product.ProductId] = {
-                ProductId: product.ProductId,
-                name: product.ProductName,
-                DetailingSeconds: 0,
-                IsReminder: false,
-                position: index + 1
+            dailyCall.jsonDailyCall.CallStartTime = moment(callData.VisitStart).format('YYYY-MM-DD hh:mm:ss')
+            dailyCall.jsonDailyCall.CallEndTime = moment(callData.VisitEnd).format('YYYY-MM-DD hh:mm:ss')
+            dailyCall.jsonDailyCall.DoctorCode = callData.Doctor.DoctorCode
+            dailyCall.jsonDailyCall.PlanDetailId = callData.PlanDetailId
+            dailyCall.jsonDailyCall.DeviceDateTime = moment().format('YYYY-MM-DD hh:mm:ss')
+            dailyCall.jsonDailyCall.DoctorLat = callData.Doctor.Latitude;
+            dailyCall.jsonDailyCall.DoctorLong = callData.Doctor.Longitude;
+            // dailyCall.jsonDailyCall.EmployeeId = moment().format('YYYY-MM-DD hh:mm:ss')
+            dailyCall.EmployeeId = this.props.user.EmployeeId
+            dailyCall.DailyCallId = callData.PlanDetailId
+    
+            this.props.getDocHistory({
+                Token: getToken,
+                DoctorCode: callData.Doctor.DoctorCode,
+                EmployeeId: this.props.user.EmployeeId,
+            });
+            this.setState({
+                form_data: dailyCall,
+                selectedProducts: selectedProducts,
+                eDetailing: eDetailings,
+                selectedFiles: _.concat(...files)
             }
-            return product;
-        })
-        dailyCall.jsonDailyCall.CallStartTime = moment(callData.VisitStart).format('YYYY-MM-DD hh:mm:ss')
-        dailyCall.jsonDailyCall.CallEndTime = moment(callData.VisitEnd).format('YYYY-MM-DD hh:mm:ss')
-        dailyCall.jsonDailyCall.DoctorCode = callData.Doctor.DoctorCode
-        dailyCall.jsonDailyCall.PlanDetailId = callData.PlanDetailId
-        dailyCall.jsonDailyCall.DeviceDateTime = moment().format('YYYY-MM-DD hh:mm:ss')
-        dailyCall.jsonDailyCall.DoctorLat = callData.Doctor.Latitude;
-        dailyCall.jsonDailyCall.DoctorLong = callData.Doctor.Longitude;
-        // dailyCall.jsonDailyCall.EmployeeId = moment().format('YYYY-MM-DD hh:mm:ss')
-        dailyCall.EmployeeId = this.props.user.EmployeeId
-        dailyCall.DailyCallId = callData.PlanDetailId
-
-        this.props.getDocHistory({
-            Token: getToken,
-            DoctorCode: callData.Doctor.DoctorCode,
-            EmployeeId: this.props.user.EmployeeId,
-        });
-        this.setState({
-            form_data: dailyCall,
-            selectedProducts: selectedProducts,
-            eDetailing: eDetailings,
-            selectedFiles: _.concat(files)
-        }
-        // , () => {console.log('checking all the values set', this.state, this.context)}
-        )
-        this.requestLocationPermission()
+            // , () => {console.log('checking all the values set', this.state, this.context)}
+            )
+            this.requestLocationPermission()
+        // })
         
     }
 
@@ -677,31 +682,43 @@ class CallExecution extends Component {
                                 }
                         </View>
                     </ScrollView>
-                    <ProductsModal
-                        selectedProducts={this.state.selectedProducts}
-                        selectedProductId={this.state.selectedProductId}
-                        reminderPosition={this.state.reminderPosition}
-                        isVisible={this.state.overlay}
-                        onPressProductHandler={this.onClickProduct}
-                        onCloseHandler={this.hideProductsOverlay}
-                        existingCall={true}
-                    />
-                    <SamplesModal
-                        selectedProductId={this.state.selectedProductId}
-                        reminderPosition={this.state.reminderPosition}
-                        selectedSamples={this.state.selectedSamples}
-                        isVisible={this.state.samplesOverlay}
-                        onPressSampleHanlder={this.onClickSample}
-                        setSamplesCountHandler={this.setSampleCount}
-                        onCloseHandler={this.handleSampleOverlayClose}
-                    />
-                    <GiftsModal
-                        isVisible={this.state.giftsOverlay}
-                        gifts={this.props.gifts}
-                        onCloseHandler={this.hideGifts}
-                        selectedGift={this.state.form_data.jsonGiftDetail}
-                        onPressGiftHandler={this.onClickGift}
-                    />
+                    {
+                        this.state.overlay
+                        ? <ProductsModal
+                            selectedProducts={this.state.selectedProducts}
+                            selectedProductId={this.state.selectedProductId}
+                            reminderPosition={this.state.reminderPosition}
+                            isVisible={this.state.overlay}
+                            onPressProductHandler={this.onClickProduct}
+                            onCloseHandler={this.hideProductsOverlay}
+                            existingCall={false}
+                        />
+                        : null
+                    }
+                    {
+                        this.state.samplesOverlay
+                        ? <SamplesModal
+                            selectedProductId={this.state.selectedProductId}
+                            reminderPosition={this.state.reminderPosition}
+                            selectedSamples={this.state.selectedSamples}
+                            isVisible={this.state.samplesOverlay}
+                            onPressSampleHanlder={this.onClickSample}
+                            setSamplesCountHandler={this.setSampleCount}
+                            onCloseHandler={this.handleSampleOverlayClose}
+                        />
+                        : null
+                    }
+                    {
+                        this.state.giftsOverlay
+                        ? <GiftsModal
+                            isVisible={this.state.giftsOverlay}
+                            gifts={this.props.gifts}
+                            onCloseHandler={this.hideGifts}
+                            selectedGift={this.state.form_data.jsonGiftDetail}
+                            onPressGiftHandler={this.onClickGift}
+                        />
+                        : null
+                    }
                 </View >
             </ImageBackgroundWrapper>
         )

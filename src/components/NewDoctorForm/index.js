@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { View, FlatList, NativeModules, Keyboard, Switch } from 'react-native';
+import { View, FlatList, NativeModules, Keyboard, Switch, ScrollView } from 'react-native';
 import { Input, Overlay, Text, ListItem } from 'react-native-elements';
 import { RandomInteger, brandColors, styles } from '../../constants';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import CitiesModal from '../CitiesModal';
 import ImageBackgroundWrapper from '../ImageBackground';
 import { useSelector } from 'react-redux'
@@ -157,7 +156,7 @@ const NewDoctorForm = ({
                             { `Select Doctor's ${fieldToSelect}`  }
                         </Text>
                         <Input label="Search" placeholder={`Search for more ${fieldToSelect}s`} onChangeText={searchDesignation} />
-                        <KeyboardAwareScrollView style={{ borderRadius: 10, }} behavior="padding">
+                        <ScrollView style={{ borderRadius: 10, }} behavior="padding">
                             <View style={{width:'100%', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
                                 <View style={{ width: '98%', marginHorizontal: 5}}>
                                     <FlatList
@@ -168,7 +167,7 @@ const NewDoctorForm = ({
                                     />
                                 </View>
                             </View>
-                        </KeyboardAwareScrollView>
+                        </ScrollView>
                     </ImageBackgroundWrapper>
                 }
             />

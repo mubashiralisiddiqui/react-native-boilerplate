@@ -72,27 +72,27 @@ export const navigationOptions = [
         icon: 'medicinebox',
         iconType: 'AntDesign'
     },{
-        name: 'change_doctor_location',
-        label: 'Change Dr Location',
-        navigateTo: 'DoctorLocation',
-        icon: 'location-arrow',
-        iconType: 'FontAwesome5'
-    },{
+    //     name: 'change_doctor_location',
+    //     label: 'Change Dr Location',
+    //     navigateTo: 'DoctorLocation',
+    //     icon: 'location-arrow',
+    //     iconType: 'FontAwesome5'
+    // },{
         name: 'rsm_planner',
         label: 'Call Planner',
-        navigateTo: 'WebView',
+        navigateTo: 'Planner',
         icon: 'chart-pie',
         iconType: 'FontAwesome5'
     },{
         name: 'expense_manager',
         label: 'Expense Manager',
-        navigateTo: 'WebView',
+        navigateTo: 'Expense',
         icon: 'cash-register',
         iconType: 'FontAwesome5'
     },{
         name: 'training_portal',
         label: 'Training Portal',
-        navigateTo: 'WebView',
+        navigateTo: 'Training',
         icon: 'clipboard-list',
         iconType: 'FontAwesome5'
     },{
@@ -271,7 +271,7 @@ export const removeStorageMultiple = keys => AsyncStorage.multiRemove(keys)
 export const setDefault = (value, setDefault = '') => {
     if(value === undefined) return setDefault;
     if(value === null) return setDefault;
-    return value;
+    return value.trim();
 }
 
 export const userFullName = user => `${setDefault(user.FirstName)} ${setDefault(user.MiddleName)} ${setDefault(user.LastName)}`

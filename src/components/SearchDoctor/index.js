@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, NativeModules, Keyboard, FlatList } from 'react-native';
+import { View, NativeModules, Keyboard, FlatList, ScrollView } from 'react-native';
 import { Input, Overlay, Text, ListItem } from 'react-native-elements';
 import { RandomInteger, styles } from '../../constants';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import ImageBackgroundWrapper from '../ImageBackground';
 import { useSelector } from 'react-redux';
 
@@ -69,7 +68,7 @@ const SearchDoctor = (props) => {
                         <Text h3 h3Style={styles.listTitle}>
                             Select Doctor
                         </Text>
-                        <KeyboardAwareScrollView style={{ borderRadius: 10, }} behavior="padding">
+                        <ScrollView style={{ borderRadius: 10, }} behavior="padding">
                         <Input label="Search Doctor" placeholder="Search Doctor" onChangeText={(text) => setQuery(text)} />
                             <View style={{width:'100%', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
                                 <View style={{ width: '98%', marginHorizontal: 5}}>
@@ -81,7 +80,7 @@ const SearchDoctor = (props) => {
                                     />
                                 </View>
                             </View>
-                        </KeyboardAwareScrollView>
+                        </ScrollView>
                     </ImageBackgroundWrapper>
                 }
               />

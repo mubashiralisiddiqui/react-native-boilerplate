@@ -4,6 +4,7 @@ import { Button, Text, Overlay, ListItem } from 'react-native-elements';
 import { ImageBackgroundWrapper } from '..';
 import Counter from "react-native-counters";
 import { brandColors, RandomInteger } from '../../constants';
+import { RFValue } from 'react-native-responsive-fontsize';
 
 const GiftsModal = ({
     gifts = [],
@@ -38,7 +39,7 @@ const GiftsModal = ({
                 <ImageBackgroundWrapper>
                     <View style={{width:'100%', display: 'flex', flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                         <View style={{ width: '98%', marginHorizontal: 5}}>
-                            <Text h3 h3Style={styles.listTitle}>Select Gift</Text>
+                            <Text style={styles.listTitle}>Select Gift</Text>
                             <FlatList
                                 contentContainerStyle={{height: '70%'}}
                                 keyExtractor={ item => `${item.GiftId} + ${RandomInteger()}`}
@@ -85,10 +86,12 @@ const styles = {
     },
     listTitle: {
         backgroundColor: brandColors.darkBrown,
-        // backgroundColor: '#ece8e7',
+        color: brandColors.lightGreen,
+        fontFamily: 'Lato-MediumItalic',
         borderRadius: 10,
         padding: 5,
-        width: '99.8%'
+        width: '99.8%',
+        fontSize: RFValue(18),
     },
     listItems: {
         width: '99%',
@@ -96,4 +99,4 @@ const styles = {
         backgroundColor: 'transparent',
     },
 }
-export default GiftsModal; 
+export default GiftsModal;

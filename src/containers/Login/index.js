@@ -2,7 +2,6 @@
  *  start of Login container
  */
 import React, { Component } from 'react';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { LoginForm, ImageHeader, ImageBackgroundWrapper } from '../../components'
 import { brandColors } from '../../constants';
 import { services } from '../../services'
@@ -10,7 +9,7 @@ import { getLoginLoding, getLoginError } from '../../reducers/authReducer';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
 import { NetworkContext } from '../../components/NetworkProvider';
-import { View } from 'react-native'
+import { View, ScrollView } from 'react-native'
 import { Text, Card } from 'react-native-elements';
 import { RFValue } from 'react-native-responsive-fontsize';
 
@@ -40,7 +39,7 @@ class Login extends Component {
         this.setState({ [key]: value })
     }
     onKeyEvent = (field, event) => {
-        if (field == 'LoginId' && event.nativeEvent.key === '@') {
+        if (field == 'LoginId' && event.nativeEvent.key === '@' && !this.state.LoginId.includes('hudsonpharma-sales.com')) {
             this.setState({
                 LoginId: `${this.state.LoginId}hudsonpharma-sales.com`
             })
@@ -103,7 +102,7 @@ class Login extends Component {
     render() {
         return (
             <ImageBackgroundWrapper>
-                <KeyboardAwareScrollView contentContainerStyle={styles.InputContainer}>
+                <ScrollView contentContainerStyle={styles.InputContainer}>
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                         <Card containerStyle={{ borderRadius: 15, width: '75%', justifyContent: 'center', alignItems: 'center' }}>
                             <ImageHeader
@@ -138,7 +137,7 @@ class Login extends Component {
                             errors={this.state.errors}
                         />
                     </View> */}
-                </KeyboardAwareScrollView >
+                </ScrollView >
             </ImageBackgroundWrapper>
         )
     }

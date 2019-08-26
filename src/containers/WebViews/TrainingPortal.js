@@ -4,16 +4,18 @@ import { NetworkContext } from '../../components/NetworkProvider';
 import { getUser } from '../../reducers/authReducer';
 import {connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
-import { RSM_ROLE_ID } from '../../constants';
+import { navigationOption } from '../../constants';
 
 class Web extends Component {
     state = {
         loading: true
     }
+    static navigationOptions = ({ navigation }) => (navigationOption(navigation, 'Training Portal'))
+
     static contextType = NetworkContext;
-    static navigationOptions = {
-        header: null,
-    }
+    // static navigationOptions = {
+    //     header: null,
+    // }
 
     getJsCode = () => {
         let username = this.props.user.LoginId
@@ -42,23 +44,7 @@ class Web extends Component {
     }
 
     getUrl = () => {
-        switch(this.props.navigation.getParam('type')) {
-            case 'rsm_planner': {
-                return this.props.user.RoleId == RSM_ROLE_ID
-                ? 'http://portal.hudsonpharma.com/Login.aspx?ReturnURL=/Pages/Planningportal/PlanningPortal_Managers.aspx'
-                : 'http://portal.hudsonpharma.com/Login.aspx?ReturnURL=/Pages/Planningportal/planningportal.aspx'
-            }
-            case 'expense_manager': {
-                return 'http://portal.hudsonpharma.com/Login.aspx?ReturnURL=/Pages/ExpensePortal/ExpensePortal.aspx'
-            }
-            
-            case 'training_portal': {
-                return 'http://portal.hudsonpharma.com/Login.aspx?ReturnURL=/Pages/TrainingPortal/TrainingPortal.aspx'
-            }
-            default: {
-                return 'https://google.com'
-            }
-        }
+        return 'http://portal.hudsonpharma.com/Login.aspx?ReturnURL=/Pages/TrainingPortal/TrainingPortal.aspx'
     }
     componentDidMount() {
         this.context.hideRefresh();
@@ -66,10 +52,8 @@ class Web extends Component {
     render() {
         let string = this.getJsCode();
         return (
-
             <WebView
                 source={{ uri: this.getUrl() }}
-                // source={{ uri: 'http://portal.hudsonpharma.com/Login.aspx?ReturnURL=/Pages/PlanningPortal/PlanningPortal.aspx' }}
                 injectedJavaScript={string}
                 javaScriptEnabled={true}
             />
