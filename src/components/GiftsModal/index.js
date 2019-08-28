@@ -3,8 +3,7 @@ import {View, FlatList} from 'react-native';
 import { Button, Text, Overlay, ListItem } from 'react-native-elements';
 import { ImageBackgroundWrapper } from '..';
 import Counter from "react-native-counters";
-import { brandColors, RandomInteger } from '../../constants';
-import { RFValue } from 'react-native-responsive-fontsize';
+import { brandColors, RandomInteger, RFValue } from '../../constants';
 
 const GiftsModal = ({
     gifts = [],

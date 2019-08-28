@@ -3,7 +3,7 @@ import { StyleSheet, Dimensions } from 'react-native';
 import { TabView, TabBar} from 'react-native-tab-view';
 import { KeyCallInfo, EDetailing } from '../../components'
 import KeyCallInfoUnplanned from '../../components/KeyCallInfo/unplanned'
-import { brandColors } from '../../constants';
+import { brandColors, RFValue } from '../../constants';
 
 export default class Tab extends Component {
   
@@ -41,9 +41,13 @@ export default class Tab extends Component {
         renderScene={this.renderScene}
         onIndexChange={index => console.log || this.setState({ index })}
         initialLayout={{ width: Dimensions.get('window').width }}
+        swipeEnabled={true}
+        removeClippedSubviews={true}
+        sceneContainerStyle={{ marginVertical: 10 }}
         renderTabBar={props =>
           <TabBar
             onTabPress={({ route }) => this.setState({ index: _.findIndex(this.state.routes, ['key', route.key])})}
+            onTabLongPress={({ route }) => this.setState({ index: _.findIndex(this.state.routes, ['key', route.key])})}
             {...props}
             indicatorStyle={{ backgroundColor: brandColors.darkBrown }}
             style={{ backgroundColor: brandColors.lightGreen }}

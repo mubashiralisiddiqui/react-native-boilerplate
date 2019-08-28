@@ -6,7 +6,7 @@ import { View } from 'react-native'
 // import Video from  'react-native-video';
 import Video from 'react-native-video-controls';
 import Icon from 'react-native-vector-icons/FontAwesome'
-import { brandColors } from '../../constants';
+import { brandColors, mediaStoragePath } from '../../constants';
 import { Button } from 'react-native-elements';
 
 class VideoPlayer extends Component {
@@ -16,7 +16,7 @@ class VideoPlayer extends Component {
             seconds: 0,
             videoRef: '',
             interval: null,
-            file: `file:///data/user/0/com.hudsonpharma/files/${this.props.file.FileName}`
+            file: `file://${mediaStoragePath}/${this.props.file.FileName}`
         }
         let Ref;
     }

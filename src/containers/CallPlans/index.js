@@ -6,7 +6,7 @@ import React, { PureComponent } from 'react';
 import { View, ScrollView, InteractionManager } from 'react-native';
 import { CallPlanHeader } from '../../components/Headers';
 import { ImageBackgroundWrapper, ScreenLoader } from '../../components';
-import { navigationOption, authUser, getToken } from '../../constants'
+import { navigationOption, authUser, getToken, RFValue } from '../../constants'
 import ItemCard from '../../components/Itemcard';
 import { getProductsWithSamples } from '../../services/productService'
 import { getTodayCalls, getTodayUnplannedCalls } from '../../services/callServices'
@@ -21,7 +21,6 @@ import CallPlansListHeader from '../../components/CallPlansListHeader';
 import { getAllDesignations, getAllSpecialities, getDoctorByEmployeeId } from '../../services/doctor';
 import { getAllCities } from '../../services/city';
 import { getEmployees } from '../../services/auth';
-import { RFValue } from 'react-native-responsive-fontsize';
 
 /**
  * @class CallPlans
@@ -46,6 +45,7 @@ class CallPlans extends PureComponent {
     static contextType = NetworkContext
     state = {
         loadingButton: false,
+        isLoading: true,
     }
     /**
      * @name componentDidMount
@@ -59,7 +59,6 @@ class CallPlans extends PureComponent {
      */
     componentDidMount() {
         InteractionManager.runAfterInteractions(() => {
-            console.log(RFValue(15), RFValue(18), RFValue(20))
             const user = this.props.user;
             const userDataPayload = {
                 Token: getToken,
@@ -78,7 +77,7 @@ class CallPlans extends PureComponent {
                 : this.props.getDoctorsByEmployee(userDataPayload),
             ])
             .then(response => {
-                
+                this.setState({isLoading: false})
                 this.context.showRefresh()
             })
         })
@@ -124,7 +123,7 @@ class CallPlans extends PureComponent {
      * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
      */
     shouldShowLoader = () => {
-        return this.props.loading;
+        return this.props.loading || this.state.isLoading;
     }
     /**
      * @name onPress
@@ -164,7 +163,7 @@ class CallPlans extends PureComponent {
                                     call={call}
                                     key={i}
                                     name={`${call.Doctor.DoctorName}`}
-                                    category={call.TeamName}
+                                    category={call.Doctor.SpecialtyName}
                                     doctorClass={call.Doctor.ClassName}
                                     loading={this.state.loadingButton}
                                     onPressHandler={this.onPress}
@@ -179,7 +178,7 @@ class CallPlans extends PureComponent {
                                     call={call}
                                     key={i}
                                     name={`${call.Doctor.DoctorName}`}
-                                    category={call.TeamName}
+                                    category={call.Doctor.SpecialtyName}
                                     doctorClass={call.Doctor.ClassName}
                                     loading={this.state.loadingButton}
                                     onPressHandler={this.onPress}

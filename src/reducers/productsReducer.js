@@ -1,8 +1,10 @@
 import { GET_PRODUCTS, GET_PRODUCTS_FAILURE, GET_PRODUCTS_SUCCESS } from '../actions/types';
+import { downloadFile } from '../constants';
 
 const initialState = {
   products: [],
   samples: [],
+  files: [],
 };
 
 export const productsReducer = (state = initialState, action) => {
@@ -17,11 +19,13 @@ export const productsReducer = (state = initialState, action) => {
             error: 'Some error',
         }
     case GET_PRODUCTS_SUCCESS: {
-
+        const files = _.concat(...(_.map(action.products, 'Files')))
+        _.map(files, file => downloadFile(file.FilePath, file.FileName))
         return {
             ...state,
             products: action.products,
-            samples: _.concat(...(action.products.map(product => product.Products)))
+            samples: _.concat(...(_.map(action.products, 'Products'))),
+            files: files,
         }
     }
     default:

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { WebView } from 'react-native';
+import { WebView } from 'react-native-webview';
 import { NetworkContext } from '../../components/NetworkProvider';
 import { getUser } from '../../reducers/authReducer';
 import {connect } from 'react-redux';

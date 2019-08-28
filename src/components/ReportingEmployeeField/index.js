@@ -62,7 +62,15 @@ const ReportingEmployeeField = (props) => {
                             Select SPO  
                         </Text>
                         <ScrollView style={{ borderRadius: 10, }} behavior="padding">
-                        <Input label="Search SPO" placeholder="Search SPO" onChangeText={(text) => setQuery(text)} />
+                        <SearchBar
+                            placeholder={`Search SPO`}
+                            onChangeText={setQuery}
+                            platform="ios"
+                            containerStyle={{ backgroundColor: 'transparent'}}
+                            round
+                            cancelButtonProps={{buttonTextStyle: {color: brandColors.lightGreen, fontFamily: 'Lato-MediumItalic' }}}
+                        />
+                        {/* <Input label="Search SPO" placeholder="Search SPO" onChangeText={(text) => setQuery(text)} /> */}
                             <View style={{width:'100%', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
                                 <View style={{ width: '98%', marginHorizontal: 5}}>
                                     <FlatList

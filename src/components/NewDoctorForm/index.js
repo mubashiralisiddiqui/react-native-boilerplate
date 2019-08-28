@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { View, FlatList, NativeModules, Keyboard, Switch, ScrollView } from 'react-native';
-import { Input, Overlay, Text, ListItem } from 'react-native-elements';
-import { RandomInteger, brandColors, styles } from '../../constants';
+import { Input, Overlay, Text, ListItem, SearchBar } from 'react-native-elements';
+import { RandomInteger, brandColors, styles, RFValue } from '../../constants';
 import CitiesModal from '../CitiesModal';
 import ImageBackgroundWrapper from '../ImageBackground';
 import { useSelector } from 'react-redux'
-import { RFValue } from 'react-native-responsive-fontsize';
 
 const NewDoctorForm = ({
     data = {},
@@ -155,7 +154,15 @@ const NewDoctorForm = ({
                         <Text style={inlineStyles.listTitle}>
                             { `Select Doctor's ${fieldToSelect}`  }
                         </Text>
-                        <Input label="Search" placeholder={`Search for more ${fieldToSelect}s`} onChangeText={searchDesignation} />
+                        <SearchBar
+                            placeholder={`Search for more ${fieldToSelect}s`}
+                            onChangeText={searchDesignation}
+                            platform="ios"
+                            containerStyle={{ backgroundColor: 'transparent'}}
+                            round
+                            cancelButtonProps={{buttonTextStyle: {color: brandColors.lightGreen, fontFamily: 'Lato-MediumItalic' }}}
+                        />
+                        {/* <Input label="Search" placeholder={`Search for more ${fieldToSelect}s`} onChangeText={searchDesignation} /> */}
                         <ScrollView style={{ borderRadius: 10, }} behavior="padding">
                             <View style={{width:'100%', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
                                 <View style={{ width: '98%', marginHorizontal: 5}}>

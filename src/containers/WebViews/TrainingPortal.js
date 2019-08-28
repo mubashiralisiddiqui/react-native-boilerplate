@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { WebView } from 'react-native';
+import { WebView } from 'react-native-webview';
 import { NetworkContext } from '../../components/NetworkProvider';
 import { getUser } from '../../reducers/authReducer';
 import {connect } from 'react-redux';
@@ -53,6 +53,8 @@ class Web extends Component {
         let string = this.getJsCode();
         return (
             <WebView
+                allowFileAccess={true}
+                domStorageEnabled={true}
                 source={{ uri: this.getUrl() }}
                 injectedJavaScript={string}
                 javaScriptEnabled={true}

@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import {View, FlatList, TouchableWithoutFeedback} from 'react-native';
 import { Button, Text, Overlay, ListItem, Badge } from 'react-native-elements';
 import { ImageBackgroundWrapper } from '..';
-import { brandColors, RandomInteger } from '../../constants';
+import { brandColors, RandomInteger, RFValue } from '../../constants';
 import { useSelector } from 'react-redux';
 import Counter from 'react-native-counters'
-import { RFValue } from "react-native-responsive-fontsize";
 
 const SamplesModal = ({
     isVisible = false,
@@ -15,7 +14,6 @@ const SamplesModal = ({
     setSamplesCountHandler,
     selectedProductId,
 }) => {
-    console.log(selectedSamples, 'checking')
     const [selected, setSelected] = useState(selectedSamples)
     
     const samples = useSelector(state => state.products.samples).filter(sample => sample.ProductTemplateId == selectedProductId)

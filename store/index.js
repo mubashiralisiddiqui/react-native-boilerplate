@@ -22,7 +22,7 @@ const rootReducer = combineReducers({
 const reduxLogger = createLogger();
 
 const configureStore = () => {
-    return createStore(rootReducer, {}, (applyMiddleware(thunk, reduxLogger)));
+    return createStore(rootReducer, {}, applyMiddleware(thunk, reduxLogger));
 }
 
 export default configureStore;

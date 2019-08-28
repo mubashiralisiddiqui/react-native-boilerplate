@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useContext } from 'react';
 import {
     View,
     StyleSheet,
@@ -6,10 +6,12 @@ import {
     Text,
     ActivityIndicator
 } from 'react-native';
-import { RFValue } from 'react-native-responsive-fontsize';
+import { RFValue } from '../../constants';
+import { NetworkContext } from '../NetworkProvider';
 
 
 const Button = (props) => {
+    const { isConnected } = useContext(NetworkContext).state;
 
     getButtonStylings = () => {
         const { rounded, backgroundColor } = props
@@ -37,6 +39,7 @@ const Button = (props) => {
     return (
         <View style={styles.container}>
             <TouchableOpacity
+                disabled={!isConnected}
                 onPress={onPress}
                 style={getButtonStylings()}
             >

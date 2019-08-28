@@ -6,7 +6,7 @@ export const getAllGifts = (params = {}, refresh = false) => async (dispatch) =>
     dispatch(getGifts())
     let giftsFromStorage = await getStorage(`gifts${todayDate()}`)
     if(giftsFromStorage == null || refresh == true) {
-        return get('getAllGiftItems', {
+        get('getAllGiftItems', {
             params
         }).then(async (response) => {
             if(response.length > 0) {
@@ -14,10 +14,10 @@ export const getAllGifts = (params = {}, refresh = false) => async (dispatch) =>
                 setStorage(`gifts${todayDate()}`, stringify(response))
                 dispatch(getGiftsSuccess(response))
             }
-            return response;
+            else dispatch(getGiftsSuccess([]))
         }).catch(console.error)
+    } else {
+        giftsFromStorage = parse(giftsFromStorage)
+        dispatch(getGiftsSuccess(giftsFromStorage))
     }
-    giftsFromStorage = parse(giftsFromStorage)
-    dispatch(getGiftsSuccess(giftsFromStorage))
-    return giftsFromStorage;
 }

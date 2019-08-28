@@ -8,6 +8,9 @@ import {
     todayDate,
     getAllStorageKeys,
     dateFormatRegexGifts,
+    RSM_ROLE_ID,
+    SPO_ROLE_ID,
+    dateFormatRegexDoctorsByEmployee, 
 } from '../constants'
 import { 
     getDesignations,
@@ -33,11 +36,12 @@ import { removeOldStorageEnteries } from './callServices';
         response = parse(response.data.d)
         setStorage('designations', stringify(response))
         dispatch(getDesignationsSuccess(response))
-        return response;
+        // return response;
+    } else {
+        dataFromStorage = parse(dataFromStorage)
+        dispatch(getDesignationsSuccess(dataFromStorage));
     }
-    dataFromStorage = parse(dataFromStorage)
-    dispatch(getDesignationsSuccess(dataFromStorage));
-    return dataFromStorage;
+    // return dataFromStorage;
  }
  
  export const getAllSpecialities = (refresh) => async (dispatch) => {
@@ -48,11 +52,10 @@ import { removeOldStorageEnteries } from './callServices';
         response = parse(response.data.d)
         setStorage('specialities', stringify(response))
         dispatch(getSpecialitiesSuccess(response))
-        return response;
+    } else {
+        dataFromStorage = parse(dataFromStorage)
+        dispatch(getSpecialitiesSuccess(dataFromStorage));
     }
-    dataFromStorage = parse(dataFromStorage)
-    dispatch(getSpecialitiesSuccess(dataFromStorage));
-    return dataFromStorage;
 }
 
 export const createDoctorRequest = (params) => async (dispatch) => {
@@ -66,23 +69,29 @@ export const createDoctorRequest = (params) => async (dispatch) => {
     return response
 }
 
-export const getDoctorByEmployeeId = (params, refresh = false) => async (dispatch) => {
+export const getDoctorByEmployeeId = (params, refresh = false) => async (dispatch, getState) => {
     dispatch(getDoctorsByEmployee())
-    // let dataFromStorage = await getStorage(`doctorsByEmployee${todayDate()}`)
-    // if(dataFromStorage == null || refresh == true) {
-        return AxiosSalesForce
+    let dataFromStorage = await getStorage(`doctorsByEmployee${todayDate()}`)
+    if(dataFromStorage == null || refresh == true) {
+        AxiosSalesForce
         .post('GetDoctorsByEmployeeId', params)
         .then(async (response) => {
-            const doctors = parse(response.data.d)
-            if(doctors.length > 0) {
-                await getAllStorageKeys(removeOldStorageEnteries, dateFormatRegexGifts);
+            const { auth: { user: {RoleId} } } = getState();
+            
+            if(RoleId == SPO_ROLE_ID) {
+                await getAllStorageKeys(removeOldStorageEnteries, dateFormatRegexDoctorsByEmployee);
+                setStorage(`doctorsByEmployee${todayDate()}`, response.data.d)
             }
+            const doctors = parse(response.data.d)
             dispatch(getDoctorsByEmployeeSuccess(doctors))
-            return response;
+            // return response;
         })
         .catch(error => {
             dispatch(getDoctorsByEmployeeFailure(error))
-            return error
+            // return error
         })
-    // }
+    } else {
+        dataFromStorage = parse(dataFromStorage)
+        dispatch(getDoctorsByEmployeeSuccess(dataFromStorage))
+    }
 }

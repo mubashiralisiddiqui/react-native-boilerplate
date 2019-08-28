@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, NativeModules, Keyboard, FlatList, ScrollView } from 'react-native';
-import { Input, Overlay, Text, ListItem } from 'react-native-elements';
-import { RandomInteger, styles } from '../../constants';
+import { View, NativeModules, Keyboard, FlatList, ScrollView, TouchableWithoutFeedback } from 'react-native';
+import { Input, Overlay, Text, ListItem, SearchBar } from 'react-native-elements';
+import { RandomInteger, styles, brandColors } from '../../constants';
 import ImageBackgroundWrapper from '../ImageBackground';
 import { useSelector } from 'react-redux';
 
@@ -31,6 +31,7 @@ const SearchDoctor = (props) => {
     const _render = ({item}) => {
         return (
             <ListItem
+                Component={TouchableWithoutFeedback}
                 style={{ height: 45, marginVertical: 5, backgroundColor: 'transparent' }}
                 containerStyle={{ backgroundColor: 'transparent' }}
                 title={`${item.Value} - ${ item.DoctorBrick }`}
@@ -53,7 +54,7 @@ const SearchDoctor = (props) => {
                 label="Select Doctor"
                 placeholder="Select Doctor"
                 value={props.name || ''}
-                errorMessage={props.errors.DoctorCode}
+                errorMessage={props.errors && props.errors.DoctorCode || ''}
             />
               <Overlay
                 width={'40%'}
@@ -65,17 +66,26 @@ const SearchDoctor = (props) => {
                 borderRadius={15}
                 children={
                     <ImageBackgroundWrapper>
-                        <Text h3 h3Style={styles.listTitle}>
+                        <Text style={styles.listTitle}>
                             Select Doctor
                         </Text>
                         <ScrollView style={{ borderRadius: 10, }} behavior="padding">
-                        <Input label="Search Doctor" placeholder="Search Doctor" onChangeText={(text) => setQuery(text)} />
+                        <SearchBar
+                            placeholder="Search Doctor"
+                            onChangeText={setQuery}
+                            value={query}
+                            platform="ios"
+                            containerStyle={{ backgroundColor: 'transparent'}}
+                            round
+                            cancelButtonProps={{buttonTextStyle: {color: brandColors.lightGreen, fontFamily: 'Lato-MediumItalic' }}}
+                        />
+                        {/* <Input label="Search Doctor" placeholder="Search Doctor" onChangeText={(text) => setQuery(text)} /> */}
                             <View style={{width:'100%', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
                                 <View style={{ width: '98%', marginHorizontal: 5}}>
                                     <FlatList
                                         initialNumToRender={50}
                                         keyExtractor={ item => `${item.Id} + ${RandomInteger()}`}
-                                        data={doctors}
+                                        data={doctors.splice(0, 30)}
                                         renderItem={_render}
                                     />
                                 </View>

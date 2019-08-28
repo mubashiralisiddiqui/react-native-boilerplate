@@ -1135,6 +1135,11 @@ babel-plugin-syntax-trailing-function-commas@^7.0.0-beta.0:
   version "7.0.0-beta.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-syntax-trailing-function-commas/-/babel-plugin-syntax-trailing-function-commas-7.0.0-beta.0.tgz#aa213c1435e2bffeb6fca842287ef534ad05d5cf"
 
+babel-plugin-transform-remove-console@^6.9.4:
+  version "6.9.4"
+  resolved "https://registry.yarnpkg.com/babel-plugin-transform-remove-console/-/babel-plugin-transform-remove-console-6.9.4.tgz#b980360c067384e24b357a588d807d3c83527780"
+  integrity sha1-uYA2DAZzhOJLNXpYjYB9PINSd4A=
+
 babel-preset-fbjs@^3.0.1, babel-preset-fbjs@^3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/babel-preset-fbjs/-/babel-preset-fbjs-3.2.0.tgz#c0e6347d3e0379ed84b3c2434d3467567aa05297"
@@ -1826,7 +1831,7 @@ escape-html@~1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/escape-html/-/escape-html-1.0.3.tgz#0258eae4d3d0c0974de1c169188ef0051d1d1988"
 
-escape-string-regexp@^1.0.2, escape-string-regexp@^1.0.5:
+escape-string-regexp@1.0.5, escape-string-regexp@^1.0.2, escape-string-regexp@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz#1b61c0562190a8dff6ae3bb2cf0200ca130b86d4"
 
@@ -2534,7 +2539,7 @@ inquirer@^3.0.6:
     strip-ansi "^4.0.0"
     through "^2.3.6"
 
-invariant@^2.2.2, invariant@^2.2.4:
+invariant@2.2.4, invariant@^2.2.2, invariant@^2.2.4:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.4.tgz#610f3c92c9359ce1db616e538008d23ff35158e6"
   integrity sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==
@@ -4515,6 +4520,14 @@ prompts@^2.0.1:
     kleur "^3.0.2"
     sisteransi "^1.0.0"
 
+prop-types@15.5.10:
+  version "15.5.10"
+  resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.5.10.tgz#2797dfc3126182e3a95e3dfbb2e893ddd7456154"
+  integrity sha1-J5ffwxJhguOpXj37suiT3ddFYVQ=
+  dependencies:
+    fbjs "^0.8.9"
+    loose-envify "^1.3.1"
+
 prop-types@^15.5.10, prop-types@^15.5.8, prop-types@^15.6.1, prop-types@^15.6.2, prop-types@^15.7.2:
   version "15.7.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
@@ -4625,6 +4638,13 @@ react-native-counters@^0.0.1:
   dependencies:
     prop-types "^15.6.2"
 
+react-native-dropdownalert@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/react-native-dropdownalert/-/react-native-dropdownalert-4.2.0.tgz#b7f418b6954058b0c822d8b49e87fa86ccbb6f1a"
+  integrity sha512-zz2W2t6UN6C/CM/z7VTEuvOTDQad8b5KBBL4YDpkdJKI9HOgLsTs0eIkZsXW2woEyp8Bj0SGpovSmf3SX756lg==
+  dependencies:
+    prop-types "15.5.10"
+
 react-native-elements@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/react-native-elements/-/react-native-elements-1.1.0.tgz#f99bcda4459a886f3ab4591c684c099d37aedf2b"
@@ -4645,11 +4665,6 @@ react-native-gesture-handler@1.1.0:
     hoist-non-react-statics "^2.3.1"
     invariant "^2.2.2"
     prop-types "^15.5.10"
-
-react-native-iphone-x-helper@^1.0.2:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.2.1.tgz#645e2ffbbb49e80844bb4cbbe34a126fda1e6772"
-  integrity sha512-/VbpIEp8tSNNHIvstuA3Swx610whci1Zpc9mqNkqn14DkMbw+ORviln2u0XyHG1kPvvwTNGZY6QpeFwxYaSdbQ==
 
 react-native-iphone-x-helper@^1.0.3:
   version "1.2.0"
@@ -4694,13 +4709,6 @@ react-native-reanimated@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-1.1.0.tgz#ba6864055ec3a206cdd5209a293fe653ce276206"
   integrity sha512-UGDVNfvuIkMqYUx6aytSzihuzv6sWubn0MQi8dRcw7BjgezhjJnVnJ/NSOcpL3cO+Ld7lFcRX6GKcskwkHdPkw==
-
-react-native-responsive-fontsize@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/react-native-responsive-fontsize/-/react-native-responsive-fontsize-0.2.1.tgz#c18840e622808702d89f0a3286058f5732f9747d"
-  integrity sha512-2Y+oxhX2KtWcJGSlo+Q/DEmVq4lVTNIsKm11FpgRTMvKdbOacaXIfSOmdQNU09R/rZ8NkMQhzEKvfCkO2nDHXA==
-  dependencies:
-    react-native-iphone-x-helper "^1.0.2"
 
 react-native-safe-area-view@^0.14.1:
   version "0.14.4"
@@ -4763,6 +4771,14 @@ react-native-view-pdf@^0.9.1:
   version "0.9.1"
   resolved "https://registry.yarnpkg.com/react-native-view-pdf/-/react-native-view-pdf-0.9.1.tgz#e7168cd1d529a1af178d7247b79fa548b7eaeb49"
   integrity sha512-T2dNqA7DRVJ++PEs3DPjAvB1rKBw1QtE3SmUc2MHDgq/oc60hOLYqSxtaagNLTt/NKasxtwFzFWMyUaPPKUBeA==
+
+react-native-webview@^6.9.0:
+  version "6.9.0"
+  resolved "https://registry.yarnpkg.com/react-native-webview/-/react-native-webview-6.9.0.tgz#d637618fe65ddc9972a55a1d181fd6879a2fcebd"
+  integrity sha512-pipcyQNhSjSfMyle+JugLwYXJBJ0rQCnJOgkz7EcsZbrAvGjFbQOAjDRYi86y9Ibw+h+sjdhPWcLi/kSHScc+w==
+  dependencies:
+    escape-string-regexp "1.0.5"
+    invariant "2.2.4"
 
 react-native@0.59.8:
   version "0.59.8"

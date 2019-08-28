@@ -1,8 +1,7 @@
 import React, {useState} from 'react'
 import { View, Text, Dimensions } from 'react-native';
 import { Card } from 'react-native-elements'
-import { brandColors, RandomInteger } from '../../constants';
-import { RFValue } from 'react-native-responsive-fontsize';
+import { brandColors, RandomInteger, RFValue } from '../../constants';
 
 const CallPlansListHeader = () => {
     const [width, setWidth] = useState(Dimensions.get('screen').width);
@@ -24,7 +23,7 @@ const CallPlansListHeader = () => {
                     <Text key={RandomInteger()} style={styles.text}>Class</Text>
                 </View>
                 <View key={RandomInteger()} style={styles.itemSecondLast}>
-                    <Text key={RandomInteger()} style={styles.text}>Team</Text>
+                    <Text key={RandomInteger()} style={styles.text}>Speciality</Text>
                 </View>
                 <View  key={RandomInteger()} style={styles.itemLast}>
                     <Text key={RandomInteger()} style={styles.text}>Call Action</Text>
@@ -72,7 +71,7 @@ const getStyles = (width) => {
         text: {
             fontSize: RFValue(18),
             color: brandColors.lightGreen,
-            fontFamily: 'Lato-MediumItalic'
+            fontFamily: 'Lato-HeavyItalic'
         },
         cardContainer: {
             backgroundColor: brandColors.darkBrown,

@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { LoginForm, ImageHeader, ImageBackgroundWrapper } from '../../components'
-import { brandColors } from '../../constants';
+import { brandColors, RFValue } from '../../constants';
 import { services } from '../../services'
 import { getLoginLoding, getLoginError } from '../../reducers/authReducer';
 import { connect } from 'react-redux';
@@ -11,7 +11,6 @@ import { bindActionCreators } from 'redux'
 import { NetworkContext } from '../../components/NetworkProvider';
 import { View, ScrollView } from 'react-native'
 import { Text, Card } from 'react-native-elements';
-import { RFValue } from 'react-native-responsive-fontsize';
 
 class Login extends Component {
     static navigationOptions = {

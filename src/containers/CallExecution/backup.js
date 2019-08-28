@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { View, PermissionsAndroid, ScrollView, Alert } from 'react-native'
 import { CallPlanHeader } from '../../components/Headers'
-import { navigationOption, brandColors, getToken, parse, stringify, getDistance } from '../../constants'
+import { navigationOption, brandColors, getToken, parse, stringify, getDistance, RFValue } from '../../constants'
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import { 
     Collapse,
@@ -33,7 +33,6 @@ import { NetworkContext } from '../../components/NetworkProvider'
 import GiftsModal from '../../components/GiftsModal';
 import ProductsSamplesModal from '../../components/ProductsSamplesModal';
 import { getProductsWithSamples } from '../../services/productService';
-import { RFValue } from 'react-native-responsive-fontsize';
 
 /**
  * @class CallExecution

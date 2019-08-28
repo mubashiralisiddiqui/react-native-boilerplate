@@ -21,7 +21,7 @@ export const getTodayCalls = (params, refresh = false) => {
         let callsFromStorage = await getStorage(`calls${todayDate()}`)
 
         if(callsFromStorage === null || refresh == true) {
-            return get(`/getTodayCalls`, {params}).then(async (response) => {
+            get(`/getTodayCalls`, {params}).then(async (response) => {
                 if(response !== null && response.length > 0) {
                     await getAllStorageKeys(removeOldStorageEnteries, dateFormatRegexCalls);
                     
@@ -29,10 +29,9 @@ export const getTodayCalls = (params, refresh = false) => {
                     
                     dispatch(getCallsSuccess(response))
                    
-                    return response
-                }
-                dispatch(getCallsSuccess([]))
-                return [];
+                    // return response
+                } else dispatch(getCallsSuccess([]))
+                // return [];
             }).catch(error => {
                 dispatch(getCallsFailure(error))
             })
@@ -41,7 +40,7 @@ export const getTodayCalls = (params, refresh = false) => {
         
         dispatch(getCallsSuccess(callsFromStorage))
         
-        return callsFromStorage;
+        // return callsFromStorage;
     }
 }
 
@@ -170,18 +169,20 @@ export const updatedCalls = (calls) => dispatch => {
 export const getTodayUnplannedCalls = (params, refresh = false) => async (dispatch) => {
     dispatch(getUnplannedCalls())
     let dataFromStorage = await getStorage(`unplannedCalls${todayDate()}`)
+    
     if(dataFromStorage == null || refresh == true) {
-        return get(`getTodayUnplannedExecutedCall`, {params})
+        get(`getTodayUnplannedExecutedCall`, {params})
         .then(response => {
-            setStorage(`unplannedCalls${todayDate()}`);
+            setStorage(`unplannedCalls${todayDate()}`, stringify(response));
             dispatch(getUnplannedCallsSuccess(response))
-            return response
+            // return response
         })
         .catch(error => {
             dispatch(getUnplannedCallsFailure(error))
         })
+    } else {
+        dataFromStorage = parse(dataFromStorage)
+        dispatch(getUnplannedCallsSuccess(dataFromStorage))
     }
-    dataFromStorage = parse(dataFromStorage)
-    dispatch(getUnplannedCallsSuccess(dataFromStorage))
-    return dataFromStorage
+    // return dataFromStorage
 }

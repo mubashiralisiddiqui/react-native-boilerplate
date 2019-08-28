@@ -41,7 +41,9 @@ const KeyCallInfo = (props) => {
     const [showTimer, setShowTimer ] = useState(false);
     const [settingTimer, setSettingTimer ] = useState('');
     return (
-        <View style={inlineStyles.cardcontainer}>
+        <View style={inlineStyles.cardcontainer} onLayout={(event) => {
+            console.log(event.nativeEvent.layout);
+          }}>
             <DateTimePicker
                 is24Hour={false}
                 mode="time"
@@ -52,7 +54,9 @@ const KeyCallInfo = (props) => {
                 onCancel={() => setShowTimer(false)}
                 minuteInterval={15}
             />
-            <View style={{width: width < height ? parseInt(width / 1.2) : parseInt(width / 1.2), ...inlineStyles.formContainer}}>
+            <View style={{width: width < height ? parseInt(width / 1.2) : parseInt(width / 1.2), ...inlineStyles.formContainer}} onLayout={(event) => {
+            console.log(event.nativeEvent.layout, 2);
+          }}>
                 <Input editable={!props.existingCall} onFocus={() => onFocus('CallStartTime')} inputStyle={styles.inputStyle} labelStyle={styles.labelStyle} label="Start Time" placeholder="12:30:00" value={moment(info.VisitStart).format('YYYY-MM-DD hh:mm:ss') || info.CallStartTime || ''}/>
                 <Input editable={!props.existingCall} onFocus={() => onFocus('CallEndTime') } inputStyle={styles.inputStyle} labelStyle={styles.labelStyle} label="End Time" placeholder="12:30:00"  value={moment(info.VisitEnd).format('YYYY-MM-DD hh:mm:ss') || info.CallEndTime || ''}/>
                 <Input editable={false} inputStyle={styles.inputStyle} labelStyle={styles.labelStyle} label="Doctor" placeholder="Doctor Name" value={info.Doctor && info.Doctor.DoctorName || ''}/>
@@ -75,7 +79,8 @@ const inlineStyles = {
         alignItems: 'center',
         height: 'auto',
         paddingLeft: 0,
-        paddingTop: 5
+        paddingTop: 5,
+        // maxHeight: 400,
     },
     formContainer: {
         // width: width < height ? parseInt(width / 1.2) : parseInt(width / 1.2),

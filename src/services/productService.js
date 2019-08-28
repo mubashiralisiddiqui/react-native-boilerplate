@@ -1,7 +1,6 @@
 import {get, setStorage, dateFormatRegexProducts, getAllStorageKeys, getStorage, todayDate, parse, stringify} from '../constants'
 import { getProducts, getProductsSuccess } from '../actions/products'
 import { removeOldStorageEnteries } from './callServices';
-import { initiateResponseInterceotors } from '.';
 
 export const getProductsWithSamples = (params, refresh = false) => {
     // initiateResponseInterceotors()
@@ -9,19 +8,20 @@ export const getProductsWithSamples = (params, refresh = false) => {
         dispatch(getProducts())
         let productsFromStorage = await getStorage(`products${todayDate()}`)
         if(productsFromStorage === null || refresh == true) {
-            return get('getAllProducts', {
+            get('getAllProducts', {
                 params
             }).then(async (response) => {
                 if(response.length > 0) {
                     await getAllStorageKeys(removeOldStorageEnteries, dateFormatRegexProducts);
-                    dispatch(getProductsSuccess(response))
                     setStorage(`products${todayDate()}`, stringify(response))
+                    dispatch(getProductsSuccess(response))
                 }
-                return response;
+                else dispatch(getProductsSuccess([]))
             }).catch(console.error)
+        } else {
+            productsFromStorage = parse(productsFromStorage)
+            dispatch(getProductsSuccess(productsFromStorage))
         }
-        productsFromStorage = parse(productsFromStorage)
-        dispatch(getProductsSuccess(productsFromStorage))
-        return productsFromStorage;
+        // return productsFromStorage;
     }
 }

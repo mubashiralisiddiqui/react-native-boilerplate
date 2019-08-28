@@ -1,9 +1,8 @@
 import React from 'react';
 import { ListItem, Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { brandColors } from '../../../constants';
+import { brandColors, RFValue } from '../../../constants';
 import { propTypes, defaultValues } from './defaultPropTypesValues'
-import { RFValue } from 'react-native-responsive-fontsize';
 
 const FieldHeader = ({
     key,

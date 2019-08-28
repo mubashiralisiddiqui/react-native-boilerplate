@@ -15,11 +15,11 @@ export const authReducer = (state = initialState, action) => {
           ...state,
           loading: true,
         };
-      case LOGIN_FAILURE:
+      case LOGIN_FAILURE: 
           return {
               ...state,
               error: 'Invalid Credentials',
-              laoding: false,
+              loading: false,
           }
       case LOGIN_SUCCESS: {
   

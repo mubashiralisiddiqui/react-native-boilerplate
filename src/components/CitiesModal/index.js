@@ -1,9 +1,8 @@
 import React, {useState, useEffect} from 'react'
 import { View, FlatList, TouchableWithoutFeedback, ScrollView } from 'react-native';
-import { ListItem, Text, Overlay, Input } from 'react-native-elements'
-import { brandColors, RandomInteger } from '../../constants';
+import { ListItem, Text, Overlay, SearchBar } from 'react-native-elements'
+import { brandColors, RandomInteger, RFValue } from '../../constants';
 import ImageBackgroundWrapper from '../ImageBackground';
-import { RFValue } from 'react-native-responsive-fontsize';
 import { useSelector } from 'react-redux'
 
 const CitiesModal = ({
@@ -59,8 +58,16 @@ const CitiesModal = ({
             height='80%'
             children={
                 <ImageBackgroundWrapper>
-                    <Text h3 h3Style={styles.listTitle}>Select City</Text>
-                    <Input label="Search" placeholder="Search City" onChangeText={_search} />
+                    <Text style={styles.listTitle}>Select City</Text>
+                    <SearchBar
+                        placeholder="Search City"
+                        onChangeText={_search}
+                        platform="ios"
+                        containerStyle={{ backgroundColor: 'transparent'}}
+                        round
+                        cancelButtonProps={{buttonTextStyle: {color: brandColors.lightGreen, fontFamily: 'Lato-MediumItalic' }}}
+                    />
+                    {/* <Input label="Search" placeholder="Search City" onChangeText={_search} /> */}
                     <ScrollView behavior="padding">
                         <View style={{width:'100%', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
                             <View style={{ width: '98%', marginHorizontal: 5}}>
@@ -87,6 +94,7 @@ const styles = {
     },
     listTitle: {
         backgroundColor: brandColors.darkBrown,
+        color: brandColors.lightGreen,
         fontFamily: 'Lato-MediumItalic',
         fontSize: RFValue(16),
         borderRadius: 10,

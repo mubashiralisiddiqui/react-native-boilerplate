@@ -1,5 +1,4 @@
-import { brandColors } from '../../../constants'
-import { RFValue } from 'react-native-responsive-fontsize';
+import { brandColors, RFValue } from '../../../constants'
 export const styles = {
     heading: {
         fontFamily: 'Lato-Medium',

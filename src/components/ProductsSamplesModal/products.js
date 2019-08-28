@@ -2,9 +2,8 @@ import React from 'react';
 import {View, FlatList, TouchableWithoutFeedback} from 'react-native';
 import { Button, Text, Overlay, ListItem, Badge } from 'react-native-elements';
 import { ImageBackgroundWrapper } from '..';
-import { brandColors, RandomInteger } from '../../constants';
+import { brandColors, RandomInteger, RFValue } from '../../constants';
 import { useSelector } from 'react-redux';
-import { RFValue } from "react-native-responsive-fontsize";
 // import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 const ProductsModal = ({

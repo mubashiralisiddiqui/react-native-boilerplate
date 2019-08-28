@@ -2,12 +2,11 @@ import React, { PureComponent, Fragment } from 'react'
 import { View, Dimensions, ScrollView } from 'react-native';
 import { ImageBackgroundWrapper } from '../../components';
 import { CallPlanHeader } from '../../components/Headers';
-import { navigationOption, RandomInteger, brandColors } from '../../constants';
+import { navigationOption, RandomInteger, brandColors, RFValue } from '../../constants';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
 import { getSamples, getProducts } from '../../reducers/productsReducer';
 import { Text, Card, Button } from 'react-native-elements';
-import { RFValue } from 'react-native-responsive-fontsize';
 import FontAwesomIcon from 'react-native-vector-icons/FontAwesome'
 import { NetworkContext } from '../../components/NetworkProvider';
 

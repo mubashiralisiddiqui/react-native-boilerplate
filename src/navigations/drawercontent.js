@@ -5,16 +5,15 @@ import {
     Text,
     StyleSheet,
     TouchableOpacity,
-    AsyncStorage,
     Alert,
     ScrollView,
 } from 'react-native';
 import { ImageHeader } from '../components';
-import { navigationOptions, brandColors, RandomInteger } from '../constants'
+import { navigationOptions, brandColors, RFValue } from '../constants'
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
-import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { RFValue } from 'react-native-responsive-fontsize';
+import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import AsyncStorage from '@react-native-community/async-storage';
 
 class NavigationMenu extends Component {
     state = {
@@ -67,7 +66,7 @@ class NavigationMenu extends Component {
         }
     }
 
-    navigateIt = (to) => {
+    navigateIt = (to) => requestAnimationFrame( () => {
         switch(to) {
             case 'Login': {
                 this.logout()
@@ -82,7 +81,7 @@ class NavigationMenu extends Component {
         //     return
         // }
         // this.logout()
-    }
+    })
 
 
     render() {

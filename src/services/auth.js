@@ -1,6 +1,5 @@
 import { post, setStorage, userFullName, getStorage, todayDate, get } from '../constants';
 import { login, loginSuccess, loginFailure, getReportingEmployees, getReportingEmployeesSuccess, getReportingEmployeesFailure } from '../actions/auth'
-import { initiateResponseInterceotors } from './index'
 
 export const loginUser = (params, onSuccess, onFailure) => {
     return dispatch => {

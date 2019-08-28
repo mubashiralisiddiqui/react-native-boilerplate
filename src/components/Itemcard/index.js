@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Dimensions } from 'react-native';
 import { Card, Button, Badge } from 'react-native-elements'
-import { brandColors, RandomInteger } from '../../constants';
-import { RFValue } from 'react-native-responsive-fontsize';
+import { brandColors, RandomInteger, RFValue } from '../../constants';
 
 const ItemCard = ({
     name,
@@ -102,7 +101,7 @@ const getStyles = (status, width) => {
             justifyContent: 'center',
             alignItems: 'center',
             padding: 7,
-            width: width/6
+            width: width/5
         },
         text: {
             fontSize: RFValue(16),
@@ -112,8 +111,8 @@ const getStyles = (status, width) => {
         },
         cardContainer: {
             backgroundColor: 'transparent',
-            paddingLeft: 2,
-            paddingRight: 5,
+            // paddingLeft: 2,
+            // paddingRight: 5,
             shadowColor: brandColors.lightGreen,
             borderRadius: 2,
             borderColor: '#86af49',

@@ -14,9 +14,10 @@ export const getAllCities = (refresh = false) => async (dispatch) =>{
         let response = await get('getAllCity');
         setStorage('cities', stringify(response))
         dispatch(getCitiesSuccess(response))
-        return response;
+        // return response;
+    } else {
+        dataFromStorage = parse(dataFromStorage)
+        dispatch(getCitiesSuccess(dataFromStorage));
     }
-    dataFromStorage = parse(dataFromStorage)
-    dispatch(getCitiesSuccess(dataFromStorage));
-    return dataFromStorage;
+    // return dataFromStorage;
 }

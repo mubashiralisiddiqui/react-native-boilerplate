@@ -2,8 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { brandColors } from '../../constants';
-import { RFValue } from 'react-native-responsive-fontsize';
+import { brandColors, RFValue } from '../../constants';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 const Collapsable = (props) => {
@@ -17,7 +16,7 @@ const Collapsable = (props) => {
         section
     } = props;
 
-    const toggleMe = () => toggler(section) 
+    const toggleMe = () => requestAnimationFrame( () => toggler(section)) 
     return (
         <View
             style={{ marginBottom: 5 }}

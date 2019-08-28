@@ -86,6 +86,7 @@
 		2931E460BD1342F58EC6C254 /* libRNCNetInfo-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A8866430DBD4BDA9F6517CE /* libRNCNetInfo-tvOS.a */; };
 		4A930CC6D4EF422DA7ED36E7 /* libRNDateTimePicker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B89C52CD10E34E6C90D3DD55 /* libRNDateTimePicker.a */; };
 		9B188B44C2484E1CA091FAB5 /* libRCTVideo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C2F3685F9764907A807A09E /* libRCTVideo.a */; };
+		55D24C5F36AE4BBBB86BEC23 /* libRNCWebView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D81AAD8150C4445CA47A0E2C /* libRNCWebView.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -479,6 +480,8 @@
 		B89C52CD10E34E6C90D3DD55 /* libRNDateTimePicker.a */ = {isa = PBXFileReference; name = "libRNDateTimePicker.a"; path = "libRNDateTimePicker.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		2E3ADAB186DD4A21B0BF43A8 /* RCTVideo.xcodeproj */ = {isa = PBXFileReference; name = "RCTVideo.xcodeproj"; path = "../node_modules/react-native-video/ios/RCTVideo.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		0C2F3685F9764907A807A09E /* libRCTVideo.a */ = {isa = PBXFileReference; name = "libRCTVideo.a"; path = "libRCTVideo.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		EA04BF257983472B88EA8103 /* RNCWebView.xcodeproj */ = {isa = PBXFileReference; name = "RNCWebView.xcodeproj"; path = "../node_modules/react-native-webview/ios/RNCWebView.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		D81AAD8150C4445CA47A0E2C /* libRNCWebView.a */ = {isa = PBXFileReference; name = "libRNCWebView.a"; path = "libRNCWebView.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -517,6 +520,7 @@
 				94E9B6693DED43C0877B7EBE /* libRNCNetInfo.a in Frameworks */,
 				4A930CC6D4EF422DA7ED36E7 /* libRNDateTimePicker.a in Frameworks */,
 				9B188B44C2484E1CA091FAB5 /* libRCTVideo.a in Frameworks */,
+				55D24C5F36AE4BBBB86BEC23 /* libRNCWebView.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -789,6 +793,7 @@
 				92F7B5C9159444F6A5354DB3 /* RNCNetInfo.xcodeproj */,
 				16F8D5CD48774EFA8C8DA315 /* RNDateTimePicker.xcodeproj */,
 				2E3ADAB186DD4A21B0BF43A8 /* RCTVideo.xcodeproj */,
+				EA04BF257983472B88EA8103 /* RNCWebView.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1491,12 +1496,14 @@
 					"$(SRCROOT)\..\node_modules\@react-native-community\netinfo\ios",
 					"$(SRCROOT)\..\node_modules\@react-native-community\datetimepicker\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-video\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
 				);
 				INFOPLIST_FILE = HudsonPharmaTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
@@ -1526,12 +1533,14 @@
 					"$(SRCROOT)\..\node_modules\@react-native-community\netinfo\ios",
 					"$(SRCROOT)\..\node_modules\@react-native-community\datetimepicker\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-video\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
 				);
 				INFOPLIST_FILE = HudsonPharmaTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
@@ -1564,6 +1573,7 @@
 					"$(SRCROOT)\..\node_modules\@react-native-community\netinfo\ios",
 					"$(SRCROOT)\..\node_modules\@react-native-community\datetimepicker\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-video\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
 				);
 				INFOPLIST_FILE = HudsonPharma/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1598,6 +1608,7 @@
 					"$(SRCROOT)\..\node_modules\@react-native-community\netinfo\ios",
 					"$(SRCROOT)\..\node_modules\@react-native-community\datetimepicker\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-video\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
 				);
 				INFOPLIST_FILE = HudsonPharma/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1637,11 +1648,13 @@
 					"$(SRCROOT)\..\node_modules\@react-native-community\netinfo\ios",
 					"$(SRCROOT)\..\node_modules\@react-native-community\datetimepicker\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-video\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
 				);
 				INFOPLIST_FILE = "HudsonPharma-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
@@ -1680,11 +1693,13 @@
 					"$(SRCROOT)\..\node_modules\@react-native-community\netinfo\ios",
 					"$(SRCROOT)\..\node_modules\@react-native-community\datetimepicker\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-video\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
 				);
 				INFOPLIST_FILE = "HudsonPharma-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
@@ -1722,11 +1737,13 @@
 					"$(SRCROOT)\..\node_modules\@react-native-community\netinfo\ios",
 					"$(SRCROOT)\..\node_modules\@react-native-community\datetimepicker\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-video\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
 				);
 				INFOPLIST_FILE = "HudsonPharma-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
@@ -1764,11 +1781,13 @@
 					"$(SRCROOT)\..\node_modules\@react-native-community\netinfo\ios",
 					"$(SRCROOT)\..\node_modules\@react-native-community\datetimepicker\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-video\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
 				);
 				INFOPLIST_FILE = "HudsonPharma-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (

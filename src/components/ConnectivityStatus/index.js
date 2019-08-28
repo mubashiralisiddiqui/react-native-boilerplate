@@ -3,13 +3,12 @@ import { View } from 'react-native'
 import { Button } from 'react-native-elements';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { NetworkContext } from '../../components/NetworkProvider'
-import { brandColors } from '../../constants';
-import { RFValue } from 'react-native-responsive-fontsize';
+import { brandColors, RFValue } from '../../constants';
 
 const ConnectivityStatus = () => {
-    const { isConnected, effectiveType } = useContext(NetworkContext).state;
+    const { isConnected, type, isInternetReachable } = useContext(NetworkContext).state;
     const getIcon = () => {
-        switch(effectiveType) {
+        switch(type) {
             case '2g': {
                 return 'signal-2g'
             }
@@ -23,14 +22,14 @@ const ConnectivityStatus = () => {
                 return 'signal-variant'
             }
             default: {
-                return isConnected ? 'signal-variant' : 'wifi-off'
+                return isConnected && isInternetReachable ? 'signal-variant' : 'wifi-off'
             }
         }
     }
     return (
         <View style={{width: '13%'}}>
             {
-                isConnected === true ?
+                isConnected && isInternetReachable ?
                 <Button
                     type="clear"
                     title="Connected"

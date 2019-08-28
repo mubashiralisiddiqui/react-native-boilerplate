@@ -6,10 +6,11 @@ import React from 'react'
 import { Icon, Button } from 'react-native-elements';
 import moment from 'moment';
 import axios from 'axios';
-import { AsyncStorage, Dimensions, View } from 'react-native'
+import { Dimensions, View } from 'react-native'
 import { loginSuccess } from '../actions/auth'
 import { services } from '../services'
-import { RFValue } from 'react-native-responsive-fontsize';
+import AsyncStorage from '@react-native-community/async-storage';
+import RNFetchBlob from 'rn-fetch-blob';
 
 /* 
 * Theme colors as designed in the logo composition. All the colors used in the application are derived from here.
@@ -72,12 +73,12 @@ export const navigationOptions = [
         icon: 'medicinebox',
         iconType: 'AntDesign'
     },{
-    //     name: 'change_doctor_location',
-    //     label: 'Change Dr Location',
-    //     navigateTo: 'DoctorLocation',
-    //     icon: 'location-arrow',
-    //     iconType: 'FontAwesome5'
-    // },{
+        name: 'change_doctor_location',
+        label: 'Change Dr Location',
+        navigateTo: 'DoctorLocation',
+        icon: 'location-arrow',
+        iconType: 'FontAwesome5'
+    },{
         name: 'rsm_planner',
         label: 'Call Planner',
         navigateTo: 'Planner',
@@ -124,9 +125,9 @@ export const navigationOption = (navigation, title) => {
             fontSize: RFValue(15),
             textAlign: 'center',
             flex: 1,
-            marginRight: RFValue(88)
+            marginRight: RFValue(50)
         },
-        headerLeft: <View style={{marginHorizontal:RFValue(140)}}></View>,
+        headerLeft: <View style={{marginHorizontal:RFValue(130)}}></View>,
         headerLeft: <Button
             type='clear'
             onPress={navigation.openDrawer}
@@ -156,7 +157,16 @@ export const styles = {
     },
     inputStyle: {
         color: 'gray'
-    }
+    },
+    listTitle: {
+        fontSize: RFValue(18),
+        fontFamily: 'Lato-MediumItalic',
+        backgroundColor: brandColors.darkBrown,
+        borderRadius: 10,
+        padding: 5,
+        width: '100%',
+        color: brandColors.lightGreen,
+    },
 }
 
 // it will return the array with the range provided
@@ -164,18 +174,22 @@ export const rangeArray = times => new Array(times).fill(times)
 
 export const baseURL = 'http://portal.hudsonpharma.com/CRMService.svc/';
 export const baseURLSalesForce = 'http://portal.hudsonpharma.com/SalesForce.svc/';
+export const baseMediaURL = 'http://portal.hudsonpharma.com';
+export const mediaStoragePath = RNFetchBlob.fs.dirs.DownloadDir;
 // export const baseURL = 'http://localhost:12670/CRMService.svc/';
 
 // application token to use for the APIs
 export const getToken = 'Fahad';
 
-export const todayDate = (format = 'DD_MM_YYYY') => moment()/*.subtract(2, 'day')*//*.add(2, 'day')*/.format(format)
+export const todayDate = (format = 'DD_MM_YYYY') => moment().subtract(3, 'hour')/*.add(2, 'day')*/.format(format)
 
 export const dateFormatRegexCalls = /^W*(calls)(0?[1-9]|[12][0-9]|3[01])[_](0?[1-9]|1[012])[_]\d{4}$/
 
 export const dateFormatRegexProducts = /^W*(products)(0?[1-9]|[12][0-9]|3[01])[_](0?[1-9]|1[012])[_]\d{4}$/
 
 export const dateFormatRegexGifts = /^W*(gifts)(0?[1-9]|[12][0-9]|3[01])[_](0?[1-9]|1[012])[_]\d{4}$/
+
+export const dateFormatRegexDoctorsByEmployee = /^W*(doctorsByEmployee)(0?[1-9]|[12][0-9]|3[01])[_](0?[1-9]|1[012])[_]\d{4}$/
 
 export const log = (...data) => console.log(data)
 
@@ -343,4 +357,48 @@ export const SPO_ROLE_ID = 7;
 
 export const getFilesFromProducts = (products, productId) => {
     return products.filter(product => product.ProductTemplateId == productId)[0].Files
+}
+
+export function RFValue(fontSize) {
+    // guideline height for standard 5" device screen
+    const standardScreenHeight = 680;
+    const heightPercent = (fontSize * standardScreenHeight) / standardScreenHeight;
+    return Math.round(heightPercent);
+}
+
+export const NO_INTERNET_MESSAGE = 'We have lost the internet connection, you still can use the application with limited features'
+export const CONNECTED_BUT_NO_INTERNET = 'Your connection seems to have lost the internet, make sure you are connected to a working internet.'
+export const MEDIA_DOWNLOAD_INPROGRESS = 'Your file is being downloaded right now, it will be available as soon as the download gets completed.'
+
+export const downloadFile = async (url, name) => {
+    const exists = await doesFileExist(name)
+    console.log(exists, url, name)
+    if(!exists) {
+        RNFetchBlob
+        .config({
+            // fileCache: true,
+            addAndroidDownloads: {
+                useDownloadManager: true,
+                notification: true,
+                path: `${mediaStoragePath}/${name}`,
+                description: 'asdasd'
+              },
+          // response data will be saved to this path if it has access right.
+          path : `${mediaStoragePath}/${name}`
+        })
+        .fetch('GET', `${baseMediaURL}${url}`, {
+          //some headers ..
+        })
+        .progress((received, total) => {
+          console.log('progress', received / total, 'received=>', received, 'total=>', total)
+        })
+        .then((res) => {
+            console.log(res)
+        }).catch(console.log)
+    }
+}
+
+export const doesFileExist = async (name) => {
+    const exists = await RNFetchBlob.fs.exists(`${mediaStoragePath}/${name}`);
+    return exists;
 }

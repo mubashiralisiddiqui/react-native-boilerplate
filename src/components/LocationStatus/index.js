@@ -2,9 +2,8 @@ import React from 'react';
 import { View } from 'react-native';
 import { Button } from 'react-native-elements';
 import { Blink } from '..'
-import { brandColors } from '../../constants';
+import { brandColors, RFValue } from '../../constants';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-import { RFValue } from 'react-native-responsive-fontsize';
 
 const LocationStatus = ({
     isFetching = true,

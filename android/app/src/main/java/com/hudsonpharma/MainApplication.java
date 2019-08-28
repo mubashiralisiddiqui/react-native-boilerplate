@@ -3,6 +3,7 @@ package com.hudsonpharma;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.reactnativecommunity.webview.RNCWebViewPackage;
 import com.brentvatne.react.ReactVideoPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
@@ -14,7 +15,8 @@ import com.hudsonpharma.KeyboardPackage;
 import com.swmansion.reanimated.ReanimatedPackage;
 import com.rumax.reactnative.pdfviewer.PDFViewPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
-// import com.reactnativecommunity.netinfo.NetInfoPackage;
+import com.reactnativecommunity.netinfo.NetInfoPackage;
+import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -31,14 +33,16 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNCWebViewPackage(),
           new ReactVideoPackage(),
           new RNGestureHandlerPackage(),
           new VectorIconsPackage(),
           new KeyboardPackage(),
           new ReanimatedPackage(),
           new PDFViewPackage(),
-          new RNFetchBlobPackage()
-          // new NetInfoPackage()
+          new RNFetchBlobPackage(),
+          new NetInfoPackage(),
+          new AsyncStoragePackage()
       );
     }
 

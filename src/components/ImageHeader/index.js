@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { View, Image } from 'react-native';
-import { RFValue } from 'react-native-responsive-fontsize';
+import { RFValue } from '../../constants';
 
 
 const ImageHeader = ({ verticalHeight = 30 }) => {

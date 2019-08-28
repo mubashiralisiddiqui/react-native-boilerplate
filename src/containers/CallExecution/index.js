@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { View, PermissionsAndroid, ScrollView, Alert, InteractionManager } from 'react-native'
 import { CallPlanHeader } from '../../components/Headers'
-import { navigationOption, brandColors, getToken, parse, stringify, getDistance } from '../../constants'
+import { navigationOption, brandColors, getToken, parse, stringify, getDistance, RFValue } from '../../constants'
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import {
     Collapse,
@@ -33,7 +33,7 @@ import { NetworkContext } from '../../components/NetworkProvider'
 import GiftsModal from '../../components/GiftsModal';
 import { ProductsModal, SamplesModal } from '../../components/ProductsSamplesModal';
 import { getProductsWithSamples } from '../../services/productService';
-import { RFValue } from 'react-native-responsive-fontsize';
+import Permission from '../../classes/Permission'
 
 /**
  * @class CallExecution
@@ -108,7 +108,6 @@ class CallExecution extends Component {
      * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
      */
     onClickProduct = (productTemplateId) => {
-        console.log(2143)
         let { selectedProducts, position, isReminder, selectedSamples, selectedFiles } = this.state
         let oldSelected = _.findIndex(selectedProducts, {position, IsReminder: isReminder})
         if(oldSelected > 0) {
@@ -301,17 +300,10 @@ class CallExecution extends Component {
      */
     requestLocationPermission = async () => {
         try {
-            const granted = await PermissionsAndroid.request(
-                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-                {
-                    'title': 'Location Access Required',
-                    'message': 'This App needs to Access your location'
-                }
-            )
-
-            granted === PermissionsAndroid.RESULTS.GRANTED
+            const granted = await Permission.requestLocationAccess()
+            granted === true
             ? this.callLocation()
-            : alert('You must allow this app to access your location. Would you like to')
+            : alert('You cannot process your calls without this persmission.')
 
         } catch (err) {
             alert("err",err);

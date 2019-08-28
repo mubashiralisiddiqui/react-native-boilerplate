@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, PermissionsAndroid, ScrollView, InteractionManager } from 'react-native'
 import { CallPlanHeader } from '../../components/Headers'
-import { navigationOption, brandColors, parse, stringify, getToken, getFilesFromProducts, validate } from '../../constants'
+import { navigationOption, brandColors, parse, stringify, getToken, RFValue, validate } from '../../constants'
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import {
     Collapse,
@@ -32,7 +32,7 @@ import { getDoctorByEmployeeId } from '../../services/doctor';
 import { getDoctors } from '../../reducers/doctorReducer';
 import { getEmployees } from '../../services/auth';
 import { getProductsWithSamples } from '../../services/productService';
-import { RFValue } from 'react-native-responsive-fontsize';
+import Permissions from '../../classes/Permission';
 
 class CallExecutionUnplanned extends Component {
     static contextType = NetworkContext
@@ -228,17 +228,10 @@ class CallExecutionUnplanned extends Component {
     }
     requestLocationPermission = async () => {
         try {
-            const granted = await PermissionsAndroid.request(
-                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-                {
-                    'title': 'Location Access Required',
-                    'message': 'This App needs to Access your location'
-                })
-            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                this.callLocation();
-            } else {
-                alert("Permission Denied");
-            }
+            const granted = await Permissions.requestLocationAccess()
+            granted
+            ? this.callLocation()
+            : alert('You cannot process your calls without this persmission.')
         } catch (err) {
             alert("err",err);
             console.warn(err)

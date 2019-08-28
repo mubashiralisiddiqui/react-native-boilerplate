@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { View } from 'react-native'
 import { Text, CheckBox} from 'react-native-elements';
-import { brandColors } from '../../constants'
-import { RFValue } from 'react-native-responsive-fontsize';
+import { brandColors, RFValue } from '../../constants'
 
 const CallReason = ({
     onCallReasonChange

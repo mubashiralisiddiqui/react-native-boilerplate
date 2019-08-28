@@ -1,8 +1,8 @@
 import React from 'react';
-import {NetInfo, View} from 'react-native';
+import { View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
-import { parse, getStorage, setStorage, brandColors, stringify, authUser, getToken } from '../../constants';
+import { parse, getStorage, setStorage, brandColors, stringify, authUser, getToken, RFValue, NO_INTERNET_MESSAGE, CONNECTED_BUT_NO_INTERNET } from '../../constants';
 import { syncCall, getTodayCalls, updateCallStatus, updatedCalls, getTodayUnplannedCalls } from '../../services/callServices';
 import { Button } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome'
@@ -12,12 +12,14 @@ import { getAllCities } from '../../services/city';
 import { getAllDesignations, getAllSpecialities, getDoctorByEmployeeId } from '../../services/doctor';
 import { getUser, isRSM } from '../../reducers/authReducer';
 import { getEmployees } from '../../services/auth';
-import { RFValue } from 'react-native-responsive-fontsize';
+import NetInfo from "@react-native-community/netinfo";
+import DropdownAlert from 'react-native-dropdownalert';
+import DropDown from '../../classes/Dropdown';
 
 export const NetworkContext = React.createContext({
     isConnected: false,
     type: 'unknown',
-    effectiveType: 'unknown',
+    isInternetReachable: false,
     showRefresh: false,
     isRefreshing: false,
 });
@@ -26,16 +28,31 @@ class NetworkProviderClass extends React.PureComponent {
     state = {
         isConnected: false,
         type: 'unknown',
-        effectiveType: 'unknown',
+        isInternetReachable: false,
+        details: null,
         showRefresh: false,
         isRefreshing: false,
+        netInfoEventListener: () => null
     };
 
-    setConnectivity = ({type, effectiveType, isConnected}) => {
+    showDropdown = (isConnected, isReachable) => {
+        if(!isConnected && !isReachable) {
+            DropDown.show('error', 'No Internet', NO_INTERNET_MESSAGE, 10000);
+        }
+        if(isConnected && !isReachable) {
+            DropDown.show('warn', 'Limited Connectivity', CONNECTED_BUT_NO_INTERNET, 10000);
+        }
+    }
+
+    setConnectivity = ({details, isConnected, isInternetReachable, type}) => {
+        console.log(24324, isInternetReachable)
+        this.showDropdown(isConnected, isInternetReachable)
+        
         this.setState({
             type,
-            effectiveType,
+            isInternetReachable,
             isConnected,
+            details,
         })
         if(isConnected) this.syncCalls();
     }
@@ -108,22 +125,20 @@ class NetworkProviderClass extends React.PureComponent {
     }
 
     async componentDidMount() {
-        const isConnected = await NetInfo.isConnected.fetch();
-        const { type, effectiveType } = await NetInfo.getConnectionInfo();
-        this.setConnectivity({ type, effectiveType, isConnected });
+        const {details, isConnected, isInternetReachable, type} = await NetInfo.fetch();
 
-        NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
+        this.setConnectivity({ details, isConnected, isInternetReachable, type });
+        this.setState({
+            netInfoEventListener: NetInfo.addEventListener(this.handleConnectivityChange)
+        })
     }
 
     componentWillUnmount() {
-        NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectivityChange);
+        this.state.netInfoEventListener();
+        // NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectivityChange);
     }
 
-    handleConnectivityChange = async (isConnected) => {
-        const {type, effectiveType} = await NetInfo.getConnectionInfo();
-
-        return this.setConnectivity({type, effectiveType, isConnected})
-    };
+    handleConnectivityChange = (state) => this.setConnectivity(state)
 
     render() {
         return (
@@ -144,6 +159,7 @@ class NetworkProviderClass extends React.PureComponent {
                         />
                     </View> : null
                 }
+                <DropdownAlert closeInterval={10000} ref={ref => DropDown.setDropDown(ref) } />
             </NetworkContext.Provider>
         );
     }

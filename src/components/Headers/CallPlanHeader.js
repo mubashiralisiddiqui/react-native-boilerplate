@@ -1,9 +1,8 @@
 
 import React from 'react';
 import { View, Image } from 'react-native';
-import { brandColors } from '../../constants';
+import { brandColors, RFValue } from '../../constants';
 import  UserInfo  from '../UserInfo';
-import { RFValue } from 'react-native-responsive-fontsize';
 
 const ImageHeader = () => {
     return (

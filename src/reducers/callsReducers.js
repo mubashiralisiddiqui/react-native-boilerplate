@@ -67,6 +67,7 @@ export const callsReducer = (state = initialState, action) => {
       }
     }
     case GET_UNPLANNED_CALLS_SUCCESS: {
+      console.log('testing action', action)
       return {
         ...state,
         unplanned_calls: action.unplanned_calls,
