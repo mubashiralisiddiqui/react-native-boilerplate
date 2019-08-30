@@ -11,6 +11,9 @@ import {
     GET_DOCTORS_BY_EMPLOYEE,
     GET_DOCTORS_BY_EMPLOYEE_SUCCESS,
     GET_DOCTORS_BY_EMPLOYEE_FAILURE,
+    SUBMIT_CHANGE_DOCTOR_LOCATION_REQUEST,
+    SUBMIT_CHANGE_DOCTOR_LOCATION_REQUEST_FAILURE,
+    SUBMIT_CHANGE_DOCTOR_LOCATION_REQUEST_SUCCESS,
  } from './types'
 
 export const getDesignations = () => {
@@ -92,5 +95,24 @@ export const getDoctorsByEmployeeFailure = (error) => {
     return {
         type: GET_DOCTORS_BY_EMPLOYEE_FAILURE,
         error,
+    }
+}
+
+export const submitDoctorChangeLocationRequest = () => {
+    return {
+        type: SUBMIT_CHANGE_DOCTOR_LOCATION_REQUEST
+    }
+}
+
+
+export const submitDoctorChangeLocationRequestSuccess = () => {
+    return {
+        type: SUBMIT_CHANGE_DOCTOR_LOCATION_REQUEST_SUCCESS
+    }
+}
+
+export const submitDoctorChangeLocationRequestFailure = () => {
+    return {
+        type: SUBMIT_CHANGE_DOCTOR_LOCATION_REQUEST_FAILURE
     }
 }

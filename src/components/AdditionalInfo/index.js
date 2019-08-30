@@ -9,7 +9,6 @@ import NotesField from './NotesField';
 
 
 const AdditionalInfo = ({
-    navigate,
     showProducts,
     selectedProducts,
     selectedSamples,
@@ -19,7 +18,7 @@ const AdditionalInfo = ({
     selectedGift,
     allGifts,
     existingCall,
-    showSamples
+    showSamples,
 }) => {
     const [reminderFieldsCount, setReminderFieldsCount] = useState(3);
     

@@ -4,9 +4,11 @@ import { Input, Overlay, Text, ListItem, SearchBar } from 'react-native-elements
 import { RandomInteger, styles, brandColors } from '../../constants';
 import ImageBackgroundWrapper from '../ImageBackground';
 import { useSelector } from 'react-redux';
+import { getDoctors } from '../../reducers/doctorReducer';
 
 const SearchDoctor = (props) => {
-    const allDoctors = useSelector(state => state.doctor.doctors);
+    const allDoctors = useSelector(getDoctors);
+    
     const [showDoctors, setShowDoctors] = useState(false)
     const [query, setQuery] = useState('')
     const [doctors, setDoctors] = useState(allDoctors)
@@ -39,6 +41,7 @@ const SearchDoctor = (props) => {
                 onPress={ () => {
                         props.setDoctor(item)
                         setShowDoctors(false)
+                        setDoctors(allDoctors);
                     }
                 }
             />
@@ -58,7 +61,7 @@ const SearchDoctor = (props) => {
             />
               <Overlay
                 width={'40%'}
-                height={'95%'}
+                height={'75%'}
                 overlayBackgroundColor={'#ddd'}
                 onBackdropPress={() => setShowDoctors(false)}
                 animationType={'fade'}
@@ -83,9 +86,9 @@ const SearchDoctor = (props) => {
                             <View style={{width:'100%', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
                                 <View style={{ width: '98%', marginHorizontal: 5}}>
                                     <FlatList
-                                        initialNumToRender={50}
+                                        // extraData={showDoctors}
                                         keyExtractor={ item => `${item.Id} + ${RandomInteger()}`}
-                                        data={doctors.splice(0, 30)}
+                                        data={JSON.parse(JSON.stringify(doctors.slice(0, 30)))}
                                         renderItem={_render}
                                     />
                                 </View>

@@ -1,8 +1,8 @@
 import React from 'react';
 import { ListItem, Text } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import { brandColors, RFValue } from '../../../constants';
 import { propTypes, defaultValues } from './defaultPropTypesValues'
+import { FontAwesomeIcon  } from '../../Icons'
 
 const FieldHeader = ({
     key,
@@ -15,7 +15,7 @@ const FieldHeader = ({
             title={<Text style={inlineStyles.textStyle('title')}>{title}</Text>}
             containerStyle={inlineStyles.listItemContainer}
             // rightIcon={ isFirst ? null : <Icon
-            rightIcon={ true ? null : <Icon
+            rightIcon={ true ? null : <FontAwesomeIcon
                         name='remove'
                         size={25}
                         color={brandColors.green}

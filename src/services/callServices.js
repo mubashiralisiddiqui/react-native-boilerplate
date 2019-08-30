@@ -12,6 +12,7 @@ import {
 } from '../constants'
 import { getCalls, getCallsFailure, getCallsSuccess, submitCallSuccess, submitCall, submitCallFailure, getUnplannedCalls, getUnplannedCallsFailure, getUnplannedCallsSuccess } from '../actions/calls'
 import moment from 'moment'
+import DropDownHolder from '../classes/Dropdown';
 // FIXME: refactor this file
 export const getTodayCalls = (params, refresh = false) => {
     return async (dispatch) => {
@@ -26,19 +27,21 @@ export const getTodayCalls = (params, refresh = false) => {
                     await getAllStorageKeys(removeOldStorageEnteries, dateFormatRegexCalls);
                     
                     setStorage(`calls${todayDate()}`, stringify(response))
-                    
+                
                     dispatch(getCallsSuccess(response))
-                   
-                    // return response
-                } else dispatch(getCallsSuccess([]))
+                } else {
+                    DropDownHolder.show('info', 'No Planned Calls Found', 'You do not have any planned calls for today.')
+                    dispatch(getCallsSuccess([]))
+                }
                 // return [];
             }).catch(error => {
                 dispatch(getCallsFailure(error))
             })
+        } else {
+            callsFromStorage = parse(callsFromStorage)
+            
+            dispatch(getCallsSuccess(callsFromStorage))
         }
-        callsFromStorage = parse(callsFromStorage)
-        
-        dispatch(getCallsSuccess(callsFromStorage))
         
         // return callsFromStorage;
     }

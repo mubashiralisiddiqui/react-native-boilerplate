@@ -10,9 +10,7 @@ import {
 } from 'react-native';
 import { ImageHeader } from '../components';
 import { navigationOptions, brandColors, RFValue } from '../constants'
-import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
-import AntDesignIcon from 'react-native-vector-icons/AntDesign';
-import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { FontAwesome5Icon, MaterialCommunityIcon, AntDesignIcon } from '../components/Icons'
 import AsyncStorage from '@react-native-community/async-storage';
 
 class NavigationMenu extends Component {

@@ -4,7 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import { View } from 'react-native'
 import PDFView from  'react-native-view-pdf/lib/index';
-import Icon from 'react-native-vector-icons/FontAwesome'
+import { FontAwesomeIcon } from '../Icons'
 import { brandColors, mediaStoragePath } from '../../constants';
 import { Button } from 'react-native-elements';
 
@@ -31,7 +31,7 @@ const PDF = ({
         <Button
           type="clear"
           onPress={() => onClose(seconds)}
-          icon={<Icon size={30} name="window-close" color={brandColors.lightGreen} />}
+          icon={<FontAwesomeIcon size={30} name="window-close" color={brandColors.lightGreen} />}
         />
       </View>
       <PDFView

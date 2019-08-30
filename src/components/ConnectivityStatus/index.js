@@ -1,9 +1,9 @@
 import React, { useContext } from 'react'
 import { View } from 'react-native'
 import { Button } from 'react-native-elements';
-import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { NetworkContext } from '../../components/NetworkProvider'
 import { brandColors, RFValue } from '../../constants';
+import { MaterialCommunityIcon } from '../Icons'
 
 const ConnectivityStatus = () => {
     const { isConnected, type, isInternetReachable } = useContext(NetworkContext).state;

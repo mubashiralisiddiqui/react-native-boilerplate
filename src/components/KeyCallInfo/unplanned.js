@@ -48,7 +48,7 @@ const KeyCallInfo = (props) => {
                     ? <ReportingEmployeesField name={info.SelectedEmployeeName} setMio={props.setMio} />
                     : null
                 }
-                <SearchDoctor errors={props.errors} setDoctor={props.setDoctor} name={info.SelectedDoctorName} />
+                <SearchDoctor additionalInfo={info} errors={props.errors} setDoctor={props.setDoctor} name={info.SelectedDoctorName} />
                 <Input editable={false} inputStyle={styles.inputStyle} labelStyle={styles.labelStyle} label="SPO Name" placeholder="SPO Name" value={`${user.FullName || ''}`}/>
                 <Input editable={false} inputStyle={styles.inputStyle} labelStyle={styles.labelStyle} label="Address" placeholder="Doctor address" value={info.SelectedDoctorAddress || ''}/>
                 <CallReason onCallReasonChange={props.onCallReasonChange} />

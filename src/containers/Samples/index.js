@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
 import { getSamples, getProducts } from '../../reducers/productsReducer';
 import { Text, Card, Button } from 'react-native-elements';
-import FontAwesomIcon from 'react-native-vector-icons/FontAwesome'
+import { FontAwesomIcon } from '../../components/Icons'
 import { NetworkContext } from '../../components/NetworkProvider';
 
 class Samples extends PureComponent {
@@ -28,11 +28,9 @@ class Samples extends PureComponent {
 
     componentDidMount() {
         this.context.hideRefresh();
-        // console.log(this.props.samples, 'asdasd')
     }
     componentWillUnMount() {
         this.context.showRefresh();
-        // console.log(this.props.samples, 'asdasd')
     }
 
     onLayout = (e) => {

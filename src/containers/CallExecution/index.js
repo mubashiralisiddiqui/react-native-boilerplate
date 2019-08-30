@@ -3,10 +3,10 @@
  * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
  */
 import React, { Component } from 'react';
-import { View, PermissionsAndroid, ScrollView, Alert, InteractionManager } from 'react-native'
+import { View, ScrollView, Alert } from 'react-native'
 import { CallPlanHeader } from '../../components/Headers'
-import { navigationOption, brandColors, getToken, parse, stringify, getDistance, RFValue } from '../../constants'
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import { navigationOption, brandColors, getToken, parse, stringify, getDistance, RFValue, ONLINE_CALLEXECUTION_SUCCESS, OFFLINE_CALL_EXECUTION_SUCCESS } from '../../constants'
+import {FontAwesomeIcon} from '../../components/Icons';
 import {
     Collapse,
     AdditionalInfo,
@@ -34,6 +34,8 @@ import GiftsModal from '../../components/GiftsModal';
 import { ProductsModal, SamplesModal } from '../../components/ProductsSamplesModal';
 import { getProductsWithSamples } from '../../services/productService';
 import Permission from '../../classes/Permission'
+import DropDownHolder from '../../classes/Dropdown';
+import { alertData } from '../../constants/messages';
 
 /**
  * @class CallExecution
@@ -457,15 +459,15 @@ class CallExecution extends Component {
             dailyCall.jsonDailyCall.Distance = distance;
             dailyCall.jsonDailyCall.IsInRange = Number(distance) < 200
         }
-        // dailyCall.jsonDailyCall.Distance = getDistance(this.state.latitude, this.state.longitude);
 
         if(this.context.state.isConnected) {
             const response = await this.props.submitCallSingle(dailyCall)
             if(response == 1) {
-                this.props.getUnplannedCalls({
-                    EmployeeId: this.props.user.EmployeeId,
-                    Token: getToken,
-                }, true)
+                DropDownHolder.show(alertData.call.onlineSuccess)
+                // this.props.getUnplannedCalls({
+                //     EmployeeId: this.props.user.EmployeeId,
+                //     Token: getToken,
+                // }, true)
                 this.props.getAllProducts({
                     EmployeeId: this.props.user.EmployeeId,
                     Token: getToken,
@@ -488,6 +490,7 @@ class CallExecution extends Component {
      */
     submitOffline = async (params) => {
         const response = await this.props.submitOfflineCall(params)
+        DropDownHolder.show(alertData.call.offlineSuccess)
         this.props.navigation.goBack()        
     }
 

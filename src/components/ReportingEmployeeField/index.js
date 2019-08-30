@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, NativeModules, Keyboard, FlatList, ScrollView } from 'react-native';
-import { Input, Overlay, Text, ListItem } from 'react-native-elements';
-import { RandomInteger, styles } from '../../constants';
+import { Input, Overlay, Text, ListItem, SearchBar } from 'react-native-elements';
+import { RandomInteger, styles, brandColors } from '../../constants';
 import ImageBackgroundWrapper from '../ImageBackground';
 import { useSelector } from 'react-redux';
 
 const ReportingEmployeeField = (props) => {
-    const allEmployees = useSelector(state => state.auth.employees);
+    const [allEmployees, user] = useSelector(state => [state.auth.employees, state.auth.user]);
     const [showEmployees, setShowEmployees] = useState(false)
     const [query, setQuery] = useState('')
     const [employees, setEmployees] = useState(allEmployees)
@@ -35,6 +35,8 @@ const ReportingEmployeeField = (props) => {
                 style={{ height: 45, marginVertical: 5, backgroundColor: 'transparent' }}
                 containerStyle={{ backgroundColor: 'transparent' }}
                 title={item.Value}
+                subtitle={ item.Id == user.EmployeeId ? 'Select this to get your doctors' : null}
+                subtitleStyle={{ color: brandColors.lightGreen, fontFamily: 'Lato-MediumItalic' }}
                 bottomDivider
                 onPress={ () => {
                     setShowEmployees(false)

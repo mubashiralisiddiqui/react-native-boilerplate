@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import { View, PermissionsAndroid, ScrollView, Alert } from 'react-native'
 import { CallPlanHeader } from '../../components/Headers'
 import { navigationOption, brandColors, getToken, parse, stringify, getDistance, RFValue } from '../../constants'
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import { FontAwesomeIcon } from '../../components/Icons';
 import { 
     Collapse,
     AdditionalInfo,

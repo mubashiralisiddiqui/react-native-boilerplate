@@ -116,18 +116,15 @@ export const navigationOption = (navigation, title) => {
             backgroundColor: brandColors.darkBrown,
         },
         headerTintColor: brandColors.lightGreen,
-        titleStyle: {
-            // textAlign: 'center',
-            // alignSelf: 'center'
-        },
         headerTitleStyle: {
-            fontFamily: 'Lato-Regular',
+            fontFamily: 'Lato-HeavyItalic',
             fontSize: RFValue(15),
             textAlign: 'center',
             flex: 1,
-            marginRight: RFValue(50)
+            marginRight: RFValue(50),
+            fontWeight: 'normal'
         },
-        headerLeft: <View style={{marginHorizontal:RFValue(130)}}></View>,
+        headerRight: <View style={{marginHorizontal:RFValue(100)}}></View>,
         headerLeft: <Button
             type='clear'
             onPress={navigation.openDrawer}
@@ -366,13 +363,9 @@ export function RFValue(fontSize) {
     return Math.round(heightPercent);
 }
 
-export const NO_INTERNET_MESSAGE = 'We have lost the internet connection, you still can use the application with limited features'
-export const CONNECTED_BUT_NO_INTERNET = 'Your connection seems to have lost the internet, make sure you are connected to a working internet.'
-export const MEDIA_DOWNLOAD_INPROGRESS = 'Your file is being downloaded right now, it will be available as soon as the download gets completed.'
-
 export const downloadFile = async (url, name) => {
     const exists = await doesFileExist(name)
-    console.log(exists, url, name)
+    // console.log(exists, url, name)
     if(!exists) {
         RNFetchBlob
         .config({

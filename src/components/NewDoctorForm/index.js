@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, FlatList, NativeModules, Keyboard, Switch, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, FlatList, NativeModules, Keyboard, Switch, ScrollView, TouchableWithoutFeedback } from 'react-native';
 import { Input, Overlay, Text, ListItem, SearchBar } from 'react-native-elements';
 import { RandomInteger, brandColors, styles, RFValue } from '../../constants';
 import CitiesModal from '../CitiesModal';
@@ -15,9 +15,16 @@ const NewDoctorForm = ({
     ))
     const [ fieldSelectionOverlay, setFieldSelectionOverlay ] = useState(false)
     const [ fieldToSelect, setFieldToSelect ] = useState('')
-    const [ designationsLocal, setDesignationsLocal ] = useState(designations.slice(0, 30))
-    const [ specialitiesLocal, setSpecialitiesLocal ] = useState(specialities.slice(0, 30))
+    const [ designationsLocal, setDesignationsLocal ] = useState(designations && JSON.parse(JSON.stringify(designations.slice(0, 30))))
+    const [ specialitiesLocal, setSpecialitiesLocal ] = useState(specialities && JSON.parse(JSON.stringify(specialities.slice(0, 30))))
     const [ citiesModal, setCitiesModal ] = useState(false);
+    const [query, setQuery] = useState('')
+
+    useEffect(() => {
+        setQuery('')
+    }, [fieldToSelect])
+
+
 
     const citiesModalVisibilityHandler = () => {
         setCitiesModal( citiesModal => !citiesModal)
@@ -35,12 +42,13 @@ const NewDoctorForm = ({
     }
 
     const searchDesignation = (value) => {
+        setQuery(value)
         if(value != '') {
            let result = fieldToSelect == 'Designation'
-            ? designationsLocal.filter(designation => {
+            ? designations.filter(designation => {
                return designation.Value.toLowerCase().includes(value.toLowerCase())
             })
-            : specialitiesLocal.filter(speciality => {
+            : specialities.filter(speciality => {
                 return speciality.Value.toLowerCase().includes(value.toLowerCase())
             })
 
@@ -55,6 +63,7 @@ const NewDoctorForm = ({
     const renderRow = (item, type) => {
         return (
             <ListItem
+                Component={TouchableWithoutFeedback}
                 style={{ height: 45, marginVertical: 5, backgroundColor: 'transparent' }}
                 containerStyle={{ backgroundColor: 'transparent' }}
                 title={item.Value}
@@ -147,14 +156,15 @@ const NewDoctorForm = ({
                 borderRadius={15}
                 isVisible={fieldSelectionOverlay}
                 onBackdropPress={() => setFieldSelectionOverlay(false)}
-                width='60%'
-                height='90%'
+                width='50%'
+                height='75%'
                 children={
                     <ImageBackgroundWrapper>
                         <Text style={inlineStyles.listTitle}>
                             { `Select Doctor's ${fieldToSelect}`  }
                         </Text>
                         <SearchBar
+                            value={query}
                             placeholder={`Search for more ${fieldToSelect}s`}
                             onChangeText={searchDesignation}
                             platform="ios"

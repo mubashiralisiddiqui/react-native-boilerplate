@@ -93,7 +93,8 @@ class NewDoctor extends Component {
             const response = await this.props.createDoctor({DoctorRequest: stringify(payload)});
             if(response == 1) {
                 this.setState({
-                    ...newDoctor,
+                    ...newDoctor
+
                 })
             }
             if(response == -1) {
@@ -212,9 +213,6 @@ class NewDoctor extends Component {
                             <NewDoctorForm
                                 data={this.state}
                                 setField={this.setField}
-                                designations={this.props.desgnations}
-                                specialities={this.props.specialities}
-                                cities={this.props.cities}
                             />
                             <View style={{width: '100%', display: 'flex', flex:1, justifyContent:'flex-end' }}>
                                 <Button

@@ -6,6 +6,7 @@ import {connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
 import { navigationOption } from '../../constants';
 import Permissions from '../../classes/Permission';
+import { ScreenLoader } from '../../components';
 
 class Web extends Component {
     state = {
@@ -47,8 +48,6 @@ class Web extends Component {
         this.context.hideRefresh();
         const cameraPermissionGranted = await Permissions.requestCameraAccess();
         const storageAccessPermissionGranted = await Permissions.requestStorageAccess();
-        console.log(cameraPermissionGranted, storageAccessPermissionGranted, 'asd')
-        // if(!cameraPermissionGranted) alert('You will not be able to capture images without this permission.')
         if(!storageAccessPermissionGranted) alert('You will not be able to upload images without this permission.')
     }
     render() {
@@ -59,6 +58,8 @@ class Web extends Component {
                 source={{ uri: this.getUrl() }}
                 injectedJavaScript={string}
                 javaScriptEnabled={true}
+                renderLoading={ScreenLoader}
+                startInLoadingState={true}
             />
         )
     }

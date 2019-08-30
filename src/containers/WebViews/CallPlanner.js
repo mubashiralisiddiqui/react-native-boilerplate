@@ -5,6 +5,7 @@ import { getUser } from '../../reducers/authReducer';
 import {connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
 import { RSM_ROLE_ID, navigationOption } from '../../constants';
+import { ScreenLoader } from '../../components';
 
 class Web extends Component {
     state = {
@@ -55,6 +56,8 @@ class Web extends Component {
                 source={{ uri: this.getUrl() }}
                 injectedJavaScript={string}
                 javaScriptEnabled={true}
+                renderLoading={ScreenLoader}
+                startInLoadingState={true}
             />
         )
     }

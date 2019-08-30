@@ -6,7 +6,7 @@ import React, { PureComponent } from 'react';
 import { View, ScrollView, InteractionManager } from 'react-native';
 import { CallPlanHeader } from '../../components/Headers';
 import { ImageBackgroundWrapper, ScreenLoader } from '../../components';
-import { navigationOption, authUser, getToken, RFValue } from '../../constants'
+import { navigationOption, authUser, getToken } from '../../constants'
 import ItemCard from '../../components/Itemcard';
 import { getProductsWithSamples } from '../../services/productService'
 import { getTodayCalls, getTodayUnplannedCalls } from '../../services/callServices'
@@ -21,6 +21,7 @@ import CallPlansListHeader from '../../components/CallPlansListHeader';
 import { getAllDesignations, getAllSpecialities, getDoctorByEmployeeId } from '../../services/doctor';
 import { getAllCities } from '../../services/city';
 import { getEmployees } from '../../services/auth';
+import Permissions from '../../classes/Permission'
 
 /**
  * @class CallPlans
@@ -45,7 +46,7 @@ class CallPlans extends PureComponent {
     static contextType = NetworkContext
     state = {
         loadingButton: false,
-        isLoading: true,
+        isLoading: false,
     }
     /**
      * @name componentDidMount
@@ -59,27 +60,24 @@ class CallPlans extends PureComponent {
      */
     componentDidMount() {
         InteractionManager.runAfterInteractions(() => {
+            Permissions.requestAll();
             const user = this.props.user;
             const userDataPayload = {
                 Token: getToken,
                 EmployeeId: user.EmployeeId,
             }
-            Promise.all([
-                this.props.getTodayCalls(userDataPayload),
-                this.props.getProductsWithSamples(userDataPayload),
-                this.props.getAllGifts(),
-                this.props.getDesignations(),
-                this.props.getSpecialities(),
-                this.props.getCities(),
-                this.props.getUnplannedCalls(userDataPayload),
-                this.props.isRSM
-                ? this.props.getReportingEmployees(userDataPayload)
-                : this.props.getDoctorsByEmployee(userDataPayload),
-            ])
-            .then(response => {
-                this.setState({isLoading: false})
-                this.context.showRefresh()
-            })
+            this.props.getTodayCalls(userDataPayload)
+            this.props.getProductsWithSamples(userDataPayload)
+            this.props.getAllGifts()
+            this.props.getDesignations()
+            this.props.getSpecialities()
+            this.props.getCities()
+            this.props.getUnplannedCalls(userDataPayload)
+            this.props.isRSM
+            ? this.props.getReportingEmployees(userDataPayload)
+            : this.props.getDoctorsByEmployee(userDataPayload)
+            // this.setState({isLoading: false})
+            this.context.showRefresh()
         })
             // TODO: need to remove this if everything works just fine.
             const user = this.props.user;

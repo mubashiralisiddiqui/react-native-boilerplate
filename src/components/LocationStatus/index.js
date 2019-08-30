@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { Button } from 'react-native-elements';
 import { Blink } from '..'
 import { brandColors, RFValue } from '../../constants';
-import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import { MaterialIcon } from '../Icons';
 
 const LocationStatus = ({
     isFetching = true,

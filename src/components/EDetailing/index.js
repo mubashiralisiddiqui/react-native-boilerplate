@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, FlatList, Dimensions } from 'react-native';
-import { RandomInteger, brandColors, getOrientation, doesFileExist, RFValue, MEDIA_DOWNLOAD_INPROGRESS } from '../../constants';
+import { RandomInteger, brandColors, getOrientation, doesFileExist, RFValue } from '../../constants';
 import { ListItem, Overlay } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome5';
-import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { PDF } from '../../components';
 import Video from '../Video'
 import { ScrollView } from 'react-native-gesture-handler';
 import DropDownHolder from '../../classes/Dropdown';
+import { alertData } from '../../constants/messages';
+import { FontAwesome5Icon, MaterialIcon, MaterialCommunityIcon } from '../Icons'
 
 const EDetailing = ({
     files = [],
@@ -22,7 +21,7 @@ const EDetailing = ({
     }))))
     const [selectedFile, setSelectedFile] = useState({})
     const [type, setType] = useState('')
-    console.log(downloads)
+    // console.log(downloads)
     useEffect(() => {
         Dimensions.addEventListener('change', () => {
             const newOrientation = getOrientation();
@@ -52,11 +51,11 @@ const EDetailing = ({
                 containerStyle={{backgroundColor: 'transparent', borderBottomWidth: 1}}
                 titleStyle={{fontFamily: 'Lato-Semibold', color: brandColors.darkBrown}}
                 subtitleStyle={{fontFamily: 'Lato-MediumItalic', color: brandColors.darkBrown}}
-                leftIcon={<Icon name={item.FileType == 'pdf' ? "file-pdf" : 'file-video'} size={25} color={brandColors.green} />}
+                leftIcon={<FontAwesome5Icon name={item.FileType == 'pdf' ? "file-pdf" : 'file-video'} size={25} color={brandColors.green} />}
                 rightIcon={
                     downloads[item.DetailingFileId] ? <MaterialIcon size={25} color={brandColors.green} name={'cloud-done'}/>
                     : <MaterialCommunityIcon size={RFValue(25)} color={'red'} name='progress-download' />}
-                onPress={() => downloads[item.DetailingFileId] ? showSelectedFile(item) : DropDownHolder.show('info', 'File Download Inprogess', MEDIA_DOWNLOAD_INPROGRESS)}
+                onPress={() => downloads[item.DetailingFileId] ? showSelectedFile(item) : DropDownHolder.show(alertData.media)}
             />)
         // return (
         //     <ListItem

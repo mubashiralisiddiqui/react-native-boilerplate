@@ -1,8 +1,8 @@
 import React from 'react'
 import {Button} from 'react-native-elements';
-import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import { brandColors } from '../../constants';
 import PropTypes from 'prop-types'
+import { MaterialIcon } from '../Icons'
 
 const CallExecutionButton = ({
     onPress,

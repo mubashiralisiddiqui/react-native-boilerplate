@@ -5,9 +5,9 @@ import React, { useState, useEffect, Component } from 'react';
 import { View } from 'react-native'
 // import Video from  'react-native-video';
 import Video from 'react-native-video-controls';
-import Icon from 'react-native-vector-icons/FontAwesome'
 import { brandColors, mediaStoragePath } from '../../constants';
 import { Button } from 'react-native-elements';
+import { FontAwesomeIcon } from '../Icons';
 
 class VideoPlayer extends Component {
     constructor(props) {
@@ -44,7 +44,7 @@ class VideoPlayer extends Component {
                 <Button
                 type="clear"
                 onPress={() => onClose(this.state.seconds)}
-                icon={<Icon size={30} name="window-close" color={brandColors.lightGreen} />}
+                icon={<FontAwesomeIcon size={30} name="window-close" color={brandColors.lightGreen} />}
                 />
             </View>
             <Video

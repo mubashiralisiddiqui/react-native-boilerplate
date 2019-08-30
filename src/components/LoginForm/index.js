@@ -1,7 +1,7 @@
 
 
 import React, { Component } from 'react';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { FontAwesomeIcon } from '../Icons';
 import { TextInput, Button } from '../../components';
 import LoginHoc from '../../containers/LoginHoc';
 import { brandColors, RFValue } from '../../constants';
@@ -33,7 +33,7 @@ class LoginForm extends Component {
                     value={email}
                     onKeyUp={onKeyUp}
                     type="text"
-                    leftIcon={<Icon
+                    leftIcon={<FontAwesomeIcon
                         size={20}
                         name="user"
                         color={brandColors.darkBrown} />}
@@ -49,7 +49,7 @@ class LoginForm extends Component {
                     onKeyUp={onKeyUp}
                     type="password"
                     leftIcon={
-                        <Icon
+                        <FontAwesomeIcon
                             style={{ zIndex: 1000000000 }}
                             size={ RFValue(25)}
                             name="eye-slash"

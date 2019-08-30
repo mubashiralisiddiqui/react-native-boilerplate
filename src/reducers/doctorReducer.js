@@ -11,6 +11,9 @@ import {
     GET_DOCTORS_BY_EMPLOYEE,
     GET_DOCTORS_BY_EMPLOYEE_SUCCESS,
     GET_DOCTORS_BY_EMPLOYEE_FAILURE,
+    SUBMIT_CHANGE_DOCTOR_LOCATION_REQUEST,
+    SUBMIT_CHANGE_DOCTOR_LOCATION_REQUEST_FAILURE,
+    SUBMIT_CHANGE_DOCTOR_LOCATION_REQUEST_SUCCESS,
  } from '../actions/types'
 
 const initialState = {
@@ -91,6 +94,24 @@ export const doctorReducer = (state = initialState, action) => {
           error: action.error
         }
       }
+      case SUBMIT_CHANGE_DOCTOR_LOCATION_REQUEST: {
+        return {
+          ...state,
+          loading: true
+        }
+      }
+      case SUBMIT_CHANGE_DOCTOR_LOCATION_REQUEST_SUCCESS: {
+        return {
+          ...state,
+          loading: false
+        }
+      }
+      case SUBMIT_CHANGE_DOCTOR_LOCATION_REQUEST_FAILURE: {
+        return {
+          ...state,
+          loading: false
+        }
+      }
       default:
         return state;
     }
@@ -100,3 +121,4 @@ export const getDesignations = state => state.doctor.designations;
 export const getSpecialities = state => state.doctor.specialities;
 export const getDoctorRequestLoader = state => state.doctor.loading;
 export const getDoctors = state => state.doctor.doctors
+export const getError = state => state.doctor.error

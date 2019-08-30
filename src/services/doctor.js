@@ -10,7 +10,8 @@ import {
     dateFormatRegexGifts,
     RSM_ROLE_ID,
     SPO_ROLE_ID,
-    dateFormatRegexDoctorsByEmployee, 
+    dateFormatRegexDoctorsByEmployee,
+    NEW_DOCTOR_REQUEST_FAILURE, 
 } from '../constants'
 import { 
     getDesignations,
@@ -25,8 +26,11 @@ import {
     getDoctorsByEmployee,
     getDoctorsByEmployeeSuccess,
     getDoctorsByEmployeeFailure,
+    submitDoctorChangeLocationRequest,
  } from '../actions/doctor'
 import { removeOldStorageEnteries } from './callServices';
+import DropDownHolder from '../classes/Dropdown';
+import { alertData } from '../constants/messages';
 
  export const getAllDesignations = (refresh = false) => async (dispatch) => {
     dispatch(getDesignations())
@@ -62,11 +66,13 @@ export const createDoctorRequest = (params) => async (dispatch) => {
     dispatch(submitDoctorRequest())
     const response = await post('InsertDoctorRequest', params);
     if(response == 1) {
+        DropDownHolder.show(alertData.doctor.doctorRequestSuccess)
         dispatch(submitDoctorRequestSuccess(params))
-        return response;
+    } else {
+        DropDownHolder.show(alertData.doctor.doctorRequestFailure)
+        dispatch(submitDoctorRequestFailure(NEW_DOCTOR_REQUEST_FAILURE))
     }
-    dispatch(submitDoctorRequestFailure('Phone Number already exists'))
-    return response
+    return response;
 }
 
 export const getDoctorByEmployeeId = (params, refresh = false) => async (dispatch, getState) => {
@@ -94,4 +100,20 @@ export const getDoctorByEmployeeId = (params, refresh = false) => async (dispatc
         dataFromStorage = parse(dataFromStorage)
         dispatch(getDoctorsByEmployeeSuccess(dataFromStorage))
     }
+}
+
+export const changeDoctorLocation = (payload) => dispatch => {
+    dispatch(submitDoctorChangeLocationRequest())
+    return post(`insertChangeDoctorLocation`, payload)
+    .then(response => {
+        if(response == 1) {
+            DropDownHolder.show(alertData.doctor.locationSuccess)
+            dispatch(submitDoctorRequestSuccess())
+            return response;
+        } else {
+            dispatch(submitDoctorRequestFailure())
+            return response;
+        }
+    })
+    .catch(console.log)
 }

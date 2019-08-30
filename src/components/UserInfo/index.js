@@ -2,15 +2,15 @@ import React from 'react'
 import { View } from 'react-native'
 import { Text } from 'react-native-elements';
 import { useSelector } from 'react-redux';
-import { setDefault } from '../../constants';
+import { setDefault, RFValue } from '../../constants';
 
 const UserInfo = () => {
     const user = useSelector(state => state.auth.user )
     
     return (
         <View>
-            <Text h4 style={{ fontFamily: 'Lato-Regular', textAlign: 'center'}}>{ `${setDefault(user.FullName)}` }</Text>
-            <Text h5 style={{ fontFamily: 'Lato-Semibold',  textAlign: 'center'}}>{ `${user.LoginId}` }</Text>
+            <Text style={{ fontFamily: 'Lato-HeavyItalic', textAlign: 'center', fontSize: RFValue(16)}}>{ `${setDefault(user.FullName)}` }</Text>
+            <Text style={{ fontFamily: 'Lato-SemiboldItalic',  textAlign: 'center', fontSize: RFValue(14)}}>{ `${user.LoginId}` }</Text>
         </View>
     );
 }

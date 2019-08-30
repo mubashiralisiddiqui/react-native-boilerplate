@@ -1,8 +1,8 @@
 import React from 'react'
 import Counter from "react-native-counters";
 import { Button } from 'react-native-elements';
-import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
 import { brandColors, RFValue } from '../../constants';
+import { FontAwesome5Icon } from '../Icons'
 
 const Count = ({
     start,

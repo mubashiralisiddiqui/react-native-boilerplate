@@ -17,7 +17,7 @@ export default class Tab extends Component {
       case 'callingformation':
         return this.props.existingCall
         ? <KeyCallInfo handleDatePicked={this.props.handleDatePicked && this.props.handleDatePicked} showTimePicker={showTimePicker} existingCall={this.props.existingCall} info={info} onCallReasonChange={this.props.onCallReasonChange} />
-        : <KeyCallInfoUnplanned errors={this.props.errors} setDoctor={this.props.setDoctor} setMio={this.props.setMio} handleDatePicked={this.props.handleDatePicked && this.props.handleDatePicked} showTimePicker={showTimePicker} existingCall={this.props.existingCall} info={info} onCallReasonChange={this.props.onCallReasonChange} />
+        : <KeyCallInfoUnplanned doctors={this.props.doctors} errors={this.props.errors} setDoctor={this.props.setDoctor} setMio={this.props.setMio} handleDatePicked={this.props.handleDatePicked && this.props.handleDatePicked} showTimePicker={showTimePicker} existingCall={this.props.existingCall} info={info} onCallReasonChange={this.props.onCallReasonChange} />
       case 'edetailing': 
         return <EDetailing onCloseFile={this.props.updateDetailingSeconds} files={this.props.files}/>
       default:

@@ -6,7 +6,7 @@ export default class DropDownHolder {
     static getDropDown() {
         return this.dropDown;
     }
-    static show(type, title, message) {
+    static show({type, title, message}) {
         if (this.dropDown) {
           this.dropDown.alertWithType(type, title, message);
         }

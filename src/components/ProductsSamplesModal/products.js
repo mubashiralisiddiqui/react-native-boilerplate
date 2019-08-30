@@ -40,7 +40,7 @@ const ProductsModal = ({
     }
     const _closeAndUnselect = () => onCloseHandler(true);
     const _close = () => onCloseHandler(false);
-    console.log(selectedProductId, 'selected')
+    // console.log(selectedProductId, 'selected')
 
     return (
         <Overlay

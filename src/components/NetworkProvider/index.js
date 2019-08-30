@@ -2,10 +2,11 @@ import React from 'react';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
-import { parse, getStorage, setStorage, brandColors, stringify, authUser, getToken, RFValue, NO_INTERNET_MESSAGE, CONNECTED_BUT_NO_INTERNET } from '../../constants';
+import { parse, getStorage, setStorage, brandColors, stringify, authUser, getToken, RFValue} from '../../constants';
+import { alertData } from '../../constants/messages'
 import { syncCall, getTodayCalls, updateCallStatus, updatedCalls, getTodayUnplannedCalls } from '../../services/callServices';
 import { Button } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome'
+import { FontAwesomeIcon } from '../Icons'
 import { getAllGifts } from '../../services/giftService';
 import { getProductsWithSamples } from '../../services/productService';
 import { getAllCities } from '../../services/city';
@@ -15,6 +16,7 @@ import { getEmployees } from '../../services/auth';
 import NetInfo from "@react-native-community/netinfo";
 import DropdownAlert from 'react-native-dropdownalert';
 import DropDown from '../../classes/Dropdown';
+import DropDownHolder from '../../classes/Dropdown';
 
 export const NetworkContext = React.createContext({
     isConnected: false,
@@ -37,15 +39,14 @@ class NetworkProviderClass extends React.PureComponent {
 
     showDropdown = (isConnected, isReachable) => {
         if(!isConnected && !isReachable) {
-            DropDown.show('error', 'No Internet', NO_INTERNET_MESSAGE, 10000);
+            DropDown.show(alertData.connectivity.unavailable);
         }
         if(isConnected && !isReachable) {
-            DropDown.show('warn', 'Limited Connectivity', CONNECTED_BUT_NO_INTERNET, 10000);
+            DropDown.show(alertData.connectivity.limited);
         }
     }
 
     setConnectivity = ({details, isConnected, isInternetReachable, type}) => {
-        console.log(24324, isInternetReachable)
         this.showDropdown(isConnected, isInternetReachable)
         
         this.setState({
@@ -118,6 +119,7 @@ class NetworkProviderClass extends React.PureComponent {
             ? this.props.getReportingEmployees(payload)
             : this.props.getDoctorsByEmployee(payload),
         ]).then(response => {
+            DropDownHolder.show('success',)
             this.setState({
                 isRefreshing: false,
             })
@@ -155,11 +157,32 @@ class NetworkProviderClass extends React.PureComponent {
                             title="Refresh"
                             onPress={this.handleRefresh}
                             titleStyle={{color: brandColors.lightGreen, fontSize: RFValue(10)}}
-                            icon={<Icon name="refresh" size={20} color={brandColors.lightGreen} />}
+                            icon={<FontAwesomeIcon name="refresh" size={20} color={brandColors.lightGreen} />}
                         />
                     </View> : null
                 }
-                <DropdownAlert closeInterval={10000} ref={ref => DropDown.setDropDown(ref) } />
+                <DropdownAlert
+                    messageStyle={{
+                        fontSize: RFValue(15),
+                        fontFamily: 'Lato-Medium',
+                        textAlign: 'left',
+                        fontWeight: 'normal',
+                        color: 'white',
+                        backgroundColor: 'transparent'
+                    }}
+                    titleStyle={{
+                        fontSize: RFValue(17),
+                        textAlign: 'left',
+                        fontWeight: 'normal',
+                        color: 'white',
+                        backgroundColor: 'transparent',
+                        fontFamily: 'Lato-BoldItalic'
+                    }}
+                    successColor={brandColors.lightGreen}
+                    updateStatusBar={false}
+                    closeInterval={4000}
+                    ref={ref => DropDown.setDropDown(ref) }
+                />
             </NetworkContext.Provider>
         );
     }

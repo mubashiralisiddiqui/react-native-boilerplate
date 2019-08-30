@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { View, PermissionsAndroid, ScrollView, InteractionManager } from 'react-native'
+import { View, ScrollView } from 'react-native'
 import { CallPlanHeader } from '../../components/Headers'
-import { navigationOption, brandColors, parse, stringify, getToken, RFValue, validate } from '../../constants'
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import { navigationOption, brandColors, parse, stringify, getToken, RFValue, validate, ONLINE_CALLEXECUTION_SUCCESS, OFFLINE_CALL_EXECUTION_SUCCESS } from '../../constants'
+import { FontAwesomeIcon } from '../../components/Icons';
 import {
     Collapse,
     AdditionalInfo,
@@ -33,6 +33,7 @@ import { getDoctors } from '../../reducers/doctorReducer';
 import { getEmployees } from '../../services/auth';
 import { getProductsWithSamples } from '../../services/productService';
 import Permissions from '../../classes/Permission';
+import DropDownHolder from '../../classes/Dropdown';
 
 class CallExecutionUnplanned extends Component {
     static contextType = NetworkContext
@@ -227,15 +228,10 @@ class CallExecutionUnplanned extends Component {
         })
     }
     requestLocationPermission = async () => {
-        try {
-            const granted = await Permissions.requestLocationAccess()
-            granted
-            ? this.callLocation()
-            : alert('You cannot process your calls without this persmission.')
-        } catch (err) {
-            alert("err",err);
-            console.warn(err)
-        }
+        const granted = await Permissions.requestLocationAccess()
+        granted
+        ? this.callLocation()
+        : alert('You cannot process your calls without this persmission.')
     }
  
     componentDidMount() {
@@ -261,6 +257,7 @@ class CallExecutionUnplanned extends Component {
     }
 
     callLocation(){
+        console.log(234234)
         navigator.geolocation.getCurrentPosition(
         //Will give you the current location
             (position) => {
@@ -286,7 +283,7 @@ class CallExecutionUnplanned extends Component {
             let dailyCall = this.state.form_data
             dailyCall.jsonDailyCall.Lattitude = currentLatitude;
             dailyCall.jsonDailyCall.Longitude = currentLongitude;
-            this.setState({ form_data: dailyCall, fetchingLocation: false });
+            this.setState({ form_data: dailyCall, fetchingLocation: false} , () => console.log(this.state));
         });
     }
     componentWillUnmount = () => {
@@ -322,7 +319,7 @@ class CallExecutionUnplanned extends Component {
         const [errors, shouldSubmit] = validate(this.state.validations, dailyCall.jsonDailyCall);
         if(shouldSubmit) {
             if(this.context.state.isConnected) {
-                this.props.submitCallSingle(dailyCall).then(response => {
+                this.props.submitCallSingle(parse(stringify(dailyCall))).then(response => {
                     if(response == 1) {
                         this.props.getUnplannedCalls({
                             EmployeeId: this.props.user.EmployeeId,
@@ -332,6 +329,7 @@ class CallExecutionUnplanned extends Component {
                             EmployeeId: this.props.user.EmployeeId,
                             Token: getToken,
                         }, true)
+                        DropDownHolder.show('success', 'Unplanned Call Execution', ONLINE_CALLEXECUTION_SUCCESS)
                         this.props.navigation.goBack();
                     }
                 }).catch(error => {
@@ -348,11 +346,12 @@ class CallExecutionUnplanned extends Component {
                 errors
             })
         }
-
+        
     }
-
+    
     submitOffline = (params) => {
         return this.props.submitOfflineCall(params).then(response => {
+            DropDownHolder.show('info', 'Unplanned Call Execution Offline', OFFLINE_CALL_EXECUTION_SUCCESS)
             this.props.navigation.goBack()
             return response
         })
@@ -437,6 +436,9 @@ class CallExecutionUnplanned extends Component {
         let { form_data } = this.state
         form_data.jsonDailyCall.JVEmployeeId = employee.Id
         form_data.jsonDailyCall.SelectedEmployeeName = employee.Value
+        if(this.props.user.EmployeeId != employee.Id) {
+            form_data.jsonDailyCall.JVEmployeeId = employee.Id
+        }
         this.setState({
             form_data
         })
@@ -483,6 +485,7 @@ class CallExecutionUnplanned extends Component {
                                 toggler={this.onToggleCollapsedElement}
                                 title="Key Call Information"
                                 Body={<Tab
+                                        doctors={this.props.doctors}
                                         setDoctor={this.setDoctor}
                                         setMio={this.setMio}
                                         handleDatePicked={this.handleDatePicked}
