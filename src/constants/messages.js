@@ -39,11 +39,33 @@ export const alertData = {
             title: 'Offline Call Executed Successfully',
             message: 'Offline Call Executed. It will be synced with the server once the device gets a working internet connection.',
         },
+        onlineUnplannedSuccess: {
+            type: 'success',
+            title: 'Unplanned Call Executed Successfully',
+            message: 'Unplanned call Executed and synced with the system successfully.',
+        },
+        offlineUnplannedSuccess: {
+            type: 'success',
+            title: 'Unplanned Call Executed Offline Successfully',
+            message: 'Unplanned call Executed offline. It will be displayed once yor device gets a working internet.',
+        }
     },
     media: {
         type: 'info',
         title: 'Download Inprogress',
         message: 'Your e-detailing files are being downloaded, it will be available as soon as the download gets completed.',
+    },
+    refresh: {
+        init: {
+            type: 'info',
+            title: 'Refreshing the data',
+            message: 'Data refreshing has been initialised. It will take few moments to complete.',
+        },
+        success: {
+            type: 'success',
+            title: 'Successfully Refreshed',
+            message: 'All the data has been refreshed and now up to date. Please contact IT support if you face any problems.',
+        }
     }
 
 }

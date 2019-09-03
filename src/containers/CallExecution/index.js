@@ -36,6 +36,8 @@ import { getProductsWithSamples } from '../../services/productService';
 import Permission from '../../classes/Permission'
 import DropDownHolder from '../../classes/Dropdown';
 import { alertData } from '../../constants/messages';
+import Location from '../../classes/Location';
+import { isFetching, getLat, getLong } from '../../reducers/locationReducer';
 
 /**
  * @class CallExecution
@@ -290,28 +292,6 @@ class CallExecution extends Component {
             selectedProductId: 0,
         })
     }
-    
-    /**
-     * @name requestLocationPermission
-     * @async
-     * @function
-     * @description Gather the Latitude and Longitude of the current position of user and sets the value to state accordingly
-     * @this CallExecution
-     * @memberof CallExecution
-     * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
-     */
-    requestLocationPermission = async () => {
-        try {
-            const granted = await Permission.requestLocationAccess()
-            granted === true
-            ? this.callLocation()
-            : alert('You cannot process your calls without this persmission.')
-
-        } catch (err) {
-            alert("err",err);
-            console.warn(err)
-        }
-    }
  
     /**
      * @inheritdoc
@@ -366,7 +346,7 @@ class CallExecution extends Component {
             }
             // , () => {console.log('checking all the values set', this.state, this.context)}
             )
-            this.requestLocationPermission()
+            this.props.location()
         // })
         
     }
@@ -389,42 +369,11 @@ class CallExecution extends Component {
         })
     }
 
-    callLocation(){
-        navigator.geolocation.getCurrentPosition(
-        //Will give you the current location
-            (position) => {
-                const currentLongitude = JSON.stringify(position.coords.longitude);
-                //getting the Longitude from the location json
-                const currentLatitude = JSON.stringify(position.coords.latitude);
-                //getting the Latitude from the location json
-                let dailyCall = this.state.form_data
-                dailyCall.jsonDailyCall.Lattitude = currentLatitude;
-                dailyCall.jsonDailyCall.Longitude = currentLongitude;
-                this.setState({ form_data: dailyCall, fetchingLocation: false });
-                },
-                (error) => console.log(error, this.state.form_data.jsonDailyCall.Lattitude, this.state.form_data.jsonDailyCall.Longitude),
-                { enableHighAccuracy: true, timeout: 200000, maximumAge: 1000 }
-        );
-        this.watchID = navigator.geolocation.watchPosition((position) => {
-            //Will give you the location on location change
-            console.log(position);
-            const currentLongitude = JSON.stringify(position.coords.longitude);
-            //getting the Longitude from the location json
-            const currentLatitude = JSON.stringify(position.coords.latitude);
-            //getting the Latitude from the location json
-            let dailyCall = this.state.form_data
-            dailyCall.jsonDailyCall.Lattitude = currentLatitude;
-            dailyCall.jsonDailyCall.Longitude = currentLongitude;
-            this.setState({ form_data: dailyCall, fetchingLocation: false });
-        });
-    }
-
-
     /**
      * @inheritdoc
      */
     componentWillUnmount = () => {
-        navigator.geolocation.clearWatch(this.watchID);
+        Location.stopLocating();
         this.context.showRefresh();
      }
 
@@ -439,16 +388,17 @@ class CallExecution extends Component {
      * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
      */
     submitCall = async () => {
-        await this.requestLocationPermission()
         let dailyCall = this.state.form_data;
         dailyCall.Epoch = new Date().getTime();
         dailyCall.jsonSampleDetail = this.state.selectedSamples.filter(sample => sample !== undefined);
         dailyCall.jsonDailyCallDetail = this.state.selectedProducts.filter(product => product !== undefined)
         dailyCall.jsonDailyCallEDetailing = this.state.eDetailing.filter(file => file !== undefined)
-        if(dailyCall.jsonDailyCall.Lattitude == '0.0' || dailyCall.jsonDailyCall.Longitude == '0.0'){
+        if(this.props.isFetching){
             alert('Unable to capture your location, please try to move, refresh the application or open your location service if it is not.');
             return;
         }
+        dailyCall.jsonDailyCall.Lattitude = this.props.lat;
+        dailyCall.jsonDailyCall.Longitude = this.props.long;
         if(dailyCall.jsonDailyCall.DoctorLat != 0 && dailyCall.jsonDailyCall.DoctorLong != 0) {
             const distance = getDistance(
                 dailyCall.jsonDailyCall.DoctorLat,
@@ -460,14 +410,10 @@ class CallExecution extends Component {
             dailyCall.jsonDailyCall.IsInRange = Number(distance) < 200
         }
 
-        if(this.context.state.isConnected) {
+        if(this.context.state.isInternetReachable) {
             const response = await this.props.submitCallSingle(dailyCall)
             if(response == 1) {
                 DropDownHolder.show(alertData.call.onlineSuccess)
-                // this.props.getUnplannedCalls({
-                //     EmployeeId: this.props.user.EmployeeId,
-                //     Token: getToken,
-                // }, true)
                 this.props.getAllProducts({
                     EmployeeId: this.props.user.EmployeeId,
                     Token: getToken,
@@ -543,12 +489,7 @@ class CallExecution extends Component {
     hideGifts = (unselect = false) => {
         if(unselect) {
             let dailyCall = this.state.form_data;
-            let giftDetail = dailyCall.jsonGiftDetail;
-            giftDetail[0] = {
-                GiftId: 0,
-                GiftQty: 0
-            }
-            dailyCall.jsonGiftDetail = giftDetail
+            dailyCall.jsonGiftDetail = []
             this.setState({
                 form_data: dailyCall
             })
@@ -625,7 +566,7 @@ class CallExecution extends Component {
                         <View style={{ flex: 1}}>
                             <View style={{width: '100%', height: 30, flexDirection: 'row', justifyContent: 'flex-end'}}>
                                 <ConnectivityStatus />
-                                <LocationStatus isFetching={this.state.fetchingLocation} />
+                                <LocationStatus isFetching={this.props.isFetching} />
                             </View>
                             <Collapse
                                 section="isKeyInfoCollapsed"
@@ -736,7 +677,10 @@ const mapStateToProps = state => {
         user: getUser(state),
         submit_data: getSubmitData(state),
         history: getHistory(state),
-        submitLoader: getSubmitLoader(state)
+        submitLoader: getSubmitLoader(state),
+        isFetching: isFetching(state),
+        lat: getLat(state),
+        long: getLong(state),
     }
 }
 
@@ -748,15 +692,20 @@ const mapStateToProps = state => {
  * @memberof CallExecution
  * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
  */
-const mapDispatchToProps = dispatch => bindActionCreators({
-    getTodayCalls: getTodayCalls,
-    submitCallSingle: submitCallSingle,
-    getDocHistory: getDocHistory,
-    submitOfflineCall: submitOfflineCall,
-    getUnplannedCalls: getTodayUnplannedCalls,
-    getAllProducts: getProductsWithSamples,
-}, dispatch)
-
+const mapDispatchToProps = dispatch => ({
+    ...bindActionCreators(
+      {
+        getTodayCalls: getTodayCalls,
+        submitCallSingle: submitCallSingle,
+        getDocHistory: getDocHistory,
+        submitOfflineCall: submitOfflineCall,
+        getUnplannedCalls: getTodayUnplannedCalls,
+        getAllProducts: getProductsWithSamples,
+      },
+      dispatch,
+    ),
+    location: () => Location.requestLocation(dispatch), // this is not to be wrapped into dispatch
+})
 
 export default connect(mapStateToProps, mapDispatchToProps)(CallExecution)
 

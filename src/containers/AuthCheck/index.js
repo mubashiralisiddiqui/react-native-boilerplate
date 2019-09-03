@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Image, ActivityIndicator } from 'react-native'
+import { View, Image } from 'react-native'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
 import { authUser } from '../../constants'
@@ -14,7 +14,7 @@ class AuthCheck extends Component {
 
     async componentDidMount() {
         const user = await this.props.authUser();
-        this.navigateNow(!(user === null))
+        this.navigateNow(! _.isEmpty(user))
     }
 
     navigateNow = (verified = true) => {

@@ -32,6 +32,7 @@ const GiftsModal = ({
             overlayBackgroundColor="#ddd"
             borderRadius={15}
             width={'75%'}
+            height={'75%'}
             onBackdropPress={() => onCloseHandler(true)}
             isVisible={isVisible}
             children={

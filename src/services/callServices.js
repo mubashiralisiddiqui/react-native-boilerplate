@@ -33,7 +33,6 @@ export const getTodayCalls = (params, refresh = false) => {
                     DropDownHolder.show('info', 'No Planned Calls Found', 'You do not have any planned calls for today.')
                     dispatch(getCallsSuccess([]))
                 }
-                // return [];
             }).catch(error => {
                 dispatch(getCallsFailure(error))
             })
@@ -42,8 +41,6 @@ export const getTodayCalls = (params, refresh = false) => {
             
             dispatch(getCallsSuccess(callsFromStorage))
         }
-        
-        // return callsFromStorage;
     }
 }
 
@@ -111,10 +108,11 @@ export const submitCallSingle = (params) => dispatch => {
 export const updateCallStatus = async (planId, isOffline = false) => {
     let allCalls = await getStorage(`calls${todayDate()}`)
     allCalls = parse(allCalls).map(call => {
-        if(Array.isArray(planId) && planId.includes(Number(call.PlanDetailId))) {
+        if(call.IsExecutedOffline && call.IsExecutedOffline == true && call.IsExecuted == true) {
             call.IsExecuted = true,
             call.IsExecutedOffline = isOffline
-        } else if(call.PlanDetailId == planId) {
+        }
+        else if(call.PlanDetailId == planId) {
             call.IsExecuted = true,
             call.IsExecutedOffline = isOffline
         }

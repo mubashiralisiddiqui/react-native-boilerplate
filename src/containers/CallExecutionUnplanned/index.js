@@ -34,6 +34,9 @@ import { getEmployees } from '../../services/auth';
 import { getProductsWithSamples } from '../../services/productService';
 import Permissions from '../../classes/Permission';
 import DropDownHolder from '../../classes/Dropdown';
+import { isFetching, getLat, getLong } from '../../reducers/locationReducer';
+import Location from '../../classes/Location';
+import { alertData } from '../../constants/messages';
 
 class CallExecutionUnplanned extends Component {
     static contextType = NetworkContext
@@ -227,17 +230,12 @@ class CallExecutionUnplanned extends Component {
             selectedProductId: 0,
         })
     }
-    requestLocationPermission = async () => {
-        const granted = await Permissions.requestLocationAccess()
-        granted
-        ? this.callLocation()
-        : alert('You cannot process your calls without this persmission.')
-    }
+    
  
     componentDidMount() {
         // InteractionManager.runAfterInteractions(() => {
             this.context.hideRefresh();
-            this.requestLocationPermission()
+            this.props.location()
             let dailyCall = parse(stringify(callExecution));
             dailyCall.jsonDailyCall.DeviceDateTime = moment().format('YYYY-MM-DD hh:mm:ss')
             dailyCall.EmployeeId = this.props.user.EmployeeId
@@ -256,38 +254,8 @@ class CallExecutionUnplanned extends Component {
         })
     }
 
-    callLocation(){
-        console.log(234234)
-        navigator.geolocation.getCurrentPosition(
-        //Will give you the current location
-            (position) => {
-                const currentLongitude = JSON.stringify(position.coords.longitude);
-                //getting the Longitude from the location json
-                const currentLatitude = JSON.stringify(position.coords.latitude);
-                //getting the Latitude from the location json
-                let dailyCall = this.state.form_data
-                dailyCall.jsonDailyCall.Lattitude = currentLatitude;
-                dailyCall.jsonDailyCall.Longitude = currentLongitude;
-                this.setState({ form_data: dailyCall, fetchingLocation: false });
-                },
-                (error) => console.log(error, this.state.form_data.jsonDailyCall.Lattitude, this.state.form_data.jsonDailyCall.Longitude),
-                { enableHighAccuracy: true, timeout: 200000, maximumAge: 1000 }
-        );
-        this.watchID = navigator.geolocation.watchPosition((position) => {
-            //Will give you the location on location change
-            console.log(position);
-            const currentLongitude = JSON.stringify(position.coords.longitude);
-            //getting the Longitude from the location json
-            const currentLatitude = JSON.stringify(position.coords.latitude);
-            //getting the Latitude from the location json
-            let dailyCall = this.state.form_data
-            dailyCall.jsonDailyCall.Lattitude = currentLatitude;
-            dailyCall.jsonDailyCall.Longitude = currentLongitude;
-            this.setState({ form_data: dailyCall, fetchingLocation: false} , () => console.log(this.state));
-        });
-    }
     componentWillUnmount = () => {
-        navigator.geolocation.clearWatch(this.watchID);
+        Location.stopLocating();
         this.context.showRefresh();
      }
 
@@ -296,16 +264,18 @@ class CallExecutionUnplanned extends Component {
             alert('Please select at least one product');
             return;
         }
-        await this.requestLocationPermission()
+        this.props.location()
         let dailyCall = this.state.form_data;
         dailyCall.Epoch = new Date().getTime();
         dailyCall.jsonSampleDetail = this.state.selectedSamples.filter(sample => sample !== undefined);
         dailyCall.jsonDailyCallDetail = this.state.selectedProducts.filter(product => product !== undefined)
         dailyCall.jsonDailyCallEDetailing = this.state.eDetailing.filter(file => file !== undefined)
-        if(dailyCall.jsonDailyCall.Lattitude == '0.0' || dailyCall.jsonDailyCall.Longitude == '0.0'){
+        if(this.props.isFetching){
             alert('Unable to capture your location, please try to move, refresh the application or open your location service if it is not.');
             return;
         }
+        dailyCall.jsonDailyCall.Lattitude = this.props.lat;
+        dailyCall.jsonDailyCall.Longitude = this.props.long;
         if(dailyCall.jsonDailyCall.DoctorLat != 0 && dailyCall.jsonDailyCall.DoctorLong != 0) {
             const distance = getDistance(
                 dailyCall.jsonDailyCall.DoctorLat,
@@ -318,7 +288,7 @@ class CallExecutionUnplanned extends Component {
         }
         const [errors, shouldSubmit] = validate(this.state.validations, dailyCall.jsonDailyCall);
         if(shouldSubmit) {
-            if(this.context.state.isConnected) {
+            if(this.context.state.isInternetReachable) {
                 this.props.submitCallSingle(parse(stringify(dailyCall))).then(response => {
                     if(response == 1) {
                         this.props.getUnplannedCalls({
@@ -329,7 +299,7 @@ class CallExecutionUnplanned extends Component {
                             EmployeeId: this.props.user.EmployeeId,
                             Token: getToken,
                         }, true)
-                        DropDownHolder.show('success', 'Unplanned Call Execution', ONLINE_CALLEXECUTION_SUCCESS)
+                        DropDownHolder.show(alertData.call.onlineUnplannedSuccess)
                         this.props.navigation.goBack();
                     }
                 }).catch(error => {
@@ -351,7 +321,7 @@ class CallExecutionUnplanned extends Component {
     
     submitOffline = (params) => {
         return this.props.submitOfflineCall(params).then(response => {
-            DropDownHolder.show('info', 'Unplanned Call Execution Offline', OFFLINE_CALL_EXECUTION_SUCCESS)
+            DropDownHolder.show(alertData.call.offlineUnplannedSuccess)
             this.props.navigation.goBack()
             return response
         })
@@ -477,7 +447,7 @@ class CallExecutionUnplanned extends Component {
                         <View style={{ flex: 1}}>
                             <View style={{width: '100%', height: 30, flexDirection: 'row', justifyContent: 'flex-end'}}>
                                 <ConnectivityStatus />
-                                <LocationStatus isFetching={this.state.fetchingLocation} />
+                                <LocationStatus isFetching={this.props.isFetching} />
                             </View>
                             <Collapse
                                 section="isKeyInfoCollapsed"
@@ -585,20 +555,39 @@ const mapStateToProps = state => {
         history: getHistory(state),
         submitLoader: getSubmitLoader(state),
         doctors: getDoctors(state),
+        isFetching: isFetching(state),
+        lat: getLat(state),
+        long: getLong(state),
     }
 }
 
-const mapDispatchToProps = dispatch => bindActionCreators({
-    getTodayCalls: getTodayCalls,
-    submitCallSingle: submitCallSingle,
-    getDocHistory: getDocHistory,
-    submitOfflineCall: submitOfflineCall,
-    getDoctorsByEmployee: getDoctorByEmployeeId,
-    getReportingEmployees: getEmployees,
-    getUnplannedCalls: getTodayUnplannedCalls,
-    getAllProducts: getProductsWithSamples,
-}, dispatch)
+// const mapDispatchToProps = dispatch => bindActionCreators({
+//     getTodayCalls: getTodayCalls,
+//     submitCallSingle: submitCallSingle,
+//     getDocHistory: getDocHistory,
+//     submitOfflineCall: submitOfflineCall,
+//     getDoctorsByEmployee: getDoctorByEmployeeId,
+//     getReportingEmployees: getEmployees,
+//     getUnplannedCalls: getTodayUnplannedCalls,
+//     getAllProducts: getProductsWithSamples,
+// }, dispatch)
 
+const mapDispatchToProps = dispatch => ({
+    ...bindActionCreators(
+      {
+        getTodayCalls: getTodayCalls,
+        submitCallSingle: submitCallSingle,
+        getDocHistory: getDocHistory,
+        submitOfflineCall: submitOfflineCall,
+        getDoctorsByEmployee: getDoctorByEmployeeId,
+        getReportingEmployees: getEmployees,
+        getUnplannedCalls: getTodayUnplannedCalls,
+        getAllProducts: getProductsWithSamples,
+      },
+      dispatch,
+    ),
+    location: () => Location.requestLocation(dispatch), // this is not to be wrapped into dispatch
+})
 export default connect(mapStateToProps, mapDispatchToProps)(CallExecutionUnplanned)
 
 const styles = {

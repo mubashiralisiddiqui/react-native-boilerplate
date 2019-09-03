@@ -3,9 +3,9 @@
  */
 import React, { Component } from 'react';
 import { LoginForm, ImageHeader, ImageBackgroundWrapper } from '../../components'
-import { brandColors, RFValue } from '../../constants';
+import { brandColors, RFValue, getStorage } from '../../constants';
 import { services } from '../../services'
-import { getLoginLoding, getLoginError } from '../../reducers/authReducer';
+import { getLoginLoding, getLoginError, getUser } from '../../reducers/authReducer';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
 import { NetworkContext } from '../../components/NetworkProvider';
@@ -80,14 +80,13 @@ class Login extends Component {
                 LoginId,
                 Password,
             }, () => {
-                this.props.navigation.navigate('CallPlans');
+                this.props.navigation.navigate('AuthCheck');
             }, () => {
                 alert('Invalid credentials')
             })
         }
     }
     showPassword = () => {
-        console.log(234)
         this.setState({
             secure: !this.state.secure,
             passwordIconColor: !this.state.secure === true ? brandColors.darkBrown : brandColors.green

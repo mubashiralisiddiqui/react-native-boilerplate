@@ -8,6 +8,7 @@ import { historyReducer } from '../src/reducers/historyReducer';
 import { doctorReducer } from '../src/reducers/doctorReducer';
 import { cityReducer } from '../src/reducers/cityReducer';
 import { createLogger } from 'redux-logger';
+import { locationReducer } from '../src/reducers/locationReducer';
 
 const rootReducer = combineReducers({
     auth: authReducer,
@@ -16,7 +17,8 @@ const rootReducer = combineReducers({
     gifts: giftsReducer,
     history: historyReducer,
     doctor: doctorReducer,
-    cities: cityReducer
+    cities: cityReducer,
+    location: locationReducer,
 });
 
 const reduxLogger = createLogger();

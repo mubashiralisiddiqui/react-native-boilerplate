@@ -24,6 +24,7 @@ export const NetworkContext = React.createContext({
     isInternetReachable: false,
     showRefresh: false,
     isRefreshing: false,
+    isSyncing: false,
 });
 
 class NetworkProviderClass extends React.PureComponent {
@@ -34,7 +35,8 @@ class NetworkProviderClass extends React.PureComponent {
         details: null,
         showRefresh: false,
         isRefreshing: false,
-        netInfoEventListener: () => null
+        netInfoEventListener: () => null,
+        isSyncing: false,
     };
 
     showDropdown = (isConnected, isReachable) => {
@@ -55,10 +57,13 @@ class NetworkProviderClass extends React.PureComponent {
             isConnected,
             details,
         })
-        if(isConnected) this.syncCalls();
+        if(isInternetReachable && this.state.isSyncing == false) this.syncCalls();
     }
 
     syncCalls = async () => {
+        this.setState({
+            isSyncing: true,
+        })
         const jsonParamsArray = ['jsonDailyCall', 'jsonDailyCallDetail', 'jsonGiftDetail', 'jsonSampleDetail']
         let calls = await getStorage('offlineCalls');
         if(calls != null) {
@@ -81,6 +86,9 @@ class NetworkProviderClass extends React.PureComponent {
                 return delete calls[id]
             })
             setStorage('offlineCalls', stringify(calls))
+            this.setState({
+                isSyncing: false,
+            })
         }
     }
 
@@ -107,6 +115,7 @@ class NetworkProviderClass extends React.PureComponent {
             Token: getToken,
             EmployeeId: this.props.user.EmployeeId
         }
+        DropDownHolder.show(alertData.refresh.init)
         Promise.all([
             this.props.getTodayCalls(payload, true),
             this.props.getProductsWithSamples(payload, true),
@@ -114,12 +123,12 @@ class NetworkProviderClass extends React.PureComponent {
             this.props.getCities(true),
             this.props.getDesignations(true),
             this.props.getSpecialities(true),
-            this.props.getUnplannedCalls(payload),
+            this.props.getUnplannedCalls(payload, true),
             this.props.isRSM
-            ? this.props.getReportingEmployees(payload)
-            : this.props.getDoctorsByEmployee(payload),
+            ? this.props.getReportingEmployees(payload, true)
+            : this.props.getDoctorsByEmployee(payload), true,
         ]).then(response => {
-            DropDownHolder.show('success',)
+            DropDownHolder.show(alertData.refresh.success)
             this.setState({
                 isRefreshing: false,
             })

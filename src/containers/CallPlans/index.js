@@ -59,57 +59,23 @@ class CallPlans extends PureComponent {
      * @memberof CallPlans
      */
     componentDidMount() {
-        InteractionManager.runAfterInteractions(() => {
-            Permissions.requestAll();
-            const user = this.props.user;
-            const userDataPayload = {
-                Token: getToken,
-                EmployeeId: user.EmployeeId,
-            }
-            this.props.getTodayCalls(userDataPayload)
-            this.props.getProductsWithSamples(userDataPayload)
-            this.props.getAllGifts()
-            this.props.getDesignations()
-            this.props.getSpecialities()
-            this.props.getCities()
-            this.props.getUnplannedCalls(userDataPayload)
-            this.props.isRSM
-            ? this.props.getReportingEmployees(userDataPayload)
-            : this.props.getDoctorsByEmployee(userDataPayload)
-            // this.setState({isLoading: false})
-            this.context.showRefresh()
-        })
-            // TODO: need to remove this if everything works just fine.
-            const user = this.props.user;
-        //     const userDataPayload = {
-        //         Token: getToken,
-        //         EmployeeId: user.EmployeeId,
-        //     }
-        //     this.props.getTodayCalls({
-        //         Token: getToken,
-        //         EmployeeId: user.EmployeeId,
-        //     });
-        // this.props.getProductsWithSamples({
-        //     Token: getToken,
-        //     EmployeeId: user.EmployeeId
-        // })
-        // this.props.getAllGifts();
-        // this.props.getDesignations();
-        // this.props.getSpecialities();
-        // this.props.getCities();
-
-        // if(this.props.isRSM) {
-        //     this.props.getReportingEmployees({
-        //         EmployeeId: this.props.user.EmployeeId,
-        //         Token: getToken,
-        //     })
-        // }
-
-        // if(this.props.isSPO) {
-        //     this.props.getDoctorsByEmployee({
-        //         EmployeeId: this.props.user.EmployeeId
-        //     });
-        // }
+        Permissions.requestAll();
+        const user = this.props.user;
+        const userDataPayload = {
+            Token: getToken,
+            EmployeeId: user.EmployeeId,
+        }
+        this.props.getTodayCalls(userDataPayload)
+        this.props.getProductsWithSamples(userDataPayload)
+        this.props.getAllGifts()
+        this.props.getDesignations()
+        this.props.getSpecialities()
+        this.props.getCities()
+        this.props.getUnplannedCalls(userDataPayload)
+        this.props.isRSM
+        ? this.props.getReportingEmployees(userDataPayload)
+        : this.props.getDoctorsByEmployee(userDataPayload)
+        this.context.showRefresh()
     }
 
     /**

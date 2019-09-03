@@ -2,7 +2,7 @@
  *  start of Login container
  */
 import React, { Component } from 'react';
-import { View, ScrollView, PermissionsAndroid } from 'react-native'
+import { View, ScrollView } from 'react-native'
 import { Input, Button } from 'react-native-elements';
 import { CallPlanHeader } from '../../components/Headers'
 import { navigationOption, brandColors, getToken, styles } from '../../constants'
@@ -14,16 +14,19 @@ import { bindActionCreators } from 'redux';
 import { changeDoctorLocation, getDoctorByEmployeeId } from '../../services/doctor';
 import { getDoctorRequestLoader } from '../../reducers/doctorReducer';
 import DropDownHolder from '../../classes/Dropdown';
+import Location from '../../classes/Location';
+import { isFetching, getLat, getLong } from '../../reducers/locationReducer';
 
 class DoctorLocation extends Component {
+    static contextType = NetworkContext
+    static navigationOptions = ({ navigation }) => (navigationOption(navigation, 'Change Doctor Location'))
+    
     state = {
         isModalVisible: false,
         form_data: {
             DoctorCode: '',
             DoctorName: '',
             Reason: '',
-            Latitude: '',
-            Longitude: '',
             CreatedBy: this.props.user.EmployeeId
         },
     }
@@ -41,78 +44,31 @@ class DoctorLocation extends Component {
 
         this.setState({ form_data })
     }
-    /**
-     * @name requestLocationPermission
-     * @async
-     * @function
-     * @description Gather the Latitude and Longitude of the current position of user and sets the value to state accordingly
-     * @this CallExecution
-     * @memberof CallExecution
-     * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
-     */
-    requestLocationPermission = async () => {
-        try {
-            const granted = await PermissionsAndroid.request(
-                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-                {
-                    'title': 'Location Access Required',
-                    'message': 'This App needs to Access your location'
-                }
-            )
-
-            granted === PermissionsAndroid.RESULTS.GRANTED
-            ? this.callLocation()
-            : alert('You must allow this app to access your location. Would you like to')
-
-        } catch (err) {
-            alert("err",err);
-            console.warn(err)
-        }
-    }
-    callLocation(){
-        navigator.geolocation.getCurrentPosition(
-        //Will give you the current location
-            (position) => {
-                const currentLongitude = JSON.stringify(position.coords.longitude);
-                //getting the Longitude from the location json
-                const currentLatitude = JSON.stringify(position.coords.latitude);
-                //getting the Latitude from the location json
-                let { form_data } = this.state
-                form_data.Latitude = currentLatitude
-                form_data.Longitude = currentLongitude
-                this.setState({ form_data }, () => console.log(this.state));
-            },
-            (error) => console.log(error),
-            { enableHighAccuracy: true, timeout: 200000, maximumAge: 1000 }
-            );
-            this.watchID = navigator.geolocation.watchPosition((position) => {
-                const currentLongitude = JSON.stringify(position.coords.longitude);
-                //getting the Longitude from the location json
-                const currentLatitude = JSON.stringify(position.coords.latitude);
-                let { form_data } = this.state
-                form_data.Latitude = currentLatitude
-                form_data.Longitude = currentLongitude
-                this.setState({ form_data }, () => console.log(this.state));
-        });
-    }
-    static contextType = NetworkContext
-    static navigationOptions = ({ navigation }) => (navigationOption(navigation, 'Change Doctor Location'))
 
     componentDidMount() {
-        this.requestLocationPermission();
+        // Location.requestLocation();
+        console.log(this.props.dispatch)
+        this.props.location();
+
         this.props.getDoctors({
             EmployeeId: this.props.user.EmployeeId
         })
+
         this.context.hideRefresh()
     }
     async componentWillUnmount() {
-        navigator.geolocation.clearWatch(this.watchID);
+        Location.stopLocating();
         this.context.showRefresh();
     }
 
     onSubmit = () => {
-        if(this.state.form_data.Latitude != '' && this.state.form_data.Longitude != '') {
-            this.props.changeLocation({ Token: getToken, ...this.state.form_data}).then(response => {
+        if(! this.props.isFetching) {
+            this.props.changeLocation({ 
+                Token: getToken,
+                ...this.state.form_data,
+                Latitude: this.props.lat,
+                Longitude: this.props.long,
+            }).then(response => {
                 if(response == 1) {
                     this.setStateVal('Reason', '')
                     this.setStateVal('DoctorName', '')
@@ -120,7 +76,7 @@ class DoctorLocation extends Component {
             })
         }
         else {
-            DropDownHolder.show('warning', 'Location Fetching', 'We are currently fetching the location, please make sure your device location service is on.')
+            DropDownHolder.show('warn', 'Location Fetching', 'We are currently fetching the location, please make sure your device location service is on.')
         }
     }
 
@@ -130,7 +86,7 @@ class DoctorLocation extends Component {
             <View style={style.InputContainer}>
                 <CallPlanHeader />
                 <View style={{width: '100%', height: 30, flexDirection: 'row', justifyContent: 'flex-end'}}>
-                    <LocationStatus isFetching={(this.state.form_data.Latitude == '' && this.state.form_data.Longitude == '')} />
+                    <LocationStatus isFetching={this.props.isFetching} />
                 </View>
                     <ScrollView contentContainerStyle={{ marginVertical: 15, width: '50%', justifyContent: 'center', alignSelf: 'center'}}>
                         <SearchDoctor setDoctor={this.setDoctor} name={ this.state.form_data.DoctorName }/>
@@ -172,14 +128,22 @@ class DoctorLocation extends Component {
 const mapStateToProps = state => {
     return {
         user: getUser(state),
-        loading: getDoctorRequestLoader(state)
+        loading: getDoctorRequestLoader(state),
+        isFetching: isFetching(state),
+        lat: getLat(state),
+        long: getLong(state),
     }
 }
-
-const mapDispatchToProps = dispatch => bindActionCreators({
-    changeLocation: changeDoctorLocation,
-    getDoctors: getDoctorByEmployeeId,
-}, dispatch)
+const mapDispatchToProps = dispatch => ({
+    ...bindActionCreators(
+      {
+        changeLocation: changeDoctorLocation,
+        getDoctors: getDoctorByEmployeeId,
+      },
+      dispatch,
+    ),
+    location: () => Location.requestLocation(dispatch), // this is not to be wrapped into dispatch
+})
 
 export default connect(mapStateToProps, mapDispatchToProps)(DoctorLocation)
 
@@ -188,6 +152,5 @@ const style = {
         display: 'flex',
         flex: 1,
         width: '100%',
-
     }
 }

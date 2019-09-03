@@ -93,8 +93,7 @@ export default createAppContainer(createSwitchNavigator(
         Auth: AuthStack, // when user logout
         AuthCheck: AuthCheck, // where we decid where to switch app or auth
     },
-    {
-        
+    {        
         initialRouteName: 'AuthCheck'
     }
 ))
