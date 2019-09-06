@@ -29,7 +29,7 @@ export const locationReducer = (state = initialState, action) => {
         return {
             ...state,
             error: action.error,
-            isFetching: false,
+            isFetching: true,
         }
     }
     default:

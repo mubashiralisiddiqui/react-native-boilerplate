@@ -58,7 +58,6 @@ export function getUnplannedCalls() {
 }
 
 export function getUnplannedCallsSuccess(unplanned_calls) {
-    console.log(unplanned_calls, 'action')
     return {
         type: GET_UNPLANNED_CALLS_SUCCESS,
         unplanned_calls: unplanned_calls || [],

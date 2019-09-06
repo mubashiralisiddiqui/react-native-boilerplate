@@ -247,16 +247,21 @@ class CallExecution extends Component {
 
     hideProductsOverlay = (unselect = false) => {
         if(unselect) {
-            let { selectedProducts, selectedSamples, selectedProductId } = this.state
+            console.log(123123123)
+            let { selectedProducts, selectedSamples, selectedProductId, eDetailing } = this.state
+            const fileIds = _.concat(..._.map(_.filter(this.props.files, ['ProductId', selectedProductId]), 'DetailingFileId'))
+            console.log(fileIds);
+            // eDetailing = _.dropWhile(eDetailing, edetail => _.includes(fileIds, edetail.DetailingFileId))
             delete selectedProducts[selectedProductId];
             delete selectedSamples[selectedProductId];
             return this.setState({
                 selectedProducts,
                 selectedSamples,
+                eDetailing,
                 overlay: false,
                 position: 0,
                 selectedProductId: 0,
-                isReminder: false
+                isReminder: false,
             })
         }
         this.setState({

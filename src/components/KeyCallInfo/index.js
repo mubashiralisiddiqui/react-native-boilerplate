@@ -60,7 +60,7 @@ const KeyCallInfo = (props) => {
                 <Input editable={!props.existingCall} onFocus={() => onFocus('CallStartTime')} inputStyle={styles.inputStyle} labelStyle={styles.labelStyle} label="Start Time" placeholder="12:30:00" value={moment(info.VisitStart).format('YYYY-MM-DD hh:mm:ss') || info.CallStartTime || ''}/>
                 <Input editable={!props.existingCall} onFocus={() => onFocus('CallEndTime') } inputStyle={styles.inputStyle} labelStyle={styles.labelStyle} label="End Time" placeholder="12:30:00"  value={moment(info.VisitEnd).format('YYYY-MM-DD hh:mm:ss') || info.CallEndTime || ''}/>
                 <Input editable={false} inputStyle={styles.inputStyle} labelStyle={styles.labelStyle} label="Doctor" placeholder="Doctor Name" value={info.Doctor && info.Doctor.DoctorName || ''}/>
-                <Input editable={false} inputStyle={styles.inputStyle} labelStyle={styles.labelStyle} label="SPO Name" placeholder="SPO Name" value={`${user.FullName || ''}`}/>
+                <Input editable={false} inputStyle={styles.inputStyle} labelStyle={styles.labelStyle} label="Employee Name" placeholder="Employee Name" value={`${user.FullName || ''}`}/>
                 <Input editable={false} inputStyle={styles.inputStyle} labelStyle={styles.labelStyle} label="Address" placeholder="Doctor address" value={info.Doctor && info.Doctor.DoctorAddress || ''}/>
                 <CallReason onCallReasonChange={(reason) => props.onCallReasonChange('CallReason', reason)} />
             </View>

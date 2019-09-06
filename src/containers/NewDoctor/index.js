@@ -188,6 +188,7 @@ class NewDoctor extends Component {
         this.setState({
             CreatedBy: this.props.user.EmployeeId
         })
+        this.context.hideRefresh()
 
     }
 

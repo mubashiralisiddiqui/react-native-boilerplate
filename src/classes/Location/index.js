@@ -32,10 +32,17 @@ export default class Location {
                 dispatch(getLocationSuccess(this.getCoords()))
                 },
                 (error) => {
-                    dispatch(getLocationFailure(error))
+                    if(error.code == error.POSITION_UNAVAILABLE) {
+                        alert('Your location service is turned off, please make sure that the service is on to execute call.')
+                        dispatch(getLocationFailure(error))
+                    }
+                    if(error.code == error.TIMEOUT && this.getCoords().lat == undefined) {
+                        alert('We are unable to capture your location, please make sure your internet is working for higher accuracy.')
+                        dispatch(getLocationFailure(error))
+                    }
                     console.log(error, this.getCoords())
                 },
-                { enableHighAccuracy: true, timeout: 200000, maximumAge: 1000 }
+                { enableHighAccuracy: true, timeout: 300000, maximumAge: 300000 }
         );
         this.watchID = navigator.geolocation.watchPosition((position) => {
             this.setLong(JSON.stringify(position.coords.longitude));
@@ -53,7 +60,6 @@ export default class Location {
     }
 
     static stopLocating() {
-        console.log(234)
         navigator.geolocation.clearWatch(this.watchID);
     }
 }

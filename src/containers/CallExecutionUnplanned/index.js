@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, ScrollView } from 'react-native'
 import { CallPlanHeader } from '../../components/Headers'
-import { navigationOption, brandColors, parse, stringify, getToken, RFValue, validate, ONLINE_CALLEXECUTION_SUCCESS, OFFLINE_CALL_EXECUTION_SUCCESS } from '../../constants'
+import { navigationOption, brandColors, parse, stringify, getToken, RFValue, validate, ONLINE_CALLEXECUTION_SUCCESS, OFFLINE_CALL_EXECUTION_SUCCESS, getDistance, getFilesFromProducts } from '../../constants'
 import { FontAwesomeIcon } from '../../components/Icons';
 import {
     Collapse,
@@ -18,7 +18,7 @@ import { submitCallSingle, getTodayCalls, submitOfflineCall, getTodayUnplannedCa
 import { Tab } from '..';
 import { callExecution } from '../../defaults';
 import { connect } from 'react-redux';
-import { getProducts, getSamples } from '../../reducers/productsReducer';
+import { getProducts, getSamples, getFiles } from '../../reducers/productsReducer';
 import { bindActionCreators } from 'redux'
 import moment from 'moment';
 import { getGifts } from '../../reducers/giftsReducer';
@@ -29,10 +29,9 @@ import { NetworkContext } from '../../components/NetworkProvider'
 import GiftsModal from '../../components/GiftsModal';
 import { ProductsModal, SamplesModal } from '../../components/ProductsSamplesModal';
 import { getDoctorByEmployeeId } from '../../services/doctor';
-import { getDoctors } from '../../reducers/doctorReducer';
+import { getDoctors, getDoctorRequestLoader } from '../../reducers/doctorReducer';
 import { getEmployees } from '../../services/auth';
 import { getProductsWithSamples } from '../../services/productService';
-import Permissions from '../../classes/Permission';
 import DropDownHolder from '../../classes/Dropdown';
 import { isFetching, getLat, getLong } from '../../reducers/locationReducer';
 import Location from '../../classes/Location';
@@ -186,12 +185,17 @@ class CallExecutionUnplanned extends Component {
     }
     hideProductsOverlay = (unselect = false) => {
         if(unselect) {
-            let { selectedProducts, selectedSamples, selectedProductId } = this.state
+            let { selectedProducts, selectedSamples, selectedProductId, eDetailing, selectedFiles } = this.state
+            const fileIds = _.map(_.filter(this.props.files, file => file.ProductId == selectedProductId), 'DetailingFileId')
+            eDetailing = eDetailing.filter(detail => !fileIds.includes(detail.DetailingFileId))
+            selectedFiles = selectedFiles.filter(file => file.ProductId != selectedProductId)
             delete selectedProducts[selectedProductId];
             delete selectedSamples[selectedProductId];
             return this.setState({
                 selectedProducts,
                 selectedSamples,
+                eDetailing,
+                selectedFiles,
                 overlay: false,
                 position: 0,
                 selectedProductId: 0,
@@ -264,7 +268,6 @@ class CallExecutionUnplanned extends Component {
             alert('Please select at least one product');
             return;
         }
-        this.props.location()
         let dailyCall = this.state.form_data;
         dailyCall.Epoch = new Date().getTime();
         dailyCall.jsonSampleDetail = this.state.selectedSamples.filter(sample => sample !== undefined);
@@ -439,7 +442,7 @@ class CallExecutionUnplanned extends Component {
         return (        
             <ImageBackgroundWrapper>
                 <CallExecutionButton disabled={this.props.submitLoader} onPress={this.submitCall}/>
-                {this.props.submitLoader == true ? <ScreenLoader /> : null}
+                {this.props.submitLoader == true || this.props.doctor_loading == true ? <ScreenLoader /> : null}
                 <View style={styles.InputContainer}>
                     <ScrollView
                         contentContainerStyle={{justifyContent: 'center', display: 'flex' }}>
@@ -558,19 +561,10 @@ const mapStateToProps = state => {
         isFetching: isFetching(state),
         lat: getLat(state),
         long: getLong(state),
+        doctor_loading: getDoctorRequestLoader(state),
+        files: getFiles(state)
     }
 }
-
-// const mapDispatchToProps = dispatch => bindActionCreators({
-//     getTodayCalls: getTodayCalls,
-//     submitCallSingle: submitCallSingle,
-//     getDocHistory: getDocHistory,
-//     submitOfflineCall: submitOfflineCall,
-//     getDoctorsByEmployee: getDoctorByEmployeeId,
-//     getReportingEmployees: getEmployees,
-//     getUnplannedCalls: getTodayUnplannedCalls,
-//     getAllProducts: getProductsWithSamples,
-// }, dispatch)
 
 const mapDispatchToProps = dispatch => ({
     ...bindActionCreators(

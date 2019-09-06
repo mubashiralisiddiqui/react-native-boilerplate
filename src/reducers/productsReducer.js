@@ -36,3 +36,4 @@ export const productsReducer = (state = initialState, action) => {
 // export const getCallsLoading = state => state.loading;
 export const getProducts = state => state.products.products;
 export const getSamples = state => state.products.samples;
+export const getFiles = state => state.products.files;

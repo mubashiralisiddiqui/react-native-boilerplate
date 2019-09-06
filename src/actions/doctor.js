@@ -14,6 +14,8 @@ import {
     SUBMIT_CHANGE_DOCTOR_LOCATION_REQUEST,
     SUBMIT_CHANGE_DOCTOR_LOCATION_REQUEST_FAILURE,
     SUBMIT_CHANGE_DOCTOR_LOCATION_REQUEST_SUCCESS,
+    GET_CALLS_DOCTORS,
+    GET_UNPLANNED_CALLS_DOCTORS,
  } from './types'
 
 export const getDesignations = () => {
@@ -114,5 +116,22 @@ export const submitDoctorChangeLocationRequestSuccess = () => {
 export const submitDoctorChangeLocationRequestFailure = () => {
     return {
         type: SUBMIT_CHANGE_DOCTOR_LOCATION_REQUEST_FAILURE
+    }
+}
+
+export const getCallsDoctors = (calls) => {
+    const doctors = _.concat(..._.map(calls, call => call.Doctor.DoctorCode))
+    return {
+        type: GET_CALLS_DOCTORS,
+        doctors,
+    }
+}
+
+
+export const getUnplannedCallsDoctors = (calls) => {
+    const doctors = _.concat(..._.map(calls, call => call.Doctor.DoctorCode))
+    return {
+        type: GET_UNPLANNED_CALLS_DOCTORS,
+        doctors,
     }
 }

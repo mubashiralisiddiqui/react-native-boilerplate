@@ -13,6 +13,7 @@ import {
 import { getCalls, getCallsFailure, getCallsSuccess, submitCallSuccess, submitCall, submitCallFailure, getUnplannedCalls, getUnplannedCallsFailure, getUnplannedCallsSuccess } from '../actions/calls'
 import moment from 'moment'
 import DropDownHolder from '../classes/Dropdown';
+import { getCallsDoctors, getUnplannedCallsDoctors } from '../actions/doctor';
 // FIXME: refactor this file
 export const getTodayCalls = (params, refresh = false) => {
     return async (dispatch) => {
@@ -27,7 +28,7 @@ export const getTodayCalls = (params, refresh = false) => {
                     await getAllStorageKeys(removeOldStorageEnteries, dateFormatRegexCalls);
                     
                     setStorage(`calls${todayDate()}`, stringify(response))
-                
+                    dispatch(getCallsDoctors(response))
                     dispatch(getCallsSuccess(response))
                 } else {
                     DropDownHolder.show('info', 'No Planned Calls Found', 'You do not have any planned calls for today.')
@@ -38,7 +39,7 @@ export const getTodayCalls = (params, refresh = false) => {
             })
         } else {
             callsFromStorage = parse(callsFromStorage)
-            
+            dispatch(getCallsDoctors(callsFromStorage))            
             dispatch(getCallsSuccess(callsFromStorage))
         }
     }
@@ -175,6 +176,7 @@ export const getTodayUnplannedCalls = (params, refresh = false) => async (dispat
         get(`getTodayUnplannedExecutedCall`, {params})
         .then(response => {
             setStorage(`unplannedCalls${todayDate()}`, stringify(response));
+            dispatch(getUnplannedCallsDoctors(response))
             dispatch(getUnplannedCallsSuccess(response))
             // return response
         })
@@ -183,6 +185,7 @@ export const getTodayUnplannedCalls = (params, refresh = false) => async (dispat
         })
     } else {
         dataFromStorage = parse(dataFromStorage)
+        dispatch(getUnplannedCallsDoctors(dataFromStorage))
         dispatch(getUnplannedCallsSuccess(dataFromStorage))
     }
     // return dataFromStorage

@@ -49,7 +49,7 @@ const KeyCallInfo = (props) => {
                     : null
                 }
                 <SearchDoctor additionalInfo={info} errors={props.errors} setDoctor={props.setDoctor} name={info.SelectedDoctorName} />
-                <Input editable={false} inputStyle={styles.inputStyle} labelStyle={styles.labelStyle} label="SPO Name" placeholder="SPO Name" value={`${user.FullName || ''}`}/>
+                <Input editable={false} inputStyle={styles.inputStyle} labelStyle={styles.labelStyle} label="Employee Name" placeholder="Employee Name" value={`${user.FullName || ''}`}/>
                 <Input editable={false} inputStyle={styles.inputStyle} labelStyle={styles.labelStyle} label="Address" placeholder="Doctor address" value={info.SelectedDoctorAddress || ''}/>
                 <CallReason onCallReasonChange={props.onCallReasonChange} />
             </View>

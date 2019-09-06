@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { View, NativeModules, Keyboard, FlatList, ScrollView, TouchableWithoutFeedback } from 'react-native';
-import { Input, Overlay, Text, ListItem, SearchBar } from 'react-native-elements';
+import { Input, Overlay, Text, ListItem, SearchBar, Badge } from 'react-native-elements';
 import { RandomInteger, styles, brandColors } from '../../constants';
 import ImageBackgroundWrapper from '../ImageBackground';
 import { useSelector } from 'react-redux';
-import { getDoctors } from '../../reducers/doctorReducer';
+import { getDoctors, getUnplannedCallDoctors, getCallDoctors } from '../../reducers/doctorReducer';
 
 const SearchDoctor = (props) => {
     const allDoctors = useSelector(getDoctors);
+    const callDoctors = [...useSelector(getUnplannedCallDoctors), ...useSelector(getCallDoctors)]
     
     const [showDoctors, setShowDoctors] = useState(false)
     const [query, setQuery] = useState('')
@@ -19,7 +20,7 @@ const SearchDoctor = (props) => {
     }
     useEffect(() => {
         setQuery('');
-        setDoctors(doctors)
+        setDoctors(allDoctors)
     }, [showDoctors])   
 
     useEffect(() => {
@@ -33,6 +34,8 @@ const SearchDoctor = (props) => {
     const _render = ({item}) => {
         return (
             <ListItem
+                disabled={_.includes(callDoctors, item.Id)}
+                rightElement={ _.includes(callDoctors, item.Id) ? <Badge status="success" value="Already Planned / Executed" /> : null }
                 Component={TouchableWithoutFeedback}
                 style={{ height: 45, marginVertical: 5, backgroundColor: 'transparent' }}
                 containerStyle={{ backgroundColor: 'transparent' }}
@@ -60,7 +63,7 @@ const SearchDoctor = (props) => {
                 errorMessage={props.errors && props.errors.DoctorCode || ''}
             />
               <Overlay
-                width={'40%'}
+                width={'75%'}
                 height={'75%'}
                 overlayBackgroundColor={'#ddd'}
                 onBackdropPress={() => setShowDoctors(false)}

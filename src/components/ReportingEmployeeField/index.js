@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, NativeModules, Keyboard, FlatList, ScrollView } from 'react-native';
+import { View, NativeModules, Keyboard, FlatList, ScrollView, TouchableWithoutFeedback } from 'react-native';
 import { Input, Overlay, Text, ListItem, SearchBar } from 'react-native-elements';
 import { RandomInteger, styles, brandColors } from '../../constants';
 import ImageBackgroundWrapper from '../ImageBackground';
@@ -32,6 +32,7 @@ const ReportingEmployeeField = (props) => {
     const _render = ({item}) => {
         return (
             <ListItem
+                Component={TouchableWithoutFeedback}
                 style={{ height: 45, marginVertical: 5, backgroundColor: 'transparent' }}
                 containerStyle={{ backgroundColor: 'transparent' }}
                 title={item.Value}
@@ -52,7 +53,7 @@ const ReportingEmployeeField = (props) => {
             <Input onFocus={onFocus} inputStyle={styles.inputStyle} labelStyle={styles.labelStyle} label="Select MIO" placeholder="Select MIO" value={props.name || ''}/>
               <Overlay
                 width={'40%'}
-                height={'95%'}
+                height={'75%'}
                 overlayBackgroundColor={'#ddd'}
                 onBackdropPress={() => setShowEmployees(false)}
                 animationType={'fade'}

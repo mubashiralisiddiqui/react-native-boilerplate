@@ -33,7 +33,6 @@ export const callsReducer = (state = initialState, action) => {
             laoding: false,
         }
     case GET_CALLS_SUCCESS: {
-
         return {
             ...state,
             calls: action.calls,

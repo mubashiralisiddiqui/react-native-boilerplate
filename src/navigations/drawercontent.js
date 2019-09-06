@@ -131,7 +131,7 @@ const styles = new StyleSheet.create({
         fontSize: RFValue(16),
         textAlignVertical: 'center',
         textAlign: 'left',
-        fontFamily: 'Lato-Heavy'
+        fontFamily: 'Lato-HeavyItalic'
     },
     section: {
         display: 'flex',

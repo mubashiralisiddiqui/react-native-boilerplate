@@ -15,7 +15,6 @@ import { getUser, isRSM } from '../../reducers/authReducer';
 import { getEmployees } from '../../services/auth';
 import NetInfo from "@react-native-community/netinfo";
 import DropdownAlert from 'react-native-dropdownalert';
-import DropDown from '../../classes/Dropdown';
 import DropDownHolder from '../../classes/Dropdown';
 
 export const NetworkContext = React.createContext({
@@ -41,10 +40,10 @@ class NetworkProviderClass extends React.PureComponent {
 
     showDropdown = (isConnected, isReachable) => {
         if(!isConnected && !isReachable) {
-            DropDown.show(alertData.connectivity.unavailable);
+            DropDownHolder.show(alertData.connectivity.unavailable);
         }
         if(isConnected && !isReachable) {
-            DropDown.show(alertData.connectivity.limited);
+            DropDownHolder.show(alertData.connectivity.limited);
         }
     }
 
@@ -57,6 +56,7 @@ class NetworkProviderClass extends React.PureComponent {
             isConnected,
             details,
         })
+        console.log(this.state.isSyncing, 'syncing status')
         if(isInternetReachable && this.state.isSyncing == false) this.syncCalls();
     }
 
@@ -103,7 +103,7 @@ class NetworkProviderClass extends React.PureComponent {
         })
     }
 
-    handleRefresh = async () => {
+    handleRefresh = () => {
         this.setState({
             isRefreshing: true
         })
@@ -190,7 +190,7 @@ class NetworkProviderClass extends React.PureComponent {
                     successColor={brandColors.lightGreen}
                     updateStatusBar={false}
                     closeInterval={4000}
-                    ref={ref => DropDown.setDropDown(ref) }
+                    ref={ref => DropDownHolder.setDropDown(ref) }
                 />
             </NetworkContext.Provider>
         );

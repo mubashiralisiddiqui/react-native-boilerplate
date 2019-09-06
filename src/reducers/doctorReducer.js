@@ -14,6 +14,8 @@ import {
     SUBMIT_CHANGE_DOCTOR_LOCATION_REQUEST,
     SUBMIT_CHANGE_DOCTOR_LOCATION_REQUEST_FAILURE,
     SUBMIT_CHANGE_DOCTOR_LOCATION_REQUEST_SUCCESS,
+    GET_CALLS_DOCTORS,
+    GET_UNPLANNED_CALLS_DOCTORS,
  } from '../actions/types'
 
 const initialState = {
@@ -23,6 +25,8 @@ const initialState = {
     loading: false,
     request: '',
     doctors: [], // Doctors by employee
+    calls_doctors: [], // Doctors from daily planned calls
+    unplanned_calls_doctors: [], // Doctors from daily calls
 }
 
 export const doctorReducer = (state = initialState, action) => {
@@ -79,19 +83,22 @@ export const doctorReducer = (state = initialState, action) => {
       }
       case GET_DOCTORS_BY_EMPLOYEE: {
         return {
-          ...state
+          ...state,
+          loading: true,
         }
       }
       case GET_DOCTORS_BY_EMPLOYEE_SUCCESS: {
         return {
           ...state,
-          doctors: action.doctors
+          doctors: action.doctors,
+          loading: false,
         }
       }
       case GET_DOCTORS_BY_EMPLOYEE_FAILURE: {
         return {
           ...state,
-          error: action.error
+          error: action.error,
+          loading: false
         }
       }
       case SUBMIT_CHANGE_DOCTOR_LOCATION_REQUEST: {
@@ -112,6 +119,18 @@ export const doctorReducer = (state = initialState, action) => {
           loading: false
         }
       }
+      case GET_CALLS_DOCTORS: {
+        return {
+          ...state,
+          calls_doctors: action.doctors
+        }
+      }
+      case GET_UNPLANNED_CALLS_DOCTORS: {
+        return {
+          ...state,
+          unplanned_calls_doctors: action.doctors
+        }
+      }
       default:
         return state;
     }
@@ -122,3 +141,5 @@ export const getSpecialities = state => state.doctor.specialities;
 export const getDoctorRequestLoader = state => state.doctor.loading;
 export const getDoctors = state => state.doctor.doctors
 export const getError = state => state.doctor.error
+export const getCallDoctors = state => state.doctor.calls_doctors;
+export const getUnplannedCallDoctors = state => state.doctor.unplanned_calls_doctors;
