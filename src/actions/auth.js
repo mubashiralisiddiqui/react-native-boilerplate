@@ -6,22 +6,10 @@ export const login = () => {
     }
 }
 
-export const getUser = () => {
-    return {
-        type: LOGIN,
-    }
-}
-
 export function loginSuccess(user) {
     return {
         type: LOGIN_SUCCESS,
         user,
-    }
-}
-
-export function loginCheck() {
-    return {
-        type: LOGIN_CHECK,
     }
 }
 

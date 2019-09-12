@@ -77,7 +77,7 @@ export const submitCallSingle = (params) => dispatch => {
     dispatch(submitCall(params))
     
     
-    return post('executeCall', params)
+    return post('executeCall', /*params*/ {})
         .then(async (response) => {
             if(response == 1) {
                 dispatch(submitCallSuccess(params))

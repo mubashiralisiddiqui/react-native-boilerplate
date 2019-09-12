@@ -47,8 +47,8 @@ export default class Permissions {
 
         return granted === PermissionsAndroid.RESULTS.GRANTED;
     }
-    static async requestAll() {
-        const granted = await PermissionsAndroid.requestMultiple([
+    static requestAll() {
+        PermissionsAndroid.requestMultiple([
             PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
             PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
             PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
