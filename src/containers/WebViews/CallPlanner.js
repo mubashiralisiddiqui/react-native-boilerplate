@@ -4,7 +4,7 @@ import { NetworkContext } from '../../components/NetworkProvider';
 import { getUser } from '../../reducers/authReducer';
 import {connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
-import { RSM_ROLE_ID, navigationOption } from '../../constants';
+import { RSM_ROLE_ID, navigationOption, jsCodeForWebViews } from '../../constants';
 import { ScreenLoader } from '../../components';
 
 class Web extends Component {
@@ -13,32 +13,6 @@ class Web extends Component {
     }
     static contextType = NetworkContext;
     static navigationOptions = ({ navigation }) => (navigationOption(navigation, 'Call Planner'))
-
-    getJsCode = () => {
-        let username = this.props.user.LoginId
-        let password = this.props.user.Password
-        return `
-        // document.onload(function() {
-            if(document.cookie != '' && !document.cookie.includes('${username}')){
-                // setCookie('RoleId', null, -1);
-                // setCookie('UserId', null, -1);
-                let cookies = document.cookie.split(';')
-                for (let i = 0; i < cookies.length; i++) {
-                    let cookie = cookies[i];
-                    let eqPos = cookie.indexOf("=");
-                    let name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-                    date = new Date();
-                    date.setTime(date.getTime() + (-1 * 24 * 60 * 60 * 1000));
-                    document.cookie = name + "=null;expires="+ date + "; path=/";
-                }
-                window.location.reload()
-            }
-            document.getElementById('txtUsername').value = '${username}';
-            document.getElementById('txtPassword').value = '${password}';
-            document.getElementById('btnLogin').click();
-        // })
-        `
-    }
 
     getUrl = () => {
         return this.props.user.RoleId == RSM_ROLE_ID
@@ -49,9 +23,8 @@ class Web extends Component {
         this.context.hideRefresh();
     }
     render() {
-        let string = this.getJsCode();
+        let string = jsCodeForWebViews(this.props.user);
         return (
-
             <WebView
                 source={{ uri: this.getUrl() }}
                 injectedJavaScript={string}

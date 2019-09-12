@@ -37,13 +37,13 @@ const ItemCard = ({
                 </View>
                 <View key={RandomInteger()} style={styles.itemSecond}>
                     { (status === true && isOffline === true)
-                        ? <Badge status="warning" value="Offline"/>
+                        ? <Badge status="warning" value="Offline" textStyle={{fontSize: RFValue(12), fontFamily: 'Lato-Regular' }}/>
                         : (status === true && isOffline === false)
-                            ? <Badge status="success" value="Synced"/>
+                            ? <Badge status="success" value="Synced" textStyle={{fontSize: RFValue(12), fontFamily: 'Lato-Regular' }}/>
                             : null
                     }
                     { (isUnplanned == true)
-                        ? <Badge status="primary" value="Unplanned"/>
+                        ? <Badge status="primary" value="Unplanned" textStyle={{fontSize: RFValue(12), fontFamily: 'Lato-Regular' }}/>
                         : null
                     }
                     
@@ -57,7 +57,8 @@ const ItemCard = ({
                         backgroundColor: brandColors.lightGreen
                     }}
                     title="Execute"
-                    containerStyle={{ marginRight: 5 }}
+                    containerStyle={{ marginRight: RFValue(5), width: RFValue(80) }}
+                    titleStyle={{ fontSize: RFValue(12), fontFamily: 'Lato-BoldItalic' }}
                     onPress={onPress}
                     disabled={status}
                     raised
@@ -75,27 +76,27 @@ const getStyles = (status, width) => {
             display: 'flex',
             justifyContent: 'flex-start',
             flexDirection: 'row',
-            height: 35,
+            height: RFValue(35),
             paddingLeft: 0,
         },
         itemFirst: {
-            height: 35,
+            height: RFValue(35),
             justifyContent: 'center',
             marginLeft: 0,
             alignItems: 'center',
             width: width/4
         },
         itemSecond: {
-            height: 35,
+            height: RFValue(35),
             flexGrow: 1,
             justifyContent: 'center',
             marginLeft: 10,
             alignItems: 'center',
             padding: 10,
-            width: width/10
+            width: width/8
         },
         item: {
-            height: 35,
+            height: RFValue(35),
             marginLeft: 10,
             flexGrow: 1,
             justifyContent: 'center',

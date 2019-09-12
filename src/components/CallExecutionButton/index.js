@@ -1,6 +1,6 @@
 import React from 'react'
 import {Button} from 'react-native-elements';
-import { brandColors } from '../../constants';
+import { brandColors, RFValue } from '../../constants';
 import PropTypes from 'prop-types'
 import { MaterialIcon } from '../Icons'
 
@@ -12,25 +12,25 @@ const CallExecutionButton = ({
         <Button
             raised
             buttonStyle={{
-            width: 75,
-            height: 75,
-            borderRadius: 37,
+            width: RFValue(75),
+            height: RFValue(75),
+            borderRadius: RFValue(37),
             backgroundColor: brandColors.lightGreen,
             }}
             containerStyle={{
-                width: 75,
-                height: 75,
-                borderRadius: 40,
+                width: RFValue(75),
+                height: RFValue(75),
+                borderRadius: RFValue(40),
                 backgroundColor: brandColors.lightGreen,
                 position: 'absolute',
-                right: 50,
-                bottom:50,
+                right: RFValue(50),
+                bottom:RFValue(50),
                 zIndex: 1000000
             }}
             icon={<MaterialIcon
                     name="check-circle"
                     color={brandColors.darkBrown}
-                    size={55}
+                    size={RFValue(55)}
                     onPress={onPress}
                 />}
             disabled={disabled}

@@ -20,7 +20,7 @@ const LocationStatus = ({
                     containerStyle={{width: '100%',}}
                     icon={<MaterialIcon
                         name={isFetching === true ? "location-searching" : 'location-on'}
-                        size={15} 
+                        size={RFValue(15)} 
                         color={isFetching === true ? 'red' : brandColors.lightGreen} />}
                 />
             </Blink>

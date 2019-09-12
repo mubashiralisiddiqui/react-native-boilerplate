@@ -29,17 +29,21 @@ export const floor = value => Math.floor(value);
 
 export const random = () => Math.random();
 
+
+export const RSM_ROLE_ID = 6;
+export const SPO_ROLE_ID = 7;
+
 /**
-* Returns a random integer between min (inclusive) and max (inclusive).
-* The value is no lower than min (or the next integer greater than min
-* if min isn't an integer) and no greater than max (or the next integer
-* lower than max if max isn't an integer).
-* Using Math.round() will give you a non-uniform distribution!
-*/
+ * Returns a random integer between min (inclusive) and max (inclusive).
+ * The value is no lower than min (or the next integer greater than min
+ * if min isn't an integer) and no greater than max (or the next integer
+ * lower than max if max isn't an integer).
+ * Using Math.round() will give you a non-uniform distribution!
+ */
 export const  RandomInteger = (min = 1, max = 999999) => {
-   min = ceil(min);
-   max = floor(max);
-   return floor(random() * ( Number(max) - Number(min) + 1 )) + Number(min);
+    min = ceil(min);
+    max = floor(max);
+    return floor(random() * ( Number(max) - Number(min) + 1 )) + Number(min);
 }
 
 /* 
@@ -53,54 +57,70 @@ export const navigationOptions = [
         label: 'Call Plans',
         navigateTo: 'CallPlans',
         icon: 'calendar-check',
+        visibleTo: [SPO_ROLE_ID, RSM_ROLE_ID],
         iconType: 'FontAwesome5'
     },{
         name: 'unplanned_visits',
         label: 'Unplanned Visits',
         navigateTo: 'CallExecutionUnplanned',
         icon: 'calendar-times',
+        visibleTo: [SPO_ROLE_ID, RSM_ROLE_ID],
         iconType: 'FontAwesome5'
     },{
         name: 'add_doctor',
         label: 'Add New Doctor',
         navigateTo: 'NewDoctor',
         icon: 'clinic-medical',
+        visibleTo: [SPO_ROLE_ID, RSM_ROLE_ID],
         iconType: 'FontAwesome5'
     },{
         name: 'sample_details',
         label: 'Sample Details',
         navigateTo: 'Samples',
         icon: 'medicinebox',
+        visibleTo: [SPO_ROLE_ID, RSM_ROLE_ID],
         iconType: 'AntDesign'
     },{
         name: 'change_doctor_location',
         label: 'Change Dr Location',
         navigateTo: 'DoctorLocation',
         icon: 'location-arrow',
+        visibleTo: [SPO_ROLE_ID, RSM_ROLE_ID],
         iconType: 'FontAwesome5'
     },{
         name: 'rsm_planner',
         label: 'Call Planner',
         navigateTo: 'Planner',
         icon: 'chart-pie',
+        visibleTo: [SPO_ROLE_ID, RSM_ROLE_ID],
         iconType: 'FontAwesome5'
     },{
         name: 'expense_manager',
         label: 'Expense Manager',
         navigateTo: 'Expense',
         icon: 'cash-register',
+        visibleTo: [SPO_ROLE_ID, RSM_ROLE_ID],
         iconType: 'FontAwesome5'
     },{
         name: 'training_portal',
         label: 'Training Portal',
         navigateTo: 'Training',
         icon: 'clipboard-list',
+        visibleTo: [SPO_ROLE_ID, RSM_ROLE_ID],
         iconType: 'FontAwesome5'
+    },{
+        name: 'activity_request',
+        label: 'Activity Request',
+        navigateTo: 'Activity',
+        icon: 'edit',
+        visibleTo: [RSM_ROLE_ID],
+        iconType: 'FontAwesome'
     },{
         name: 'logout',
         label: 'Logout',
         navigateTo: 'Login',
         icon: 'logout',
+        visibleTo: [SPO_ROLE_ID, RSM_ROLE_ID],
         iconType: 'MaterialCommunityIcon',
     },
 ];
@@ -349,17 +369,16 @@ export const getDistance = (latitudeFrom, longitudeFrom, latitudeTo, longitudeTo
     return distance;
 }
 
-export const RSM_ROLE_ID = 6;
-export const SPO_ROLE_ID = 7;
-
 export const getFilesFromProducts = (products, productId) => {
     return products.filter(product => product.ProductTemplateId == productId)[0].Files
 }
 
 export function RFValue(fontSize) {
     // guideline height for standard 5" device screen
+    const { width } = Dimensions.get('screen') 
     const standardScreenHeight = 680;
-    const heightPercent = (fontSize * standardScreenHeight) / standardScreenHeight;
+    const multiplier = width > 400 ? 680 : 450
+    const heightPercent = (fontSize * multiplier) / standardScreenHeight;
     return Math.round(heightPercent);
 }
 
@@ -395,3 +414,23 @@ export const doesFileExist = async (name) => {
     const exists = await RNFetchBlob.fs.exists(`${mediaStoragePath}/${name}`);
     return exists;
 }
+
+export const jsCodeForWebViews = ({LoginId, Password}) => `
+    if(document.cookie != '' && !document.cookie.includes('${LoginId}')){
+        // setCookie('RoleId', null, -1);
+        // setCookie('UserId', null, -1);
+        let cookies = document.cookie.split(';')
+        for (let i = 0; i < cookies.length; i++) {
+            let cookie = cookies[i];
+            let eqPos = cookie.indexOf("=");
+            let name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+            date = new Date();
+            date.setTime(date.getTime() + (-1 * 24 * 60 * 60 * 1000));
+            document.cookie = name + "=null;expires="+ date + "; path=/";
+        }
+        window.location.reload()
+    }
+    document.getElementById('txtUsername').value = '${LoginId}';
+    document.getElementById('txtPassword').value = '${Password}';
+    document.getElementById('btnLogin').click();
+`

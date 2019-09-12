@@ -34,7 +34,7 @@ const SearchDoctor = (props) => {
     const _render = ({item}) => {
         return (
             <ListItem
-                disabled={_.includes(callDoctors, item.Id)}
+                // disabled={_.includes(callDoctors, item.Id)}
                 rightElement={ _.includes(callDoctors, item.Id) ? <Badge status="success" value="Already Planned / Executed" /> : null }
                 Component={TouchableWithoutFeedback}
                 style={{ height: 45, marginVertical: 5, backgroundColor: 'transparent' }}

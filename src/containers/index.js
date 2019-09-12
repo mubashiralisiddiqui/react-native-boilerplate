@@ -15,7 +15,7 @@ import Tab from './Tabs';
 import AuthCheck from './AuthCheck';
 import SavedData from './SavedData';
 import CallExecutionUnplanned from './CallExecutionUnplanned'
-import { Planner, Training, Expense } from './WebViews'
+import { Planner, Training, Expense, ActivityRequest } from './WebViews'
 
 export {
     Login,
@@ -34,4 +34,5 @@ export {
     Expense,
     Planner,
     Training,
+    ActivityRequest,
 }

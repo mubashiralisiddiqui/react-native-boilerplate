@@ -9,13 +9,11 @@ import * as giftService from "./giftService";
 import * as historyService from "./historyService";
 
 export const responseInterceptor = response => {
-    // if(typeof response === 'string') {
-         response = parse(response.data && response.data.d)
-         if(response.Error !== undefined) {
-             alert(`${response.Error}, Please contact IT support.`)
-             return null
-         }
-    // }
+    response = parse(response.data && response.data.d)
+    if(response.Error !== undefined) {
+        alert(`${response.Error}, Please contact IT support.`)
+        return null
+    }
     return response
 }
 

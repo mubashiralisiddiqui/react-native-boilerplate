@@ -84,6 +84,7 @@ export const submitCallSingle = (params) => dispatch => {
                 const allCalls = await updateCallStatus(jsonParams.DailyCallId, false);
                 dispatch(getCallsSuccess(allCalls))
             }
+            dispatch(submitCallFailure('Server Error'))
             return response;
         }).catch(async (error) => {
             // dispatch to failure event

@@ -54,6 +54,5 @@ export default class Permissions {
             PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
             PermissionsAndroid.PERMISSIONS.CAMERA,
         ])
-        console.log(granted)
     }
 }

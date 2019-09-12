@@ -59,7 +59,11 @@ class CallPlans extends PureComponent {
      * @memberof CallPlans
      */
     componentDidMount() {
-        Permissions.requestAll();
+        try {
+            Permissions.requestAll();
+        } catch (e) {
+            alert(e)
+        }
         const user = this.props.user;
         const userDataPayload = {
             Token: getToken,

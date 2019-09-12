@@ -10,14 +10,14 @@ import {
 } from 'react-native';
 import { ImageHeader } from '../components';
 import { navigationOptions, brandColors, RFValue } from '../constants'
-import { FontAwesome5Icon, MaterialCommunityIcon, AntDesignIcon } from '../components/Icons'
+import { FontAwesome5Icon, MaterialCommunityIcon, AntDesignIcon, FontAwesomeIcon } from '../components/Icons'
 import AsyncStorage from '@react-native-community/async-storage';
+import { getUser } from '../reducers/authReducer';
+import { connect } from 'react-redux';
 
 class NavigationMenu extends Component {
     state = {
-        name: '',
-        activeTab: 1,
-        affiliationCode: ''
+        activeTab: 'CallPlans',
     };
 
     logout = () => {
@@ -41,21 +41,26 @@ class NavigationMenu extends Component {
         );
     }
 
-    getIcon = ({icon, type}) => {
+    getIcon = ({icon, type, isActive}) => {
         switch(type) {
             case 'FontAwesome5': {
                 return (
-                    <FontAwesome5Icon name={icon} size={20} color={brandColors.lightGreen} />
+                    <FontAwesome5Icon name={icon} size={20} color={isActive ? '#fff' : brandColors.lightGreen} />
                 )
             }
             case 'AntDesign': {
                 return (
-                    <AntDesignIcon name={icon} size={20}  color={brandColors.lightGreen} />
+                    <AntDesignIcon name={icon} size={20}  color={isActive ? '#fff' : brandColors.lightGreen} />
                 )
             }
             case 'MaterialCommunityIcon': {
                 return (
-                    <MaterialCommunityIcon name={icon} size={20}  color={brandColors.lightGreen} />
+                    <MaterialCommunityIcon name={icon} size={20}  color={isActive ? '#fff' : brandColors.lightGreen} />
+                )
+            }
+            case 'FontAwesome': {
+                return (
+                    <FontAwesomeIcon name={icon} size={20}  color={isActive ? '#fff' : brandColors.lightGreen} />
                 )
             }
             default: {
@@ -65,6 +70,7 @@ class NavigationMenu extends Component {
     }
 
     navigateIt = (to) => requestAnimationFrame( () => {
+        this.setState({ activeTab: to}, () => console.log(this.state))
         switch(to) {
             case 'Login': {
                 this.logout()
@@ -94,17 +100,19 @@ class NavigationMenu extends Component {
                     {/* </View> */}
                     {
                         navigationOptions.map((option, index) => {
-                            return (
+                            return option.visibleTo.includes(this.props.user.RoleId)
+                            ? (
                             <TouchableOpacity key={index}
                                 onPress={() => this.navigateIt(option.navigateTo)}
-                                style={styles.section}
+                                style={ this.state.activeTab == option.navigateTo ? [styles.section, styles.activeSection] : styles.section}
                             >
-                                <CustomIcon  icon={ option.icon || '' } type={option.iconType || ''} />
+                                <CustomIcon isActive={this.state.activeTab == option.navigateTo}  icon={ option.icon || '' } type={option.iconType || ''} />
                                 {/* <Icon key={RandomInteger()} name='schedule' color={brandColors.darkBrown} /> */}
                                 <View key={index} style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 5 }}>
                                     <Text key={index} style={styles.sectionHeadingStyle}>{option.label}</Text>
                                 </View>
                             </TouchableOpacity>)
+                            : null
                         })
                     }
                 </ScrollView>
@@ -137,11 +145,14 @@ const styles = new StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         paddingVertical: 20,
-        marginLeft: 10,
+        paddingLeft: 5,
         borderBottomColor: '#a9b1bc',
-        // borderBottomWidth: 0.5,
         justifyContent: 'flex-start',
         alignItems: 'center'
+    },
+    activeSection: {
+        backgroundColor: brandColors.lightGreen,
+        paddingVertical: 10,
     },
 });
 
@@ -149,14 +160,10 @@ NavigationMenu.propTypes = {
     navigation: PropTypes.object
 };
 
-// const mapStateToProps = ({ auth }) => {
-//     const { loading, user } = auth;
-//     return { loading, user };
-// };
+const mapStateToProps = (state) => {
+    return {
+        user: getUser(state)
+    }
+};
 
-
-// export default connect(mapStateToProps, {
-//     getUser
-// })(NavigationMenu);
-
-export default NavigationMenu
+export default connect(mapStateToProps)(NavigationMenu)
