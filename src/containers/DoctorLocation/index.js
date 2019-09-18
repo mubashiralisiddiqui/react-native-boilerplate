@@ -89,15 +89,14 @@ class DoctorLocation extends Component {
                     <LocationStatus isFetching={this.props.isFetching} />
                 </View>
                     <ScrollView contentContainerStyle={{ marginVertical: 15, width: '50%', justifyContent: 'center', alignSelf: 'center'}}>
-                        <SearchDoctor setDoctor={this.setDoctor} name={ this.state.form_data.DoctorName }/>
+                        <SearchDoctor location={true} setDoctor={this.setDoctor} name={ this.state.form_data.DoctorName }/>
                         {
-                            this.state.form_data.DoctorName !== ''
-                            ? <Input labelStyle={styles.labelStyle} label="Reason" value={this.state.form_data.Reason} onChangeText={(text) => this.setStateVal('Reason', text) } placeholder="Why do you wish to change location?" numberOfLines={2}/>
-                            : null
+                            this.state.form_data.DoctorName !== '' &&
+                            <Input labelStyle={styles.labelStyle} label="Reason" value={this.state.form_data.Reason} onChangeText={(text) => this.setStateVal('Reason', text) } placeholder="Why do you wish to change location?" numberOfLines={2}/>
                         }
                         {
-                            this.state.form_data.Reason !== ''
-                            ? <Button
+                            this.state.form_data.Reason !== '' &&
+                            <Button
                                 loading={this.props.loading}
                                 disabled={this.props.loading}
                                 onPress={this.onSubmit}
@@ -114,8 +113,8 @@ class DoctorLocation extends Component {
                                     color: '#fff',
                                     fontFamily: 'Lato-HeavyItalic'
                                 }}
-                                title="Submit" />
-                            : null
+                                title="Submit"
+                            />
                         }
                     </ScrollView>
 

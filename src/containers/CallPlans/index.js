@@ -3,19 +3,17 @@
  * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
  */
 import React, { PureComponent } from 'react';
-import { View, ScrollView, InteractionManager } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import { CallPlanHeader } from '../../components/Headers';
-import { ImageBackgroundWrapper, ScreenLoader } from '../../components';
+import { ImageBackgroundWrapper, ScreenLoader, CallList } from '../../components';
 import { navigationOption, authUser, getToken } from '../../constants'
-import ItemCard from '../../components/Itemcard';
 import { getProductsWithSamples } from '../../services/productService'
 import { getTodayCalls, getTodayUnplannedCalls } from '../../services/callServices'
 import { getAllGifts } from '../../services/giftService'
 import { connect } from 'react-redux';
-import { getCalls, getCallsError, getCallsLoading, getUnplannedCalls } from '../../reducers/callsReducers'
+import { getCallsLoading, getCalls } from '../../reducers/callsReducers'
 import { bindActionCreators } from 'redux'
-import { getProducts } from '../../reducers/productsReducer';
-import { getUser, isRSM, isSPO } from '../../reducers/authReducer';
+import { getUser, isRSM } from '../../reducers/authReducer';
 import { NetworkContext } from '../../components/NetworkProvider';
 import CallPlansListHeader from '../../components/CallPlansListHeader';
 import { getAllDesignations, getAllSpecialities, getDoctorByEmployeeId } from '../../services/doctor';
@@ -125,37 +123,8 @@ class CallPlans extends PureComponent {
                     { this.shouldShowLoader() ? <ScreenLoader /> : null }
                     <CallPlansListHeader />
                     <ScrollView showsVerticalScrollIndicator={false} style={{ width: '99%' }}>
-                        {
-                            this.props.calls.map((call, i) => {
-                                return (<ItemCard
-                                    call={call}
-                                    key={i}
-                                    name={`${call.Doctor.DoctorName}`}
-                                    category={call.Doctor.SpecialtyName}
-                                    doctorClass={call.Doctor.ClassName}
-                                    loading={this.state.loadingButton}
-                                    onPressHandler={this.onPress}
-                                    status={call.IsExecuted}
-                                    isOffline={call.IsExecutedOffline && call.IsExecutedOffline}
-                                />)
-                            })
-                        }
-                        {
-                            this.props.unplannedCalls.map((call, i) => {
-                                return (<ItemCard
-                                    call={call}
-                                    key={i}
-                                    name={`${call.Doctor.DoctorName}`}
-                                    category={call.Doctor.SpecialtyName}
-                                    doctorClass={call.Doctor.ClassName}
-                                    loading={this.state.loadingButton}
-                                    onPressHandler={this.onPress}
-                                    status={call.IsExecuted}
-                                    isOffline={call.IsExecutedOffline && call.IsExecutedOffline}
-                                    isUnplanned={true}
-                                />)
-                            })
-                        }
+                        <CallList onPress={this.onPress} />
+                        <CallList type="unplanned" />
                     </ScrollView>
                 </ImageBackgroundWrapper>
             </View >
@@ -173,14 +142,10 @@ class CallPlans extends PureComponent {
  */
 const mapStateToProps = state => {
     return {
-        error: getCallsError(state),
-        loading: getCallsLoading(state),
         calls: getCalls(state),
-        products: getProducts(state),
+        loading: getCallsLoading(state),
         user: getUser(state),   
         isRSM: isRSM(state),
-        isSPO: isSPO(state),
-        unplannedCalls: getUnplannedCalls(state),
     }
 }
 

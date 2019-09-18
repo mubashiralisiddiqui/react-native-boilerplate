@@ -9,7 +9,7 @@ const LocationStatus = ({
     isFetching = true,
 }) => {
     return (
-        <View style={{width: '10%'}}>
+        <View style={{width: '12%'}}>
             <Blink blinking={isFetching} delay={300}>
                 <Button
                     type="clear"

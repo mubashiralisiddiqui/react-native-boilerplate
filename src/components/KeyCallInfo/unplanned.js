@@ -44,11 +44,9 @@ const KeyCallInfo = (props) => {
                 <Input inputStyle={styles.inputStyle} onFocus={() => onFocusTimerFields('CallStartTime')} labelStyle={styles.labelStyle} label="Start Time" placeholder="12:30:00" value={info.CallStartTime || ''}/>
                 <Input inputStyle={styles.inputStyle} onFocus={() => onFocusTimerFields('CallEndTime')} labelStyle={styles.labelStyle} label="End Time" placeholder="12:30:00"  value={info.CallEndTime || ''}/>
                 {
-                    user.RoleId == RSM_ROLE_ID
-                    ? <ReportingEmployeesField name={info.SelectedEmployeeName} setMio={props.setMio} />
-                    : null
+                    user.RoleId == RSM_ROLE_ID && <ReportingEmployeesField name={info.SelectedEmployeeName} setMio={props.setMio} />
                 }
-                <SearchDoctor additionalInfo={info} errors={props.errors} setDoctor={props.setDoctor} name={info.SelectedDoctorName} />
+                <SearchDoctor location={false} additionalInfo={info} errors={props.errors} setDoctor={props.setDoctor} name={info.SelectedDoctorName} />
                 <Input editable={false} inputStyle={styles.inputStyle} labelStyle={styles.labelStyle} label="Employee Name" placeholder="Employee Name" value={`${user.FullName || ''}`}/>
                 <Input editable={false} inputStyle={styles.inputStyle} labelStyle={styles.labelStyle} label="Address" placeholder="Doctor address" value={info.SelectedDoctorAddress || ''}/>
                 <CallReason onCallReasonChange={props.onCallReasonChange} />

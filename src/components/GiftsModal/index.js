@@ -22,7 +22,7 @@ const GiftsModal = ({
                 bottomDivider
                 onPress={() => onPressGiftHandler(item.GiftId)}
                 containerStyle={styles.listItems}
-                rightElement={(selectedGift[0] !== undefined && selectedGift[0].GiftId === item.GiftId) ? <Counter start={selectedGift[0].GiftQty} max={5} onChange={(number, type) => onPressGiftHandler(item.GiftId, number)} /> : null}
+                rightElement={(selectedGift[0] !== undefined && selectedGift[0].GiftId === item.GiftId) && <Counter start={selectedGift[0].GiftQty} max={5} onChange={(number, type) => onPressGiftHandler(item.GiftId, number)} /> }
                 title={item.GiftName}
             />
         )

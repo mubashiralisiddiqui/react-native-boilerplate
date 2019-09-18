@@ -51,6 +51,7 @@ export default class Tab extends Component {
             {...props}
             indicatorStyle={{ backgroundColor: brandColors.darkBrown }}
             style={{ backgroundColor: brandColors.lightGreen }}
+            labelStyle={{ fontFamily: 'Lato-SemiboldItalic', fontSize: RFValue(18) }}
           />
         }
       />

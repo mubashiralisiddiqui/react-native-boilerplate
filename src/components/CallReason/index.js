@@ -26,20 +26,22 @@ const CallReason = ({
             <View style={{width: '50%'}}>
                 <CheckBox
                     containerStyle={{ backgroundColor: 'transparent'}}
-                    textStyle={{color: brandColors.darkBrown}}
+                    textStyle={{color: brandColors.darkBrown, fontFamily: 'Lato-BoldItalic', fontSize: RFValue(18)}}
                     checkedColor={brandColors.lightGreen}
                     title='Clinic Closed'
                     checked={closed}
+                    size={RFValue(22)}
                     onPress={() => onChange('Clinic Closed')}
                 />
             </View>
             <View style={{width: '50%'}}>
                 <CheckBox
                     containerStyle={{ backgroundColor: 'transparent'}}
-                    textStyle={{color: brandColors.darkBrown}}
+                    textStyle={{color: brandColors.darkBrown, fontFamily: 'Lato-BoldItalic', fontSize: RFValue(18)}}
                     checkedColor={brandColors.lightGreen}
                     title='N/A'
                     checked={noReason}
+                    size={RFValue(18)}
                     onPress={() => onChange('N\\A')}
                 />
             </View>

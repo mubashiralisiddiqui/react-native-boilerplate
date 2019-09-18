@@ -72,7 +72,5 @@ export const newDoctor = {
     Phone: '',
     Designation: '',
     Speciality: '',
-    CityId: '',
-    CityName: '',
     isKOL: false,
 }

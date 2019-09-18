@@ -46,9 +46,7 @@ const SamplesModal = ({
             rightElement={
                 selected[0] !== undefined
                 ? <Counter start={selected[0].SampleQty} max={item.OnHandQty} onChange={(number, type) => setSamplesCountHandler(number, type, item.ProductTemplateId)} /> 
-                : item.OnHandQty <= 0
-                    ? <Badge status="error" value="No Samples" onPress={showNoSamplesAlert} />
-                    : null
+                : item.OnHandQty <= 0 && <Badge textStyle={{fontSize: RFValue(11), fontFamily: 'Lato-Regular' }} status="error" value="No Samples" onPress={showNoSamplesAlert} />
             }
             title={item.ProductName} />)
     }
@@ -57,7 +55,7 @@ const SamplesModal = ({
         <Overlay
             overlayBackgroundColor="#ddd"
             borderRadius={15}
-            width="65%"
+            width="75%"
             height="50%"
             onBackdropPress={_closeAndUnselect}
             isVisible={isVisible}

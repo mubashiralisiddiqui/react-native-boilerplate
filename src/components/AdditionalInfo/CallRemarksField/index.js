@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
 import FieldHeader from '../FieldHeader';
-import { styles, brandColors } from '../../../constants';
+import { styles, brandColors, RFValue } from '../../../constants';
 import { CheckBox } from 'react-native-elements';
 import { propTypes } from './defaultPropTypesValues'
  
@@ -42,30 +42,33 @@ const CallRemarksField = ({
                     <View style={{width: '33%'}}>
                     <CheckBox
                         containerStyle={{ backgroundColor: 'transparent'}}
-                        textStyle={{color: brandColors.darkBrown}}
+                        textStyle={{color: brandColors.darkBrown, fontFamily: 'Lato-BoldItalic', fontSize: RFValue(18)}}
                         checkedColor={brandColors.lightGreen}
                         title='Positive'
                         checked={positive}
+                        size={RFValue(22)}
                         onPress={() => onchange('positive')}
                     />
                     </View>
                     <View style={{width: '33%'}}>
                         <CheckBox
                             containerStyle={{ backgroundColor: 'transparent'}}
-                            textStyle={{color: brandColors.darkBrown}}
+                            textStyle={{color: brandColors.darkBrown, fontFamily: 'Lato-BoldItalic', fontSize: RFValue(18)}}
                             checkedColor={brandColors.lightGreen}
                             title='Negative'
                             checked={negative}
+                            size={RFValue(22)}
                             onPress={() => onchange('negative')}
                         />
                     </View>
                     <View style={{width: '33%'}}>
                         <CheckBox
                             containerStyle={{ backgroundColor: 'transparent'}}
-                            textStyle={{color: brandColors.darkBrown}}
+                            textStyle={{color: brandColors.darkBrown, fontFamily: 'Lato-BoldItalic', fontSize: RFValue(18)}}
                             checkedColor={brandColors.lightGreen}
                             title='Neutral'
                             checked={neutral}
+                            size={RFValue(22)}
                             onPress={() => onchange('neutral')}
                         />
                     </View>

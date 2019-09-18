@@ -23,10 +23,10 @@ const GiftField = ({
                 />
                 <View style={{flex:1, flexDirection: 'row'}}>
                     <View style={{width: "50%"}}>
-                        <Input onFocus={onFocus} labelStyle={styles.labelStyle} label="Gift" placeholder="Select Gift" value={getQuantityOrNameOfSelectedGift(selectedGift, gifts)} />
+                        <Input inputStyle={styles.inputStyle} onFocus={onFocus} labelStyle={styles.labelStyle} label="Gift" placeholder="Select Gift" value={getQuantityOrNameOfSelectedGift(selectedGift, gifts)} />
                     </View>
                     <View style={{width: "50%"}}>
-                        <Input onFocus={onFocus} labelStyle={styles.labelStyle} label="Quantity" placeholder="Quantity" value={`${getQuantityOrNameOfSelectedGift(selectedGift, gifts, 'qty')}`} />
+                        <Input inputStyle={styles.inputStyle} onFocus={onFocus} labelStyle={styles.labelStyle} label="Quantity" placeholder="Quantity" value={`${getQuantityOrNameOfSelectedGift(selectedGift, gifts, 'qty')}`} />
                     </View>
                 </View>
             </View>

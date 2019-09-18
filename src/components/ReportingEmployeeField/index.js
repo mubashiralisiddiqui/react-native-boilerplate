@@ -36,7 +36,7 @@ const ReportingEmployeeField = (props) => {
                 style={{ height: 45, marginVertical: 5, backgroundColor: 'transparent' }}
                 containerStyle={{ backgroundColor: 'transparent' }}
                 title={item.Value}
-                subtitle={ item.Id == user.EmployeeId ? 'Select this to get your doctors' : null}
+                subtitle={ item.Id == user.EmployeeId && 'Select this to get your doctors'}
                 subtitleStyle={{ color: brandColors.lightGreen, fontFamily: 'Lato-MediumItalic' }}
                 bottomDivider
                 onPress={ () => {
@@ -71,7 +71,7 @@ const ReportingEmployeeField = (props) => {
                             platform="ios"
                             containerStyle={{ backgroundColor: 'transparent'}}
                             round
-                            cancelButtonProps={{buttonTextStyle: {color: brandColors.lightGreen, fontFamily: 'Lato-MediumItalic' }}}
+                            cancelButtonProps={{buttonTextStyle: { fontFamily:"Lato-RegularItalic", fontSize: RFValue(14), color: brandColors.lightGreen }}}
                         />
                         {/* <Input label="Search SPO" placeholder="Search SPO" onChangeText={(text) => setQuery(text)} /> */}
                             <View style={{width:'100%', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>

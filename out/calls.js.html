@@ -1,10 +1,38 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: calls.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: calls.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * @namespace Actions/calls
  * @file Action creators of calls section of this application. 
  * This application uses JSDoc for documentation. Please see official website for reference.
  * Add author tag to the existing function if you edit any existing functionality.
  * 
- * @author [Muhammad Nauman] <muhammad.nauman@hudsonpharma.com>
+ * @author [Muhammad Nauman] &lt;muhammad.nauman@hudsonpharma.com>
  */
 
 import {
@@ -24,7 +52,7 @@ import {
  * 
  * @function getCalls
  * @memberof Actions/calls
- * @author [Muhammad Nauman] <muhammad.nauman@hudsonpharma.com>
+ * @author [Muhammad Nauman] &lt;muhammad.nauman@hudsonpharma.com>
  * @export
  * @returns {Object}
  */
@@ -39,7 +67,7 @@ export function getCalls () {
  * 
  * @function getCallsSuccess
  * @memberof Actions/calls
- * @author [Muhammad Nauman] <muhammad.nauman@hudsonpharma.com>
+ * @author [Muhammad Nauman] &lt;muhammad.nauman@hudsonpharma.com>
  * @export
  * @param {Array} calls
  * @returns {Object}
@@ -56,7 +84,7 @@ export function getCallsSuccess(calls) {
  * 
  * @function getCallsFailure
  * @memberof Actions/calls
- * @author [Muhammad Nauman] <muhammad.nauman@hudsonpharma.com>
+ * @author [Muhammad Nauman] &lt;muhammad.nauman@hudsonpharma.com>
  * @export
  * @param {String|Object} error
  * @returns {Object}
@@ -73,7 +101,7 @@ export function getCallsFailure(error) {
  * 
  * @function submitCall
  * @memberof Actions/calls
- * @author [Muhammad Nauman] <muhammad.nauman@hudsonpharma.com>
+ * @author [Muhammad Nauman] &lt;muhammad.nauman@hudsonpharma.com>
  * @export
  * @param {Object} submit_data request payload
  * @returns {Object}
@@ -90,7 +118,7 @@ export function submitCall(submit_data) {
  * 
  * @function submitCallSuccess
  * @memberof Actions/calls
- * @author [Muhammad Nauman] <muhammad.nauman@hudsonpharma.com>
+ * @author [Muhammad Nauman] &lt;muhammad.nauman@hudsonpharma.com>
  * @export
  * @param {Object} submit_data request payload
  * @returns {Object}
@@ -107,7 +135,7 @@ export function submitCallSuccess(submit_data) {
  * 
  * @function submitCallFailure
  * @memberof Actions/calls
- * @author [Muhammad Nauman] <muhammad.nauman@hudsonpharma.com>
+ * @author [Muhammad Nauman] &lt;muhammad.nauman@hudsonpharma.com>
  * @export
  * @param {String|Object} error
  * @returns {Object}
@@ -124,7 +152,7 @@ export function submitCallFailure(error) {
  * 
  * @function getUnplannedCalls
  * @memberof Actions/calls
- * @author [Muhammad Nauman] <muhammad.nauman@hudsonpharma.com>
+ * @author [Muhammad Nauman] &lt;muhammad.nauman@hudsonpharma.com>
  * @export
  * @returns {Object}
  */
@@ -139,7 +167,7 @@ export function getUnplannedCalls() {
  * 
  * @function getUnplannedCallsSuccess
  * @memberof Actions/calls
- * @author [Muhammad Nauman] <muhammad.nauman@hudsonpharma.com>
+ * @author [Muhammad Nauman] &lt;muhammad.nauman@hudsonpharma.com>
  * @export
  * @param {Array} unplanned_calls
  * @returns {Object}
@@ -156,7 +184,7 @@ export function getUnplannedCallsSuccess(unplanned_calls) {
  * 
  * @function getUnplannedCallsFailure
  * @memberof Actions/calls
- * @author [Muhammad Nauman] <muhammad.nauman@hudsonpharma.com>
+ * @author [Muhammad Nauman] &lt;muhammad.nauman@hudsonpharma.com>
  * @export
  * @param {String|Object} error
  * @returns {Object}
@@ -166,4 +194,26 @@ export function getUnplannedCallsFailure(error) {
         type: GET_UNPLANNED_CALLS_FAILURE,
         error,
     }
-}
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#GET_CALLS">GET_CALLS</a></li><li><a href="global.html#GET_CITIES">GET_CITIES</a></li><li><a href="global.html#GET_DOCTOR_DESIGNATION">GET_DOCTOR_DESIGNATION</a></li><li><a href="global.html#GET_DOCTOR_SPECIALITY">GET_DOCTOR_SPECIALITY</a></li><li><a href="global.html#GET_DOCTORS_BY_EMPLOYEE">GET_DOCTORS_BY_EMPLOYEE</a></li><li><a href="global.html#GET_GIFTS">GET_GIFTS</a></li><li><a href="global.html#GET_HISTORY">GET_HISTORY</a></li><li><a href="global.html#GET_PRODUCTS">GET_PRODUCTS</a></li><li><a href="global.html#GET_REPORTING_EMPLOYEES">GET_REPORTING_EMPLOYEES</a></li><li><a href="global.html#getGiftsFailure">getGiftsFailure</a></li><li><a href="global.html#SUBMIT_CHANGE_DOCTOR_LOCATION_REQUEST">SUBMIT_CHANGE_DOCTOR_LOCATION_REQUEST</a></li><li><a href="global.html#SUBMIT_DOCTOR_REQUEST">SUBMIT_DOCTOR_REQUEST</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Fri Sep 13 2019 18:34:58 GMT+0500 (Pakistan Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

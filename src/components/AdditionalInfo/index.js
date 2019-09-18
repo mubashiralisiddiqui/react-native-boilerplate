@@ -41,8 +41,7 @@ const AdditionalInfo = ({
                 onPress={() => setProductFieldsCount(productFieldsCount + 1) }
             /> */}
             {
-                existingCall
-                ? <ReminderField
+                existingCall && <ReminderField
                     selectedProduct={selectedProducts}
                     selectedSamples={selectedSamples}
                     times={reminderFieldsCount}
@@ -50,7 +49,6 @@ const AdditionalInfo = ({
                     showProducts={showProducts}
                     showSamples={showSamples}
                 />
-                : null
             }
             {/* This functionality will be use in future when we have more products(hopefully) and 
                 will give the feasibility to SPO/RSM to have dynamic number of products par visit */}

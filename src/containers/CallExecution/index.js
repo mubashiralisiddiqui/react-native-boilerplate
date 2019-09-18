@@ -561,7 +561,7 @@ class CallExecution extends Component {
         return (        
             <ImageBackgroundWrapper>
                 <CallExecutionButton disabled={this.props.submitLoader} onPress={this.confirmSubmit}/>
-                {this.props.submitLoader == true ? <ScreenLoader /> : null}
+                {this.props.submitLoader == true && <ScreenLoader /> }
                 <View style={styles.InputContainer}>
                     <ScrollView
                         contentContainerStyle={{justifyContent: 'center', display: 'flex' }}>
@@ -609,21 +609,21 @@ class CallExecution extends Component {
                                 }
                             />
                                 {
-                                    existingCall && !!this.props.history.history ?
+                                    existingCall && !!this.props.history.history &&
                                     <Collapse
                                         section="isDocHistoryCollapsed"
                                         isCollapsed={isDocHistoryCollapsed}
                                         toggler={this.onToggleCollapsedElement}
                                         title="Doctor Visit History"
                                         Body={ <DoctorHistory /> }
-                                        HeaderIcon={<FontAwesomeIcon name="history" size={40} color={brandColors.lightGreen} />}/>
-                                        : null
+                                        HeaderIcon={<FontAwesomeIcon name="history" size={40} color={brandColors.lightGreen} />}
+                                    />
                                 }
                         </View>
                     </ScrollView>
                     {
-                        this.state.overlay
-                        ? <ProductsModal
+                        this.state.overlay &&
+                        <ProductsModal
                             selectedProducts={this.state.selectedProducts}
                             selectedProductId={this.state.selectedProductId}
                             reminderPosition={this.state.reminderPosition}
@@ -632,11 +632,10 @@ class CallExecution extends Component {
                             onCloseHandler={this.hideProductsOverlay}
                             existingCall={false}
                         />
-                        : null
                     }
                     {
-                        this.state.samplesOverlay
-                        ? <SamplesModal
+                        this.state.samplesOverlay &&
+                        <SamplesModal
                             selectedProductId={this.state.selectedProductId}
                             reminderPosition={this.state.reminderPosition}
                             selectedSamples={this.state.selectedSamples}
@@ -645,18 +644,16 @@ class CallExecution extends Component {
                             setSamplesCountHandler={this.setSampleCount}
                             onCloseHandler={this.handleSampleOverlayClose}
                         />
-                        : null
                     }
                     {
-                        this.state.giftsOverlay
-                        ? <GiftsModal
+                        this.state.giftsOverlay &&
+                        <GiftsModal
                             isVisible={this.state.giftsOverlay}
                             gifts={this.props.gifts}
                             onCloseHandler={this.hideGifts}
                             selectedGift={this.state.form_data.jsonGiftDetail}
                             onPressGiftHandler={this.onClickGift}
                         />
-                        : null
                     }
                 </View >
             </ImageBackgroundWrapper>

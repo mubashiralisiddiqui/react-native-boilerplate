@@ -14,7 +14,7 @@ const NotesField = ({
                 <FieldHeader
                     title="Additional Notes"
                 />
-                <Input onChangeText={(text) => onChangeAdditionalNotes('FeedBack', text) } labelStyle={styles.labelStyle} label="Notes" placeholder="Any additional notes you want to mention" numberOfLine={2} />
+                <Input inputStyle={styles.inputStyle} onChangeText={(text) => onChangeAdditionalNotes('FeedBack', text) } labelStyle={styles.labelStyle} label="Notes" placeholder="Any additional notes you want to mention" numberOfLine={2} />
             </View>
         </View>
     );

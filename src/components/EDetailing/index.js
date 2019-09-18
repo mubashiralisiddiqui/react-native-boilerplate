@@ -49,31 +49,14 @@ const EDetailing = ({
                 title={item && item.FileName}
                 subtitle={item && item.FileDescription}
                 containerStyle={{backgroundColor: 'transparent', borderBottomWidth: 1}}
-                titleStyle={{fontFamily: 'Lato-Semibold', color: brandColors.darkBrown}}
-                subtitleStyle={{fontFamily: 'Lato-MediumItalic', color: brandColors.darkBrown}}
+                titleStyle={{fontFamily: 'Lato-Semibold', color: brandColors.darkBrown, fontSize: RFValue(18)}}
+                subtitleStyle={{fontFamily: 'Lato-MediumItalic', color: brandColors.darkBrown, fontSize: RFValue(16)}}
                 leftIcon={<FontAwesome5Icon name={item.FileType == 'pdf' ? "file-pdf" : 'file-video'} size={25} color={brandColors.green} />}
                 rightIcon={
                     downloads[item.DetailingFileId] ? <MaterialIcon size={25} color={brandColors.green} name={'cloud-done'}/>
                     : <MaterialCommunityIcon size={RFValue(25)} color={'red'} name='progress-download' />}
                 onPress={() => downloads[item.DetailingFileId] ? showSelectedFile(item) : DropDownHolder.show(alertData.media)}
             />)
-        // return (
-        //     <ListItem
-        //         underlayColor='transparent'
-        //         title={item && item.FileName}
-        //         subtitle={item && item.FileDescription}
-        //         containerStyle={{backgroundColor: 'transparent', borderBottomWidth: 1}}
-        //         titleStyle={{fontFamily: 'Lato-Semibold', color: brandColors.darkBrown}}
-        //         subtitleStyle={{fontFamily: 'Lato-MediumItalic', color: brandColors.darkBrown}}
-        //         leftIcon={<Icon name={item.FileType == 'pdf' ? "file-pdf" : 'file-video'} size={25} color={brandColors.green} />}
-        //         rightIcon={<MaterialIcon
-        //             size={25}
-        //             color={true ? brandColors.green : 'red' }    
-        //             name={true ? 'cloud-done' : 'cloud-download'} 
-        //                 />}
-        //         onPress={() => showSelectedFile(item)}
-        //     />
-        // )
     }
     const [paused, setPaused] = useState(false)
 
@@ -82,7 +65,6 @@ const EDetailing = ({
             <ScrollView contentContainerStyle={{ alignItems: 'center'}}>
                 {
                     files.length > 0
-                    // ? _.map(files, file => <RenderItem item={file} />)
                     ? <FlatList
                         keyExtractor={item => `${item.DetailingFileId}${RandomInteger()}`}
                         style={{width: '80%'}}
@@ -94,7 +76,7 @@ const EDetailing = ({
                         style={{width: '80%', height: 30}}
                         title="No files found"
                         containerStyle={{backgroundColor: 'transparent', borderBottomWidth: 1}}
-                        titleStyle={{fontFamily: 'Lato-Heavy'}}
+                        titleStyle={{fontFamily: 'Lato-Heavy', fontSize: RFValue(18) }}
                         subtitleStyle={{fontFamily: 'Lato-MediumItalic'}}
                     />
                 }

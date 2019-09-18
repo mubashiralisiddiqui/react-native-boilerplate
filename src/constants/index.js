@@ -173,7 +173,8 @@ export const styles = {
         fontWeight: 'normal'
     },
     inputStyle: {
-        color: 'gray'
+        color: brandColors.darkBrown,
+        fontSize: RFValue(18),
     },
     listTitle: {
         fontSize: RFValue(18),

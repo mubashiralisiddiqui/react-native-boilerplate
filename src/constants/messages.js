@@ -48,6 +48,16 @@ export const alertData = {
             type: 'success',
             title: 'Unplanned Call Executed Offline Successfully',
             message: 'Unplanned call Executed offline. It will be displayed once yor device gets a working internet.',
+        },
+        syncing: {
+            type: 'info',
+            title: 'Calls Syncing has been initialised',
+            message: 'Calls syncing has been initialized, it can take a while to complete.',
+        },
+        synced: {
+            type: 'success',
+            title: 'Calls syncing completed',
+            message: 'All calls have been synced successfully.',
         }
     },
     media: {

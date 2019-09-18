@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, NativeModules, Keyboard, FlatList, ScrollView, TouchableWithoutFeedback } from 'react-native';
 import { Input, Overlay, Text, ListItem, SearchBar, Badge } from 'react-native-elements';
-import { RandomInteger, styles, brandColors } from '../../constants';
+import { RandomInteger, styles, brandColors, RFValue } from '../../constants';
 import ImageBackgroundWrapper from '../ImageBackground';
 import { useSelector } from 'react-redux';
 import { getDoctors, getUnplannedCallDoctors, getCallDoctors } from '../../reducers/doctorReducer';
@@ -34,8 +34,8 @@ const SearchDoctor = (props) => {
     const _render = ({item}) => {
         return (
             <ListItem
-                // disabled={_.includes(callDoctors, item.Id)}
-                rightElement={ _.includes(callDoctors, item.Id) ? <Badge status="success" value="Already Planned / Executed" /> : null }
+                disabled={!props.location && _.includes(callDoctors, item.Id)}
+                rightElement={ !props.location && _.includes(callDoctors, item.Id) && <Badge textStyle={{fontSize: RFValue(11), fontFamily: 'Lato-Regular' }} status="success" value="Already Planned / Executed" /> }
                 Component={TouchableWithoutFeedback}
                 style={{ height: 45, marginVertical: 5, backgroundColor: 'transparent' }}
                 containerStyle={{ backgroundColor: 'transparent' }}
@@ -83,7 +83,7 @@ const SearchDoctor = (props) => {
                             platform="ios"
                             containerStyle={{ backgroundColor: 'transparent'}}
                             round
-                            cancelButtonProps={{buttonTextStyle: {color: brandColors.lightGreen, fontFamily: 'Lato-MediumItalic' }}}
+                            cancelButtonProps={{buttonTextStyle: { fontFamily:"Lato-RegularItalic", fontSize: RFValue(14), color: brandColors.lightGreen }}}
                         />
                         {/* <Input label="Search Doctor" placeholder="Search Doctor" onChangeText={(text) => setQuery(text)} /> */}
                             <View style={{width:'100%', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>

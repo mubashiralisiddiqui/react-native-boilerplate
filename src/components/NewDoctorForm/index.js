@@ -71,8 +71,8 @@ const NewDoctorForm = ({
                 onPress={ () => {
                         setField(type, item.Id)
                         setFieldToSelect('')
-                        setDesignationsLocal(designations.slice(0, 20))
-                        setSpecialitiesLocal(specialities.slice(0, 20))
+                        // setDesignationsLocal(designations.slice(0, 20))
+                        // setSpecialitiesLocal(specialities.slice(0, 20))
                         setFieldSelectionOverlay(false)
                     }
                 }
@@ -84,6 +84,7 @@ const NewDoctorForm = ({
             <View style={{width: '50%'}}>
                 <Input
                     label="Name"
+                    inputStyle={styles.inputStyle}
                     labelStyle={styles.labelStyle}
                     placeholder="Enter Doctor full name"
                     value={data.DoctorName}
@@ -92,6 +93,7 @@ const NewDoctorForm = ({
                 />
                 <Input
                     label="Phone"
+                    inputStyle={styles.inputStyle}
                     labelStyle={styles.labelStyle}
                     placeholder="Enter Phone number"
                     keyboardType='number-pad'
@@ -101,6 +103,7 @@ const NewDoctorForm = ({
                 />
                 <Input
                     label="City"
+                    inputStyle={styles.inputStyle}
                     labelStyle={styles.labelStyle}
                     placeholder="Select Doctor City"
                     keyboardType='number-pad'
@@ -110,6 +113,7 @@ const NewDoctorForm = ({
                 />
                 <Input
                     label="Designation"
+                    inputStyle={styles.inputStyle}
                     labelStyle={styles.labelStyle}
                     placeholder="Select Designation"
                     value={data.Designation}
@@ -120,6 +124,7 @@ const NewDoctorForm = ({
             <View style={{width: '50%'}}>
                 <Input
                     label="Email"
+                    inputStyle={styles.inputStyle}
                     labelStyle={styles.labelStyle}
                     placeholder="Enter Doctor email address"
                     keyboardType='email-address'
@@ -129,6 +134,7 @@ const NewDoctorForm = ({
                 />
                 <Input
                     label="Address (Optional)"
+                    inputStyle={styles.inputStyle}
                     labelStyle={styles.labelStyle}
                     placeholder="Enter address"
                     value={data.DoctorAddress}
@@ -136,6 +142,7 @@ const NewDoctorForm = ({
                 />
                 <Input
                     label="Speciality"
+                    inputStyle={styles.inputStyle}
                     labelStyle={styles.labelStyle}
                     placeholder="Select Speciality"
                     value={data.Speciality}
@@ -144,7 +151,7 @@ const NewDoctorForm = ({
                 />
                 <Text style={{ color: brandColors.darkBrown, marginVertical: 3, marginHorizontal: 10, fontSize: RFValue(15), fontFamily: 'Lato-HeavyItalic'}}>
                     Is KOL?
-                </Text><Switch value={data.IsKOL} trackColor={brandColors.green} thumbColor={data.IsKOL ? brandColors.lightGreen : 'lightgrey'} onValueChange={(value) => setField('IsKOL', value)}/>
+                </Text><Switch value={data.IsKOL} trackColor={{true: brandColors.darkBrown}} thumbColor={data.IsKOL ? brandColors.lightGreen : 'lightgrey'} onValueChange={(value) => setField('IsKOL', value)}/>
             </View>
             <CitiesModal
                 isVisible={citiesModal}
@@ -156,7 +163,7 @@ const NewDoctorForm = ({
                 borderRadius={15}
                 isVisible={fieldSelectionOverlay}
                 onBackdropPress={() => setFieldSelectionOverlay(false)}
-                width='50%'
+                width='60%'
                 height='75%'
                 children={
                     <ImageBackgroundWrapper>
@@ -164,13 +171,14 @@ const NewDoctorForm = ({
                             { `Select Doctor's ${fieldToSelect}`  }
                         </Text>
                         <SearchBar
+                            inputStyle={styles.inputStyle}
                             value={query}
-                            placeholder={`Search for more ${fieldToSelect}s`}
+                            placeholder={`Search for more ${fieldToSelect}`}
                             onChangeText={searchDesignation}
                             platform="ios"
                             containerStyle={{ backgroundColor: 'transparent'}}
                             round
-                            cancelButtonProps={{buttonTextStyle: {color: brandColors.lightGreen, fontFamily: 'Lato-MediumItalic' }}}
+                            cancelButtonProps={{buttonTextStyle: { fontFamily:"Lato-RegularItalic", fontSize: RFValue(14), color: brandColors.lightGreen, fontFamily: 'Lato-MediumItalic' }}}
                         />
                         {/* <Input label="Search" placeholder={`Search for more ${fieldToSelect}s`} onChangeText={searchDesignation} /> */}
                         <ScrollView style={{ borderRadius: 10, }} behavior="padding">

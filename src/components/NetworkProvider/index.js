@@ -56,7 +56,6 @@ class NetworkProviderClass extends React.PureComponent {
             isConnected,
             details,
         })
-        console.log(this.state.isSyncing, 'syncing status')
         if(isInternetReachable && this.state.isSyncing == false) this.syncCalls();
     }
 
@@ -66,7 +65,9 @@ class NetworkProviderClass extends React.PureComponent {
         })
         const jsonParamsArray = ['jsonDailyCall', 'jsonDailyCallDetail', 'jsonGiftDetail', 'jsonSampleDetail']
         let calls = await getStorage('offlineCalls');
-        if(calls != null) {
+
+        if(! _.isEmpty(parse(calls))) {
+            DropDownHolder.show(alertData.call.syncing)
             calls = parse(calls);
             Object.keys(calls).map(call => {
                 Object.keys(calls[call]).map(single => {
@@ -88,7 +89,7 @@ class NetworkProviderClass extends React.PureComponent {
             setStorage('offlineCalls', stringify(calls))
             this.setState({
                 isSyncing: false,
-            })
+            }, () => DropDownHolder.show(alertData.call.synced))
         }
     }
 
@@ -126,7 +127,7 @@ class NetworkProviderClass extends React.PureComponent {
             this.props.getUnplannedCalls(payload, true),
             this.props.isRSM
             ? this.props.getReportingEmployees(payload, true)
-            : this.props.getDoctorsByEmployee(payload), true,
+            : this.props.getDoctorsByEmployee(payload, true)
         ]).then(response => {
             DropDownHolder.show(alertData.refresh.success)
             this.setState({
@@ -156,7 +157,7 @@ class NetworkProviderClass extends React.PureComponent {
             <NetworkContext.Provider value={{state: this.state, hideRefresh: this.hideRefresh, showRefresh: this.showRefresh}}>
                 {this.props.children}
                 {
-                    this.state.showRefresh ?
+                    this.state.showRefresh &&
                     <View style={{position: 'absolute', top: 60, right: 10, display: 'flex', flexDirection: 'row', justifyContent: 'flex-end'}}>
                         <Button
                             loading={this.state.isRefreshing}
@@ -166,9 +167,9 @@ class NetworkProviderClass extends React.PureComponent {
                             title="Refresh"
                             onPress={this.handleRefresh}
                             titleStyle={{color: brandColors.lightGreen, fontSize: RFValue(10)}}
-                            icon={<FontAwesomeIcon name="refresh" size={20} color={brandColors.lightGreen} />}
+                            icon={<FontAwesomeIcon name="refresh" size={RFValue(20)} color={brandColors.lightGreen} />}
                         />
-                    </View> : null
+                    </View>
                 }
                 <DropdownAlert
                     messageStyle={{

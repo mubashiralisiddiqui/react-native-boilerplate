@@ -1,4 +1,4 @@
-import React, { PureComponent, Fragment } from 'react'
+import React, { PureComponent } from 'react'
 import { View, Dimensions, ScrollView } from 'react-native';
 import { ImageBackgroundWrapper } from '../../components';
 import { CallPlanHeader } from '../../components/Headers';
@@ -6,8 +6,7 @@ import { navigationOption, RandomInteger, brandColors, RFValue } from '../../con
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
 import { getSamples, getProducts } from '../../reducers/productsReducer';
-import { Text, Card, Button } from 'react-native-elements';
-import { FontAwesomIcon } from '../../components/Icons'
+import { Text, Card } from 'react-native-elements';
 import { NetworkContext } from '../../components/NetworkProvider';
 
 class Samples extends PureComponent {
@@ -16,8 +15,6 @@ class Samples extends PureComponent {
 
     state = {
         width: Dimensions.get('screen').width,
-        // samples: _.groupBy(this.props.samples, sample => sample.ProductTemplateId),
-        // selected: ''
     }
 
     onPressHead = (index) => {
@@ -61,7 +58,7 @@ class Samples extends PureComponent {
                             </View>
                         </Card>
                         {
-                            this.props.samples.map(sample => <_render item={sample} />)
+                            this.props.samples.map(sample => <_render key={RandomInteger()} item={sample} />)
                         }
                     </ScrollView>
             </ImageBackgroundWrapper>
@@ -172,45 +169,18 @@ const getStyles = () => {
 _render = ({ item }) => {
     const styles = getStyles()
     return (
-        <Card key={RandomInteger()}
+        <Card key={`${item.ProductId}${RandomInteger()}`}
             containerStyle={styles.listCardContainer}
         >
-            <View onLayout={this.onLayout} key={RandomInteger()} style={styles.viewContainer}> 
-                <View key={RandomInteger()} style={styles.itemSecondLast}>
-                    <Text key={RandomInteger()} style={styles.text}>{item.ProductName}</Text>
+            <View onLayout={this.onLayout} key={`${item.ProductId}${RandomInteger()}`} style={styles.viewContainer}> 
+                <View key={`${item.ProductId}${RandomInteger()}`} style={styles.itemSecondLast}>
+                    <Text key={`${item.ProductId}${RandomInteger()}`} style={styles.text}>{item.ProductName}</Text>
                 </View>
-                <View  key={RandomInteger()} style={styles.itemLast}>
-                    <Text key={RandomInteger()} style={styles.text}>{item.OnHandQty}</Text>
+                <View  key={`${item.ProductId}${RandomInteger()}`} style={styles.itemLast}>
+                    <Text key={`${item.ProductId}${RandomInteger()}`} style={styles.text}>{item.OnHandQty}</Text>
                 </View>
             </View>
         </Card>
-        
-    )
-}
-_renderProductHead = ({ item, products, index, selected, onPress }) => {
-    const styles = getStyles()
-    return (
-        // <View>
-            <Fragment>
-            <Card key={RandomInteger()}
-                containerStyle={styles.cardContainer}
-            >
-                <View onLayout={this.onLayout} key={RandomInteger()} style={styles.viewContainer}> 
-                    <View key={RandomInteger()} style={styles.itemHead}>
-                        <Text key={RandomInteger()} style={styles.textHead}>{_.find(products, ['ProductTemplateId', Number(index)]).ProductTemplateName}</Text>
-                    </View>
-                    <View  key={RandomInteger()} style={styles.itemHeadIcon}>
-                        <Button type="clear" onPress={() => onPress(index)} icon={<FontAwesomIcon style={{alignItems: 'center'}} name={selected == index ? 'arrow-up' : 'arrow-down'} size={RFValue(20)} color={brandColors.lightGreen} />} />
-                    </View>
-                </View>
-            </Card>
-            {
-                selected == index
-                ? _.map(item, sample => <_render item={sample} />)
-                : null
-
-            }
-        </Fragment>
         
     )
 }

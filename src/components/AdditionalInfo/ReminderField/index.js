@@ -35,13 +35,13 @@ const ReminderField = ({
                                 isFirst={ key === 0 ? true : false }
                                 onRemove={onRemove}
                             />
-                            <Input onFocus={() => onFocus(product.ProductId || null, key + 1)} labelStyle={styles.labelStyle} label={`Reminder ${key+1}`} placeholder="Product Name" value={product.name || ''} />
+                            <Input inputStyle={styles.inputStyle} onFocus={() => onFocus(product.ProductId || null, key + 1)} labelStyle={styles.labelStyle} label={`Reminder ${key+1}`} placeholder="Product Name" value={product.name || ''} />
                             <View key={ RandomInteger() } style={{flex:1, flexDirection: 'row'}}>
                                 <View key={ RandomInteger() } style={{width: "50%"}}>
-                                    <Input editable={!_.isEmpty(product)} onFocus={() => onFocus( product.ProductId || null, key + 1, 'sample')} labelStyle={styles.labelStyle} key={ key + RandomInteger() } label={`Sample ${key + 1}`} placeholder="Sample Name" value={getNameFromSelectedSamples(selectedSamples, product.ProductId)} />
+                                    <Input inputStyle={styles.inputStyle} editable={!_.isEmpty(product)} onFocus={() => onFocus( product.ProductId || null, key + 1, 'sample')} labelStyle={styles.labelStyle} key={ key + RandomInteger() } label={`Sample ${key + 1}`} placeholder="Sample Name" value={getNameFromSelectedSamples(selectedSamples, product.ProductId)} />
                                 </View>
                                 <View key={ RandomInteger() } style={{width: "50%"}}>
-                                    <Input editable={!_.isEmpty(product)} onFocus={() => onFocus(product.ProductId || null, key + 1, 'sample')} labelStyle={styles.labelStyle} key={ RandomInteger() } label="Quantity" placeholder="Quantity" value={`${getQuantityOfTheSelectedSamples(selectedSamples, product.ProductId)}`} />
+                                    <Input inputStyle={styles.inputStyle} editable={!_.isEmpty(product)} onFocus={() => onFocus(product.ProductId || null, key + 1, 'sample')} labelStyle={styles.labelStyle} key={ RandomInteger() } label="Quantity" placeholder="Quantity" value={`${getQuantityOfTheSelectedSamples(selectedSamples, product.ProductId)}`} />
                                 </View>
                             </View>
                         </View>

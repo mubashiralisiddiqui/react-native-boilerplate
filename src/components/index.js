@@ -26,6 +26,7 @@ import LocationStatus from './LocationStatus';
 import ScreenLoader from './ScreenLoader'
 import CallExecutionButton from './CallExecutionButton'
 import Counter from './Counter'
+import CallList from './CallList'
 
 export {
     TextInput,
@@ -50,5 +51,6 @@ export {
     LocationStatus,
     ScreenLoader,
     CallExecutionButton,
-    Counter
+    Counter,
+    CallList,
 }

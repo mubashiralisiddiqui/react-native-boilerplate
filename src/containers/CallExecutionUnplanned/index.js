@@ -442,7 +442,7 @@ class CallExecutionUnplanned extends Component {
         return (        
             <ImageBackgroundWrapper>
                 <CallExecutionButton disabled={this.props.submitLoader} onPress={this.submitCall}/>
-                {this.props.submitLoader == true || this.props.doctor_loading == true ? <ScreenLoader /> : null}
+                {(this.props.submitLoader == true || this.props.doctor_loading == true) && <ScreenLoader /> }
                 <View style={styles.InputContainer}>
                     <ScrollView
                         contentContainerStyle={{justifyContent: 'center', display: 'flex' }}>
@@ -494,7 +494,7 @@ class CallExecutionUnplanned extends Component {
                                 }
                             />
                                 {
-                                    existingCall && !!this.props.history.history ?
+                                    existingCall && !!this.props.history.history &&
                                     <Collapse
                                         section="isDocHistoryCollapsed"
                                         isCollapsed={isDocHistoryCollapsed}
@@ -502,13 +502,12 @@ class CallExecutionUnplanned extends Component {
                                         title="Doctor Visit History"
                                         Body={ <DoctorHistory /> }
                                         HeaderIcon={<FontAwesomeIcon name="history" size={40} color="#fff" />}/>
-                                        : null
                                 }
                         </View>
                     </ScrollView>
                     {
-                        this.state.overlay
-                        ? <ProductsModal
+                        this.state.overlay &&
+                        <ProductsModal
                             selectedProducts={this.state.selectedProducts}
                             selectedProductId={this.state.selectedProductId}
                             reminderPosition={this.state.reminderPosition}
@@ -517,11 +516,10 @@ class CallExecutionUnplanned extends Component {
                             onCloseHandler={this.hideProductsOverlay}
                             existingCall={false}
                         />
-                        : null
                     }
                     {
-                        this.state.samplesOverlay
-                        ? <SamplesModal
+                        this.state.samplesOverlay &&
+                        <SamplesModal
                             selectedProductId={this.state.selectedProductId}
                             reminderPosition={this.state.reminderPosition}
                             selectedSamples={this.state.selectedSamples}
@@ -530,18 +528,16 @@ class CallExecutionUnplanned extends Component {
                             setSamplesCountHandler={this.setSampleCount}
                             onCloseHandler={this.handleSampleOverlayClose}
                         />
-                        : null
                     }
                     {
-                        this.state.giftsOverlay
-                        ? <GiftsModal
+                        this.state.giftsOverlay &&
+                        <GiftsModal
                             isVisible={this.state.giftsOverlay}
                             gifts={this.props.gifts}
                             onCloseHandler={this.hideGifts}
                             selectedGift={this.state.form_data.jsonGiftDetail}
                             onPressGiftHandler={this.onClickGift}
                         />
-                        : null
                     }
                 </View >
             </ImageBackgroundWrapper>

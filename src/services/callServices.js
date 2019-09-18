@@ -61,8 +61,6 @@ export const syncCall = (params) => async (dispatch) => {
     return post('executeCall', params).then(async (response) => {
         if(response == 1) {
             dispatch(submitCallSuccess(params))
-            // const allCalls = await updateCallStatus(params.DailyCallId);
-            // dispatch(getCallsSuccess(allCalls))
         }
         return response;
     })
@@ -77,7 +75,7 @@ export const submitCallSingle = (params) => dispatch => {
     dispatch(submitCall(params))
     
     
-    return post('executeCall', /*params*/ {})
+    return post('executeCall', params)
         .then(async (response) => {
             if(response == 1) {
                 dispatch(submitCallSuccess(params))

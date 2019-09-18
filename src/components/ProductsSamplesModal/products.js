@@ -28,7 +28,7 @@ const ProductsModal = ({
                 underlayColor='transparent'
                 disabled={shouldBeDisabled}
                 containerStyle={style}
-                rightTitle={ selected ? <Badge status="success" value="selected" /> : shouldBeDisabled ? <Badge badgeStyle={{ backgroundColor: brandColors.green }} value={existingCall ? 'Planned' : 'Selected'} /> : null }
+                rightTitle={ selected ? <Badge textStyle={{fontSize: RFValue(11), fontFamily: 'Lato-Regular' }} status="success" value="selected" /> : shouldBeDisabled ? <Badge textStyle={{fontSize: RFValue(11), fontFamily: 'Lato-Regular' }} badgeStyle={{ backgroundColor: brandColors.green }} value={existingCall ? 'Planned' : 'Selected'} /> : null }
                 titleStyle={titleStyle}
                 rightSubtitle={shouldBeDisabled && reminderPosition != 0 ? 'Cannot be selected as reminder' : null}
                 key={item.ProductTemplateId}
@@ -69,15 +69,14 @@ const ProductsModal = ({
                                 <Button buttonStyle={styles.button} onPress={_close} title="Unselect Both" />
                             </View> */}
                             {
-                                selectedProductId > 0
-                                ? <View style={styles.buttonContainer}>
+                                selectedProductId > 0 &&
+                                <View style={styles.buttonContainer}>
                                     <Button
                                         buttonStyle={styles.button}
                                         onPress={_closeAndUnselect}
                                         title="Unselect"
                                     />
                                 </View>
-                                : null
                             }
                         </View>
                     </View>

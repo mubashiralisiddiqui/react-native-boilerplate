@@ -37,15 +37,12 @@ const ItemCard = ({
                 </View>
                 <View key={RandomInteger()} style={styles.itemSecond}>
                     { (status === true && isOffline === true)
-                        ? <Badge status="warning" value="Offline" textStyle={{fontSize: RFValue(12), fontFamily: 'Lato-Regular' }}/>
-                        : (status === true && isOffline === false)
-                            ? <Badge status="success" value="Synced" textStyle={{fontSize: RFValue(12), fontFamily: 'Lato-Regular' }}/>
-                            : null
+                        ? <Badge status="warning" value="Offline" textStyle={{fontSize: RFValue(11), fontFamily: 'Lato-Regular' }}/>
+                        : status === true &&
+                         isOffline === false &&
+                         <Badge status="success" value="Synced" textStyle={{fontSize: RFValue(11), fontFamily: 'Lato-Regular' }}/>
                     }
-                    { (isUnplanned == true)
-                        ? <Badge status="primary" value="Unplanned" textStyle={{fontSize: RFValue(12), fontFamily: 'Lato-Regular' }}/>
-                        : null
-                    }
+                    { isUnplanned == true && <Badge status="primary" value="Unplanned" textStyle={{fontSize: RFValue(11), fontFamily: 'Lato-Regular' }} /> }
                     
                     <Text key={RandomInteger()} style={styles.text}>{ doctorClass }</Text>
                 </View>
@@ -58,7 +55,7 @@ const ItemCard = ({
                     }}
                     title="Execute"
                     containerStyle={{ marginRight: RFValue(5), width: RFValue(80) }}
-                    titleStyle={{ fontSize: RFValue(12), fontFamily: 'Lato-BoldItalic' }}
+                    titleStyle={{ fontSize: RFValue(14), fontFamily: 'Lato-BoldItalic' }}
                     onPress={onPress}
                     disabled={status}
                     raised

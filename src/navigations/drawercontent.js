@@ -70,7 +70,7 @@ class NavigationMenu extends Component {
     }
 
     navigateIt = (to) => requestAnimationFrame( () => {
-        this.setState({ activeTab: to}, () => console.log(this.state))
+        this.setState({ activeTab: to}, () => console.log(this.state, this.props.navigation.state))
         switch(to) {
             case 'Login': {
                 this.logout()
@@ -80,12 +80,19 @@ class NavigationMenu extends Component {
                 return this.props.navigation.navigate(to)
             }
         }
-        // if(to != 'Login') {
-        //     this.props.navigation.navigate(to)
-        //     return
-        // }
-        // this.logout()
     })
+    getActiveRoute = (navigationState) => {
+        if (
+          !navigationState.routes ||
+          !navigationState.routes.length ||
+          navigationState.index >= navigationState.routes.length
+        ) {
+          return navigationState;
+        }
+      
+        const childActiveRoute = navigationState.routes[navigationState.index];
+        return this.getActiveRoute(childActiveRoute);
+      };
 
 
     render() {
@@ -100,19 +107,20 @@ class NavigationMenu extends Component {
                     {/* </View> */}
                     {
                         navigationOptions.map((option, index) => {
+                            const activeRoute = this.getActiveRoute(this.props.navigation.state)
+                            const focused = activeRoute.routeName && activeRoute.routeName == option.navigateTo
                             return option.visibleTo.includes(this.props.user.RoleId)
-                            ? (
+                            && (
                             <TouchableOpacity key={index}
                                 onPress={() => this.navigateIt(option.navigateTo)}
-                                style={ this.state.activeTab == option.navigateTo ? [styles.section, styles.activeSection] : styles.section}
+                                style={ focused ? [styles.section, styles.activeSection] : styles.section}
                             >
-                                <CustomIcon isActive={this.state.activeTab == option.navigateTo}  icon={ option.icon || '' } type={option.iconType || ''} />
+                                <CustomIcon isActive={focused}  icon={ option.icon || '' } type={option.iconType || ''} />
                                 {/* <Icon key={RandomInteger()} name='schedule' color={brandColors.darkBrown} /> */}
                                 <View key={index} style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 5 }}>
                                     <Text key={index} style={styles.sectionHeadingStyle}>{option.label}</Text>
                                 </View>
                             </TouchableOpacity>)
-                            : null
                         })
                     }
                 </ScrollView>

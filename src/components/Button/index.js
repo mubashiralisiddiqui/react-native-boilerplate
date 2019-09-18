@@ -46,12 +46,7 @@ const Button = (props) => {
                 <Text style={{ textAlign: 'left', color: 'white', fontSize: RFValue(18), fontFamily: 'Lato-MediumItalic' }}>
                         {Title}
                 </Text>
-                {loading ?
-                    <ActivityIndicator
-                        color="white"
-                    />
-                    : null
-                }
+                {loading && <ActivityIndicator color="white" /> }
 
                 {icon}
             </TouchableOpacity>

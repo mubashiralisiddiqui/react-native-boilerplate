@@ -39,7 +39,9 @@ class NewDoctor extends Component {
     static navigationOptions = ({ navigation }) => (navigationOption(navigation, 'Add New Doctor'))
     state = {
         ...newDoctor,
-        createdBy: 0,
+        CityId: '',
+        CityName: '',
+        CreatedBy: 0,
         validations: {
             DoctorName: {
                 required: true,
@@ -94,7 +96,6 @@ class NewDoctor extends Component {
             if(response == 1) {
                 this.setState({
                     ...newDoctor
-
                 })
             }
             if(response == -1) {

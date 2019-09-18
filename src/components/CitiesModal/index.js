@@ -13,6 +13,7 @@ const CitiesModal = ({
     const [cities, user] = useSelector(state => [state.cities.cities, state.auth.user])
     const [citiesInitial, setCitiesInitial] = useState(cities)
     const [ selectedCity, setSelectedCity ] = useState(null)
+    const [ query, setQuery ] = useState('')
 
     useEffect(() => {
         onPressHandler('CityId', user.CityId)
@@ -23,10 +24,13 @@ const CitiesModal = ({
         setSelectedCity(id)
         onPressHandler('CityId', id)
         onPressHandler('CityName', name)
+        setQuery('')
+        setCitiesInitial(cities)
         visibilityHandler();
     }
 
     const _search = (value) => {
+        setQuery(value)
         if(value != '') {
             const searched = cities.filter(city => city.CityName.toLowerCase().includes(value.toLowerCase()))
             setCitiesInitial(searched)
@@ -54,7 +58,7 @@ const CitiesModal = ({
             borderRadius={15}
             isVisible={isVisible}
             onBackdropPress={visibilityHandler}
-            width='50%'
+            width='60%'
             height='80%'
             children={
                 <ImageBackgroundWrapper>
@@ -63,9 +67,10 @@ const CitiesModal = ({
                         placeholder="Search City"
                         onChangeText={_search}
                         platform="ios"
+                        value={query}
                         containerStyle={{ backgroundColor: 'transparent'}}
                         round
-                        cancelButtonProps={{buttonTextStyle: {color: brandColors.lightGreen, fontFamily: 'Lato-MediumItalic' }}}
+                        cancelButtonProps={{buttonTextStyle: { fontFamily:"Lato-RegularItalic", fontSize: RFValue(14), color: brandColors.lightGreen }}}
                     />
                     {/* <Input label="Search" placeholder="Search City" onChangeText={_search} /> */}
                     <ScrollView behavior="padding">
@@ -75,7 +80,7 @@ const CitiesModal = ({
                                     maxToRenderPerBatch={20}
                                     updateCellsBatchingPeriod={20}
                                     keyExtractor={ item => `${item.CityId} + ${RandomInteger()}`}
-                                    data={citiesInitial}
+                                    data={citiesInitial.slice(0, 30)}
                                     renderItem={_render}
                                     removeClippedSubviews={true}
                                 />

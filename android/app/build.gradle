@@ -113,8 +113,8 @@ android {
         applicationId "com.hudsonpharma"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 4194316
-        versionName "2.16"
+        versionCode 4194317
+        versionName "2.17"
     }
     splits {
         abi {

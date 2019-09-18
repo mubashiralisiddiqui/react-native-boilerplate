@@ -27,7 +27,7 @@ const ConnectivityStatus = () => {
         }
     }
     return (
-        <View style={{width: '13%'}}>
+        <View style={{width: '15%'}}>
             {
                 isConnected && isInternetReachable ?
                 <Button
