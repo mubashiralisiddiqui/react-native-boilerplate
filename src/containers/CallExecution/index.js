@@ -28,16 +28,15 @@ import moment from 'moment';
 import { getGifts } from '../../reducers/giftsReducer';
 import { getUser } from '../../reducers/authReducer';
 import { getSubmitData, getSubmitLoader } from '../../reducers/callsReducers';
-import { getHistory } from '../../actions/history';
 import { NetworkContext } from '../../components/NetworkProvider'
 import GiftsModal from '../../components/GiftsModal';
 import { ProductsModal, SamplesModal } from '../../components/ProductsSamplesModal';
 import { getProductsWithSamples } from '../../services/productService';
-import Permission from '../../classes/Permission'
 import DropDownHolder from '../../classes/Dropdown';
 import { alertData } from '../../constants/messages';
 import Location from '../../classes/Location';
 import { isFetching, getLat, getLong } from '../../reducers/locationReducer';
+import { getHistorys } from '../../reducers/historyReducer';
 
 /**
  * @class CallExecution
@@ -55,18 +54,9 @@ class CallExecution extends Component {
     static contextType = NetworkContext
     static navigationOptions = ({ navigation }) => (navigationOption(navigation, 'Call Details'))
     state = {
-        isKeyInfoCollapsed: true,
-        isAdditionalInfoCollapsed: false,
-        isDocHistoryCollapsed: false,
-        existingCall: false,
-        doctor_history: [],
-        samples: [],
         overlay: false,
         giftsOverlay: false,
         overlayError: '',
-        lat: '',
-        long: '',
-        fetchingLocation: true,
         selectedProductId: 0, // This will be only set while opening the overlay, and unset while closing the overlay
         reminderPosition: 0, // This will be only set while opening the overlay, and unset while closing the overlay
         // This key will me merged with JsonCallDetails key of API call
@@ -119,7 +109,6 @@ class CallExecution extends Component {
             delete selectedSamples[oldSelected]
             selectedFiles = _.dropWhile(selectedFiles, ['ProductTemplateId', oldSelected])
         }
-        console.log(selectedFiles, 'deleted')
         const product = _.find(this.props.products, ['ProductTemplateId', productTemplateId])
         selectedProducts[productTemplateId] = {
             ProductId: product.ProductTemplateId,
@@ -129,9 +118,6 @@ class CallExecution extends Component {
             position
         }
         selectedFiles = _.concat(selectedFiles, product.Files)
-        console.log(selectedFiles, 'set')
-        // let filesNotIncluded = _.differenceWith(selectedFiles, product.Files, _.isEqual)
-        // if(! _.isEmpty(filesNotIncluded)) selectedFiles = [ ...selectedFiles, ...filesNotIncluded ];
         this.setState({
             selectedProducts,
             selectedProductId: productTemplateId,
@@ -213,19 +199,6 @@ class CallExecution extends Component {
             selectedSamples: allSamples,
         })
     }
-
-    /**
-     * @name onToggleCollapsedElement
-     * @function
-     * @description Manages the state when user tries to select section
-     * @this Component
-     * @param {string} section - section name that needs to be toggled
-     * @memberof CallExecution
-     * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
-     */
-    onToggleCollapsedElement = (section) => {
-        this.setState({[section]: !this.state[section]})
-    }
     
     /**
      * @name showProductsOverlay
@@ -242,7 +215,7 @@ class CallExecution extends Component {
             position: position,
             selectedProductId: selectedProduct,
             isReminder: type != 'planned'
-        }, () => console.log(this.state))
+        })
     }
 
     hideProductsOverlay = (unselect = false) => {
@@ -390,16 +363,16 @@ class CallExecution extends Component {
      * @memberof CallExecution
      * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
      */
-    submitCall = async () => {
+    submitCall = () => {
+        if(this.props.isFetching){
+            alert('Unable to capture your location, please try to move, refresh the application or open your location service if it is not.');
+            return;
+        }
         let dailyCall = this.state.form_data;
         dailyCall.Epoch = new Date().getTime();
         dailyCall.jsonSampleDetail = this.state.selectedSamples.filter(sample => sample !== undefined);
         dailyCall.jsonDailyCallDetail = this.state.selectedProducts.filter(product => product !== undefined)
         dailyCall.jsonDailyCallEDetailing = this.state.eDetailing.filter(file => file !== undefined)
-        if(this.props.isFetching){
-            alert('Unable to capture your location, please try to move, refresh the application or open your location service if it is not.');
-            return;
-        }
         dailyCall.jsonDailyCall.Lattitude = this.props.lat;
         dailyCall.jsonDailyCall.Longitude = this.props.long;
         if(dailyCall.jsonDailyCall.DoctorLat != 0 && dailyCall.jsonDailyCall.DoctorLong != 0) {
@@ -414,15 +387,7 @@ class CallExecution extends Component {
         }
 
         if(this.context.state.isInternetReachable) {
-            const response = await this.props.submitCallSingle(dailyCall)
-            if(response == 1) {
-                DropDownHolder.show(alertData.call.onlineSuccess)
-                this.props.getAllProducts({
-                    EmployeeId: this.props.user.EmployeeId,
-                    Token: getToken,
-                }, true)
-                this.props.navigation.goBack();
-            }
+            this.props.submitCallSingle(dailyCall, () => this.props.navigation.goBack())
             return;
         }
         this.submitOffline(dailyCall)
@@ -572,9 +537,7 @@ class CallExecution extends Component {
                                 <LocationStatus isFetching={this.props.isFetching} />
                             </View>
                             <Collapse
-                                section="isKeyInfoCollapsed"
-                                isCollapsed={isKeyInfoCollapsed}
-                                toggler={this.onToggleCollapsedElement}
+                                shouldBeCollapsed={true}
                                 title="Key Call Information"
                                 Body={<Tab
                                         updateDetailingSeconds={this.updateDetailingSeconds}
@@ -585,9 +548,7 @@ class CallExecution extends Component {
                                     />}  
                                 HeaderIcon={<FontAwesomeIcon name="info-circle" size={RFValue(40)} color={brandColors.lightGreen} />} />
                             <Collapse
-                                isCollapsed={isAdditionalInfoCollapsed}
-                                section="isAdditionalInfoCollapsed"
-                                toggler={this.onToggleCollapsedElement}
+                                shouldBeCollapsed={false}
                                 title="Additional Information"
                                 HeaderIcon={<FontAwesomeIcon name="plus-square" size={ RFValue(40) } color={brandColors.lightGreen} />}
                                 Body={
@@ -609,11 +570,9 @@ class CallExecution extends Component {
                                 }
                             />
                                 {
-                                    existingCall && !!this.props.history.history &&
+                                    !!this.props.history &&
                                     <Collapse
-                                        section="isDocHistoryCollapsed"
-                                        isCollapsed={isDocHistoryCollapsed}
-                                        toggler={this.onToggleCollapsedElement}
+                                        shouldBeCollapsed={false}
                                         title="Doctor Visit History"
                                         Body={ <DoctorHistory /> }
                                         HeaderIcon={<FontAwesomeIcon name="history" size={40} color={brandColors.lightGreen} />}
@@ -676,7 +635,7 @@ const mapStateToProps = state => {
         gifts: getGifts(state),
         user: getUser(state),
         submit_data: getSubmitData(state),
-        history: getHistory(state),
+        history: getHistorys(state),
         submitLoader: getSubmitLoader(state),
         isFetching: isFetching(state),
         lat: getLat(state),

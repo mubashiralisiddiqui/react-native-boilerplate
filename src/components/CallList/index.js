@@ -10,7 +10,7 @@ export default function ({
     const calls = type === 'planned'
     ? useSelector(getCalls)
     : useSelector(getUnplannedCalls)
-    console.log(calls, type, 'rendering')
+    
     return (
         calls.map((call, i) => {
             return (

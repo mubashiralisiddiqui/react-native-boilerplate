@@ -1,27 +1,25 @@
-import React, {Component} from 'react';
+import React from 'react';
 import { View, Dimensions, ScrollView } from 'react-native';
-// import { ScrollView } from 'react-native-gesture-handler';
 import HistoryCard from './HistoryCard';
 import { useSelector } from 'react-redux'
+import { getHistorys } from '../../reducers/historyReducer';
 
-export default class DoctorHistory extends Component {
-    render() {
-        const data = useSelector(state => state.history.history)
-        console.log(data, 'history')
+const DoctorHistory = () => {
+    const data = useSelector(getHistorys)
 
-        const { width } = Dimensions.get('window')
-        return (
-            // <View style={styles.container}>
-                <ScrollView horizontal={true}
-                    decelerationRate={0}
-                    snapToInterval={width - 60}
-                    // snapToAlignment={"center"}
-                >
-                    <View style={{ width: '100%', flex: 1, flexDirection: 'row'}}>
-                        <HistoryCard />
-                    </View>
-                </ScrollView>
-            // </View>
-        );
-    }
+    const { width } = Dimensions.get('window')
+    return (
+        <ScrollView horizontal={true}
+            decelerationRate={0}
+            snapToInterval={width - 60}
+        >
+            <View style={{ width: '100%', flex: 1, flexDirection: 'row'}}>
+                {
+                    data.map(history => <HistoryCard data={history} />)
+                }
+            </View>
+        </ScrollView>
+    );
 }
+
+export default DoctorHistory

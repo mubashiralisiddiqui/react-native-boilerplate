@@ -14,6 +14,7 @@ import { getCalls, getCallsFailure, getCallsSuccess, submitCallSuccess, submitCa
 import moment from 'moment'
 import DropDownHolder from '../classes/Dropdown';
 import { getCallsDoctors, getUnplannedCallsDoctors } from '../actions/doctor';
+import { alertData } from '../constants/messages';
 // FIXME: refactor this file
 export const getTodayCalls = (params, refresh = false) => {
     return async (dispatch) => {
@@ -67,18 +68,19 @@ export const syncCall = (params) => async (dispatch) => {
 
 }
 
-export const submitCallSingle = (params) => dispatch => {
+export const submitCallSingle = (params, callback = () => null) => dispatch => {
     const jsonParams = parse(stringify(params));
     
     params = serializeData(params)
     
     dispatch(submitCall(params))
     
-    
     return post('executeCall', params)
         .then(async (response) => {
             if(response == 1) {
                 dispatch(submitCallSuccess(params))
+                DropDownHolder.show(alertData.call.onlineSuccess)
+                callback();
                 const allCalls = await updateCallStatus(jsonParams.DailyCallId, false);
                 dispatch(getCallsSuccess(allCalls))
             }

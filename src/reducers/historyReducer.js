@@ -26,4 +26,4 @@ export const historyReducer = (state = initialState, action) => {
     }
   }
 
-export const getHistorys = state => {return state.history};
+export const getHistorys = state => state.history.history;

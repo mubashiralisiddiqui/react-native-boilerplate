@@ -1,17 +1,19 @@
 import React from 'react';
 import { Text } from 'react-native-elements';
-import { brandColors } from '../../../../constants';
+import { brandColors, RFValue } from '../../../../constants';
+import moment from 'moment';
 
-const HistoryCardHeader = () => {
+const HistoryCardHeader = ({title}) => {
     return (
         <Text style={{
             backgroundColor: brandColors.darkBrown,
             color: brandColors.green,
             textAlign: 'center',
-            height: 35,
-            borderRadius: 8,
-            fontSize: 22
-        }}>June 20 2019 02:30PM</Text>
+            height: RFValue(35),
+            borderRadius: 10,
+            fontSize: RFValue(18),
+            fontFamily: 'Lato-SemiboldItalic'
+        }}>{ moment(title).format('dddd, MMMM Do YYYY, h:mm:ss a') }</Text>
     );
 }
 export default HistoryCardHeader;

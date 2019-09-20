@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View } from 'react-native';
 import { Text } from 'react-native-elements';
 import { brandColors, RFValue } from '../../constants';
@@ -6,22 +6,21 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { FontAwesomeIcon } from '../Icons'
 
 const Collapsable = (props) => {
+    const [isCollapsed, setIsCollapsed] = useState(props.shouldBeCollapsed)
     const {
         title = 'Title',
         HeaderIcon = null,
         Header = null,
         Body = null,
-        isCollapsed = false,
-        toggler,
-        section
+        shouldBeCollapsed = true,
     } = props;
 
-    const toggleMe = () => requestAnimationFrame( () => toggler(section)) 
+    const toggleMe = () =>  setIsCollapsed(! isCollapsed)
     return (
         <View
             style={{ marginBottom: 5 }}
             isCollapsed={isCollapsed}
-            onToggle={toggler}>
+            onToggle={toggleMe}>
                 <View>
                     {
                         (Header) ?

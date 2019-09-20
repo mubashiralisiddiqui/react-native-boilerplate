@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, ScrollView } from 'react-native'
 import { CallPlanHeader } from '../../components/Headers'
-import { navigationOption, brandColors, parse, stringify, getToken, RFValue, validate, ONLINE_CALLEXECUTION_SUCCESS, OFFLINE_CALL_EXECUTION_SUCCESS, getDistance, getFilesFromProducts } from '../../constants'
+import { navigationOption, brandColors, parse, stringify, getToken, RFValue, validate, getDistance } from '../../constants'
 import { FontAwesomeIcon } from '../../components/Icons';
 import {
     Collapse,
@@ -24,7 +24,6 @@ import moment from 'moment';
 import { getGifts } from '../../reducers/giftsReducer';
 import { getUser } from '../../reducers/authReducer';
 import { getSubmitData, getSubmitLoader } from '../../reducers/callsReducers';
-import { getHistory } from '../../actions/history';
 import { NetworkContext } from '../../components/NetworkProvider'
 import GiftsModal from '../../components/GiftsModal';
 import { ProductsModal, SamplesModal } from '../../components/ProductsSamplesModal';
@@ -36,6 +35,7 @@ import DropDownHolder from '../../classes/Dropdown';
 import { isFetching, getLat, getLong } from '../../reducers/locationReducer';
 import Location from '../../classes/Location';
 import { alertData } from '../../constants/messages';
+import { getHistorys } from '../../reducers/historyReducer';
 
 class CallExecutionUnplanned extends Component {
     static contextType = NetworkContext
@@ -43,16 +43,9 @@ class CallExecutionUnplanned extends Component {
         navigationOption(navigation, 'Unplanned Call Details')
     )
     state = {
-        isKeyInfoCollapsed: true,
-        isAdditionalInfoCollapsed: false,
-        isDocHistoryCollapsed: false,
-        existingCall: false,
         doctor_history: [],
-        samples: [],
         overlay: false,
         giftsOverlay: false,
-        overlayError: '',
-        fetchingLocation: true,
         selectedProductId: 0, // This will be only set while opening the overlay, and unset while closing the overlay
         reminderPosition: 0, // This will be only set while opening the overlay, and unset while closing the overlay
         // This key will me merged with JsonCallDetails key of API call
@@ -172,9 +165,7 @@ class CallExecutionUnplanned extends Component {
             selectedSamples: allSamples,
         })
     }
-    onToggleCollapsedElement = (section) => {
-        this.setState({[section]: !this.state[section]})
-    }
+
     showProductsOverlay = (selectedProduct, position, type = 'planned') => {
         this.setState({
             overlay: true,
@@ -427,18 +418,17 @@ class CallExecutionUnplanned extends Component {
         form_data.jsonDailyCall.SelectedDoctorAddress = doctor.DoctorAddress;
         form_data.jsonDailyCall.DoctorLat = doctor.Latitude
         form_data.jsonDailyCall.DoctorLong = doctor.Longitude
+        this.props.getDocHistory({
+            Token: getToken,
+            DoctorCode: doctor.DoctorCode,
+            EmployeeId: this.props.user.EmployeeId,
+        });
         this.setState({
             form_data
-        }, () => console.log(this.state.form_data))
+        })
     }
 
     render() {
-        const {
-            isKeyInfoCollapsed,
-            isAdditionalInfoCollapsed,
-            isDocHistoryCollapsed,
-            existingCall,
-        } = this.state;
         return (        
             <ImageBackgroundWrapper>
                 <CallExecutionButton disabled={this.props.submitLoader} onPress={this.submitCall}/>
@@ -453,9 +443,7 @@ class CallExecutionUnplanned extends Component {
                                 <LocationStatus isFetching={this.props.isFetching} />
                             </View>
                             <Collapse
-                                section="isKeyInfoCollapsed"
-                                isCollapsed={isKeyInfoCollapsed}
-                                toggler={this.onToggleCollapsedElement}
+                                shouldBeCollapsed={true}
                                 title="Key Call Information"
                                 Body={<Tab
                                         doctors={this.props.doctors}
@@ -472,9 +460,7 @@ class CallExecutionUnplanned extends Component {
                                     />}  
                                 HeaderIcon={<FontAwesomeIcon name="info-circle" size={RFValue(40)} color={brandColors.lightGreen} />} />
                             <Collapse
-                                isCollapsed={isAdditionalInfoCollapsed}
-                                section="isAdditionalInfoCollapsed"
-                                toggler={this.onToggleCollapsedElement}
+                                shouldBeCollapsed={false}
                                 title="Additional Information"
                                 HeaderIcon={<FontAwesomeIcon name="plus-square" size={RFValue(40)} color={brandColors.lightGreen} />}
                                 Body={
@@ -494,14 +480,12 @@ class CallExecutionUnplanned extends Component {
                                 }
                             />
                                 {
-                                    existingCall && !!this.props.history.history &&
+                                    this.props.history.length > 0 &&
                                     <Collapse
-                                        section="isDocHistoryCollapsed"
-                                        isCollapsed={isDocHistoryCollapsed}
-                                        toggler={this.onToggleCollapsedElement}
+                                        shouldBeCollapsed={false}
                                         title="Doctor Visit History"
                                         Body={ <DoctorHistory /> }
-                                        HeaderIcon={<FontAwesomeIcon name="history" size={40} color="#fff" />}/>
+                                        HeaderIcon={<FontAwesomeIcon name="history" size={RFValue(40)} color={brandColors.lightGreen} />}/>
                                 }
                         </View>
                     </ScrollView>
@@ -551,7 +535,7 @@ const mapStateToProps = state => {
         gifts: getGifts(state),
         user: getUser(state),
         submit_data: getSubmitData(state),
-        history: getHistory(state),
+        history: getHistorys(state),
         submitLoader: getSubmitLoader(state),
         doctors: getDoctors(state),
         isFetching: isFetching(state),
