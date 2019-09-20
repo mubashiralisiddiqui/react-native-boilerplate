@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
 import { authUser } from '../../constants'
 import { ScreenLoader } from '../../components';
+import { getBackgroundImages } from '../../services/auth';
 
 class AuthCheck extends Component {
     state = {
@@ -14,6 +15,7 @@ class AuthCheck extends Component {
 
     async componentDidMount() {
         const user = await this.props.authUser();
+        // this.props.getBackgroundImages();
         this.navigateNow(! _.isEmpty(user))
     }
 

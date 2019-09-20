@@ -1,10 +1,9 @@
-import { post, setStorage, userFullName, getStorage, todayDate, get } from '../constants';
-import { login, loginSuccess, loginFailure, getReportingEmployees, getReportingEmployeesSuccess, getReportingEmployeesFailure } from '../actions/auth'
+import { post, setStorage, userFullName, getStorage, todayDate, get, getToken } from '../constants';
+import { login, loginSuccess, loginFailure, getReportingEmployees, getReportingEmployeesSuccess, getReportingEmployeesFailure, getBackgroundImagesSuccess, getBackgroundImagesFailure } from '../actions/auth'
 import { getDoctorByEmployeeId } from './doctor';
 
 export const loginUser = (params, onSuccess, onFailure) => {
     return dispatch => {
-        // initiateResponseInterceotors();
         dispatch(login())
         return post('loginUser', params).then(response => {
             if(response.length > 0) {
@@ -25,15 +24,26 @@ export const getEmployees = (params, refresh) => async (dispatch, getState) => {
     dispatch(getReportingEmployees())
     let dataFromStorage = await getStorage(`reportingEmployees${todayDate()}`)
     if(dataFromStorage == null || refresh == true) {
-        return get('GetReportingEmployees', { params })
+        get('GetReportingEmployees', { params })
         .then(response => {
             const { auth: { user: { EmployeeId, FullName} } } = getState();
             dispatch(getReportingEmployeesSuccess(_.concat([{ Id: EmployeeId, Value: FullName }], response)))
-            // return response
         })
         .catch(error => {
             dispatch(getReportingEmployeesFailure())
-            // return error;
         })
     }
+}
+
+export const getBackgroundImages = () => async (dispatch) => {
+    console.log('called');
+    // dispatch(getBackgroundImages())
+    post('GetImagesForSMApp',{
+            Token: getToken,
+        })
+    .then(response => {
+        console.log(response)
+        dispatch(getBackgroundImagesSuccess(response))
+    })
+    // .catch(error => console.log(error) || dispatch(getBackgroundImagesFailure()))
 }

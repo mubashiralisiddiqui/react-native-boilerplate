@@ -27,6 +27,7 @@ import ScreenLoader from './ScreenLoader'
 import CallExecutionButton from './CallExecutionButton'
 import Counter from './Counter'
 import CallList from './CallList'
+import MultipleImageBackgroundWrapper from './ImageBackground/multiple'
 
 export {
     TextInput,
@@ -53,4 +54,5 @@ export {
     CallExecutionButton,
     Counter,
     CallList,
+    MultipleImageBackgroundWrapper,
 }

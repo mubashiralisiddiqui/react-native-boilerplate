@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, NativeModules, Keyboard, FlatList, ScrollView, TouchableWithoutFeedback } from 'react-native';
 import { Input, Overlay, Text, ListItem, SearchBar } from 'react-native-elements';
-import { RandomInteger, styles, brandColors } from '../../constants';
+import { RandomInteger, styles, brandColors, RFValue } from '../../constants';
 import ImageBackgroundWrapper from '../ImageBackground';
 import { useSelector } from 'react-redux';
 
@@ -52,7 +52,7 @@ const ReportingEmployeeField = (props) => {
         <View>
             <Input onFocus={onFocus} inputStyle={styles.inputStyle} labelStyle={styles.labelStyle} label="Select MIO" placeholder="Select MIO" value={props.name || ''}/>
               <Overlay
-                width={'40%'}
+                width={'60%'}
                 height={'75%'}
                 overlayBackgroundColor={'#ddd'}
                 onBackdropPress={() => setShowEmployees(false)}

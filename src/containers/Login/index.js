@@ -2,10 +2,10 @@
  *  start of Login container
  */
 import React, { Component } from 'react';
-import { LoginForm, ImageHeader, ImageBackgroundWrapper } from '../../components'
+import { LoginForm, ImageHeader, MultipleImageBackgroundWrapper } from '../../components'
 import { brandColors, RFValue } from '../../constants';
 import { services } from '../../services'
-import { getLoginLoding, getLoginError } from '../../reducers/authReducer';
+import { getLoginLoding, getLoginError, backgroundImages } from '../../reducers/authReducer';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
 import { NetworkContext } from '../../components/NetworkProvider';
@@ -73,9 +73,7 @@ class Login extends Component {
                 }
             }
         })
-        if (!this.state.loading
-            && this.state.errors.LoginId.message === ''
-            && this.state.errors.Password.message === '') {
+        if (!this.state.loading) {
             const { LoginId, Password } = this.state;
             this.props.loginUser({
                 LoginId,
@@ -85,6 +83,8 @@ class Login extends Component {
             }, () => {
                 alert('Invalid credentials')
             })
+        } else {
+            console.log(123)
         }
     }
     showPassword = () => {
@@ -96,11 +96,12 @@ class Login extends Component {
 
     componentDidMount() {
         this.context.hideRefresh();
+        this.props.getBackgroundImages()
     }
 
     render() {
         return (
-            <ImageBackgroundWrapper>
+            <MultipleImageBackgroundWrapper images={this.props.images}>
                 <ScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={styles.InputContainer}>
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                         <Card containerStyle={{ borderRadius: 15, width: '75%', justifyContent: 'center', alignItems: 'center' }}>
@@ -122,7 +123,7 @@ class Login extends Component {
                         </Card>
                     </View>
                 </ScrollView >
-            </ImageBackgroundWrapper>
+            </MultipleImageBackgroundWrapper>
         )
     }
 }
@@ -130,11 +131,13 @@ const mapStateToProps = state => {
     return {
         error: getLoginError(state),
         loading: getLoginLoding(state),
+        images: backgroundImages(state),
     }
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     loginUser: services().authService.loginUser,
+    getBackgroundImages: services().authService.getBackgroundImages,
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login)

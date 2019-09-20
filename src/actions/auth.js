@@ -14,6 +14,8 @@ import {
     GET_REPORTING_EMPLOYEES,
     GET_REPORTING_EMPLOYEES_SUCCESS,
     GET_REPORTING_EMPLOYEES_FAILURE,
+    GET_BACKGROUND_IMAGES,
+    GET_BACKGROUND_IMAGES_SUCCESS,
 } from './types'
 
 
@@ -110,5 +112,24 @@ export function getReportingEmployeesFailure(error) {
     return {
         type: GET_REPORTING_EMPLOYEES_FAILURE,
         error,
+    }
+}
+
+export function getBackgroundImages() {
+    return {
+        type: GET_BACKGROUND_IMAGES,
+    }
+}
+
+export function getBackgroundImagesSuccess(images) {
+    return {
+        type: GET_BACKGROUND_IMAGES_SUCCESS,
+        images,
+    }
+}
+
+export function getBackgroundImagesFailure() {
+    return {
+        type: GET_REPORTING_EMPLOYEES_FAILURE,
     }
 }
