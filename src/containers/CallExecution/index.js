@@ -387,7 +387,14 @@ class CallExecution extends Component {
         }
 
         if(this.context.state.isInternetReachable) {
-            this.props.submitCallSingle(dailyCall, () => this.props.navigation.goBack())
+            this.props.submitCallSingle(dailyCall, () => {
+                DropDownHolder.show(alertData.call.onlineSuccess)
+                this.props.getAllProducts({
+                    EmployeeId: this.props.user.EmployeeId,
+                    Token: getToken,
+                }, true)
+                this.props.navigation.goBack()
+            })
             return;
         }
         this.submitOffline(dailyCall)
@@ -517,12 +524,6 @@ class CallExecution extends Component {
      * @inheritdoc
      */
     render() {
-        const {
-            isKeyInfoCollapsed,
-            isAdditionalInfoCollapsed,
-            isDocHistoryCollapsed,
-            existingCall,
-        } = this.state;
         return (        
             <ImageBackgroundWrapper>
                 <CallExecutionButton disabled={this.props.submitLoader} onPress={this.confirmSubmit}/>
@@ -575,7 +576,7 @@ class CallExecution extends Component {
                                         shouldBeCollapsed={false}
                                         title="Doctor Visit History"
                                         Body={ <DoctorHistory /> }
-                                        HeaderIcon={<FontAwesomeIcon name="history" size={40} color={brandColors.lightGreen} />}
+                                        HeaderIcon={<FontAwesomeIcon name="history" size={RFValue(40)} color={brandColors.lightGreen} />}
                                     />
                                 }
                         </View>

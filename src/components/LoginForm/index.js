@@ -22,7 +22,7 @@ class LoginForm extends Component {
             errors,
         } = this.props;
         return (
-            <View style={{ width: '130%'}}>
+            <View style={{ width: '150%'}}>
                 {/* <Text style={styles.heading}>Login</Text> */}
                 <TextInput
                     placeholder="Login ID"
@@ -37,7 +37,7 @@ class LoginForm extends Component {
                         size={20}
                         name="user"
                         color={brandColors.darkBrown} />}
-                    error={errors.LoginId}
+                    error={errors.LoginId || ''}
                 />
                 <TextInput
                     placeholder="Password"
@@ -56,7 +56,7 @@ class LoginForm extends Component {
                             color={passwordIconColor}
                             onPress={passwordVisible}
                         />}
-                    error={errors.Password}
+                    error={errors.Password || ''}
                 />
                 <Button
                     loading={loading}

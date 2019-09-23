@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { LoginForm, ImageHeader, MultipleImageBackgroundWrapper } from '../../components'
-import { brandColors, RFValue } from '../../constants';
+import { brandColors, RFValue, validate } from '../../constants';
 import { services } from '../../services'
 import { getLoginLoding, getLoginError, backgroundImages } from '../../reducers/authReducer';
 import { connect } from 'react-redux';
@@ -23,15 +23,18 @@ class Login extends Component {
         loading: false,
         secure: true,
         passwordIconColor: brandColors.darkBrown,
-        errors: {
+        validations: {
             LoginId: {
-                show: false,
-                message: '',
+                required: true,
+                email: true,
             },
             Password: {
-                show: false,
-                message: '',
+                required: true,
             }
+        },
+        errors: {
+            LoginId: '',
+            Password: '',
         }
     }
     onChange = (key, value) => {
@@ -46,35 +49,12 @@ class Login extends Component {
 
     }
 
-    stopLoader = () => {
-        this.setState({
-            loading: false,
-        })
-    }
-    startLoader = () => {
-        this.setState({
-            loading: true,
-        })
-    }
-
     onSubmit = () => {
-        Keyboard.dismiss();
-        this.setState({
-            errors: {
-                LoginId: {
-                    message: this.state.LoginId.trim() === '' ?
-                        'Please enter Login ID'
-                        : '',
-                },
-                Password: {
-                    message: this.state.Password === ''
-                        ? 'Please enter Password'
-                        : '',
-                }
-            }
-        })
-        if (!this.state.loading) {
-            const { LoginId, Password } = this.state;
+        // alert('clicked')
+        const { LoginId, Password } = this.state
+        const [errors, shouldSubmit] = validate(this.state.validations, { LoginId, Password })
+        if(shouldSubmit) {
+            // alert('logging')
             this.props.loginUser({
                 LoginId,
                 Password,
@@ -83,10 +63,12 @@ class Login extends Component {
             }, () => {
                 alert('Invalid credentials')
             })
-        } else {
-            console.log(123)
+            return;
         }
+        alert('validations')
+        this.setState({ errors })
     }
+
     showPassword = () => {
         this.setState({
             secure: !this.state.secure,
@@ -102,12 +84,12 @@ class Login extends Component {
     render() {
         return (
             <MultipleImageBackgroundWrapper images={this.props.images}>
-                <ScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={styles.InputContainer}>
+                <ScrollView keyboardShouldPersistTaps={'always'} contentContainerStyle={styles.InputContainer}>
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                        <Card containerStyle={{ borderRadius: 15, width: '75%', justifyContent: 'center', alignItems: 'center' }}>
+                        <Card containerStyle={{ borderRadius: 15, width: '75%', justifyContent: 'center', alignItems: 'center', opacity: 0.8 }}>
                             <ImageHeader
                             />
-                            <Text style={{ textAlign: 'center', fontFamily: 'Lato-HeavyItalic', fontSize: RFValue(30) }}>Login</Text>
+                            <Text style={{opacity: 1, textAlign: 'center', fontFamily: 'Lato-HeavyItalic', fontSize: RFValue(30) }}>Login</Text>
                             <LoginForm
                                 onKeyUp={this.onKeyEvent}
                                 email={this.state.LoginId}

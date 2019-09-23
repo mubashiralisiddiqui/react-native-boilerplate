@@ -116,6 +116,13 @@ export const navigationOptions = [
         visibleTo: [RSM_ROLE_ID],
         iconType: 'FontAwesome'
     },{
+        name: 'petty_cash_dashboard',
+        label: 'Petty Cash Dashboard',
+        navigateTo: 'PettyCash',
+        icon: 'square-inc-cash',
+        visibleTo: [RSM_ROLE_ID],
+        iconType: 'MaterialCommunityIcon',
+    },{
         name: 'logout',
         label: 'Logout',
         navigateTo: 'Login',
@@ -215,12 +222,34 @@ export const parse = data => JSON.parse(data)
 
 export const stringify = data => JSON.stringify(data)
 
+export const responseInterceptor = response => {
+    response = parse(response.data && response.data.d)
+    if(response.Error !== undefined) {
+        DropDownHolder.show({type: 'error', title: 'Server Error Occurred', message: `${response.Error}, the screenshot of the error has been taken and saved to your Photos. Please contact IT support.`})
+        // alert(`${response.Error}, Please contact IT support.`)
+        setTimeout(() => captureScreen({
+            format: "jpg",
+            quality: 0.8
+        }).then(
+            uri => console.log("Image saved to", uri) || CameraRoll.saveToCameraRoll(uri),
+            error => console.error("Oops, snapshot failed", error)
+        ), 1500)
+        return null
+    }
+    return response
+}
+
 export const get = (url, params) => {
+    if(Axios.interceptors.response.handlers.length == 0) {
+        Axios.interceptors.response.use(responseInterceptor);
+    }
     return Axios.get(url, params)
 }
 
 export const post = (url, params) => {
-    // initiateResponseInterceotors();
+    if(Axios.interceptors.response.handlers.length == 0) {
+        Axios.interceptors.response.use(responseInterceptor);
+    }
     return Axios.post(url, params, {
         headers: {
             'Content-Type': 'application/json',
@@ -247,7 +276,6 @@ export const getOrientation = () => {
 }
 
 export const authUser = () => async (dispatch) => {
-    services().authService.loginUser({});
     let user = await getStorage('user')
     if(user !== null) {
         user = JSON.parse(user);
@@ -310,14 +338,12 @@ export const userFullName = user => `${setDefault(user.FirstName)} ${setDefault(
 
 export const validate = (rules, values) => {
     const fieldsThatNeedsToValidate = Object.keys(values)
-    console.log(fieldsThatNeedsToValidate)
     let errors = {}
     fieldsThatNeedsToValidate.map(field => {
         let rulesToCheck = rules[field] || null;
         Object.keys(rulesToCheck || {}).map(rule => {
             switch(rule) {
                 case 'required': {
-                    console.log(values[field], values, field)
                     if(`${values[field]}`.trim() == '' || values[field] == null || (!isNaN(values[field]) && values[field] == 0)) {
                         errors[field] = `${field} is required`
                     }
@@ -339,6 +365,16 @@ export const validate = (rules, values) => {
                     }
                     if(values[field] != '') {
                         delete errors[checkValues[0]]
+                    }
+                    return;
+                }
+                case 'length': {
+                    let checkValues = rulesToCheck.length
+                    if(values[field].length < checkValues.min ) {
+                        errors[field] = `${field} must have at least ${checkValues.min} characters`;
+                    }
+                    if(values[field].length > checkValues.max ) {
+                        errors[field] = `${field} must have maximum of ${checkValues.max} characters`;
                     }
                     return;
                 }

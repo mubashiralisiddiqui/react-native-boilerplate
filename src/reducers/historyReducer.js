@@ -11,10 +11,11 @@ export const historyReducer = (state = initialState, action) => {
           ...state,
         };
       case GET_HISTORY_SUCCESS:
-          return {
-              ...state,
-              history: action.history
-          }
+        const history = _.orderBy(action.history, 'DeviceDateTime', 'desc')
+        return {
+            ...state,
+            history: history
+        }
       case GET_HISTORY_FAILURE: {
   
           return {

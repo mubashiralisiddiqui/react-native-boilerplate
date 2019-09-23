@@ -12,7 +12,7 @@ export default function ({
     : useSelector(getUnplannedCalls)
     
     return (
-        calls.map((call, i) => {
+        console.log(calls, 'asd') || calls.map((call, i) => {
             return (
                 <Itemcard
                     call={call}

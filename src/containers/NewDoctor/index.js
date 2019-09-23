@@ -60,6 +60,10 @@ class NewDoctor extends Component {
                 email: true,
             },
             Phone: {
+                length: {
+                    min: 11,
+                    max: 11,
+                },
                 required_if: ['Email', ''],
             }
         },

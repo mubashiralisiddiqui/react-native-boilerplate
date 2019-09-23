@@ -57,7 +57,7 @@ const ItemCard = ({
                     containerStyle={{ marginRight: RFValue(5), width: RFValue(80) }}
                     titleStyle={{ fontSize: RFValue(14), fontFamily: 'Lato-BoldItalic' }}
                     onPress={onPress}
-                    // disabled={status}
+                    disabled={status}
                     raised
                     loading={loading}
                 />

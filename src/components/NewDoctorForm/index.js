@@ -5,6 +5,7 @@ import { RandomInteger, brandColors, styles, RFValue } from '../../constants';
 import CitiesModal from '../CitiesModal';
 import ImageBackgroundWrapper from '../ImageBackground';
 import { useSelector } from 'react-redux'
+import { SearchDesignations, SearchSpecialities } from '..';
 
 const NewDoctorForm = ({
     data = {},
@@ -22,6 +23,8 @@ const NewDoctorForm = ({
 
     useEffect(() => {
         setQuery('')
+        setDesignationsLocal(designations)
+        setSpecialitiesLocal(specialities)
     }, [fieldToSelect])
 
 
@@ -111,15 +114,7 @@ const NewDoctorForm = ({
                     onFocus={ () => onFocus('DoctorCity')}
                     errorMessage={data.errors.CityId || ''}
                 />
-                <Input
-                    label="Designation"
-                    inputStyle={styles.inputStyle}
-                    labelStyle={styles.labelStyle}
-                    placeholder="Select Designation"
-                    value={data.Designation}
-                    onFocus={ () => onFocus('Designation')}
-                    errorMessage={data.errors.Designation || ''}
-                />
+                <SearchDesignations setField={setField} value={data.Designation} errors={data.errors} />
             </View>
             <View style={{width: '50%'}}>
                 <Input
@@ -140,15 +135,7 @@ const NewDoctorForm = ({
                     value={data.DoctorAddress}
                     onChangeText={(value) => setField('DoctorAddress', value)}
                 />
-                <Input
-                    label="Speciality"
-                    inputStyle={styles.inputStyle}
-                    labelStyle={styles.labelStyle}
-                    placeholder="Select Speciality"
-                    value={data.Speciality}
-                    onFocus={ () => onFocus('Speciality')}
-                    errorMessage={data.errors.Speciality || ''}
-                />
+                <SearchSpecialities setField={setField} value={data.Speciality} errors={data.errors}/>
                 <Text style={{ color: brandColors.darkBrown, marginVertical: 3, marginHorizontal: 10, fontSize: RFValue(15), fontFamily: 'Lato-HeavyItalic'}}>
                     Is KOL?
                 </Text><Switch value={data.IsKOL} trackColor={{true: brandColors.darkBrown}} thumbColor={data.IsKOL ? brandColors.lightGreen : 'lightgrey'} onValueChange={(value) => setField('IsKOL', value)}/>
@@ -157,44 +144,6 @@ const NewDoctorForm = ({
                 isVisible={citiesModal}
                 visibilityHandler={citiesModalVisibilityHandler}
                 onPressHandler={setField}
-            />
-            <Overlay
-                overlayBackgroundColor="#ddd"
-                borderRadius={15}
-                isVisible={fieldSelectionOverlay}
-                onBackdropPress={() => setFieldSelectionOverlay(false)}
-                width='60%'
-                height='75%'
-                children={
-                    <ImageBackgroundWrapper>
-                        <Text style={inlineStyles.listTitle}>
-                            { `Select Doctor's ${fieldToSelect}`  }
-                        </Text>
-                        <SearchBar
-                            inputStyle={styles.inputStyle}
-                            value={query}
-                            placeholder={`Search for more ${fieldToSelect}`}
-                            onChangeText={searchDesignation}
-                            platform="ios"
-                            containerStyle={{ backgroundColor: 'transparent'}}
-                            round
-                            cancelButtonProps={{buttonTextStyle: { fontFamily:"Lato-RegularItalic", fontSize: RFValue(14), color: brandColors.lightGreen, fontFamily: 'Lato-MediumItalic' }}}
-                        />
-                        {/* <Input label="Search" placeholder={`Search for more ${fieldToSelect}s`} onChangeText={searchDesignation} /> */}
-                        <ScrollView style={{ borderRadius: 10, }} behavior="padding">
-                            <View style={{width:'100%', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
-                                <View style={{ width: '98%', marginHorizontal: 5}}>
-                                    <FlatList
-                                        initialNumToRender={30}
-                                        keyExtractor={ item => `${item.Id} + ${RandomInteger()}`}
-                                        data={fieldToSelect === 'Designation' ?  designationsLocal : specialitiesLocal }
-                                        renderItem={({item}) => renderRow(item, fieldToSelect)}
-                                    />
-                                </View>
-                            </View>
-                        </ScrollView>
-                    </ImageBackgroundWrapper>
-                }
             />
             
         </View>

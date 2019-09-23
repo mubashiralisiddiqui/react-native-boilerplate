@@ -166,8 +166,8 @@ class NetworkProviderClass extends React.PureComponent {
                             disabled={!this.state.isConnected}
                             title="Refresh"
                             onPress={this.handleRefresh}
-                            titleStyle={{color: brandColors.lightGreen, fontSize: RFValue(10)}}
-                            icon={<FontAwesomeIcon name="refresh" size={RFValue(20)} color={brandColors.lightGreen} />}
+                            titleStyle={{color: brandColors.lightGreen, fontSize: RFValue(14)}}
+                            icon={<FontAwesomeIcon name="refresh" size={RFValue(18)} color={brandColors.lightGreen} />}
                         />
                     </View>
                 }

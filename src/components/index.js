@@ -28,6 +28,8 @@ import CallExecutionButton from './CallExecutionButton'
 import Counter from './Counter'
 import CallList from './CallList'
 import MultipleImageBackgroundWrapper from './ImageBackground/multiple'
+import SearchDesignations from './SearchDesignations'
+import SearchSpecialities from './SearchSpecialities'
 
 export {
     TextInput,
@@ -55,4 +57,6 @@ export {
     Counter,
     CallList,
     MultipleImageBackgroundWrapper,
+    SearchDesignations,
+    SearchSpecialities,
 }

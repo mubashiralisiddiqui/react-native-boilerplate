@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, NativeModules, Keyboard } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import FieldHeader from '../FieldHeader';
 import { Input } from 'react-native-elements';
 import { styles, getQuantityOrNameOfSelectedGift } from '../../../constants';
@@ -10,11 +10,6 @@ const GiftField = ({
     selectedGift,
     gifts
 }) => {
-    const onFocus = () => {
-        NativeModules.KeyboardFunctionalities.hideKeyboard()
-        Keyboard.dismiss();
-        showGifts()
-    }
     return (
         <View style={styles.container}>
             <View style={{width: "95%"}}> 
@@ -23,10 +18,14 @@ const GiftField = ({
                 />
                 <View style={{flex:1, flexDirection: 'row'}}>
                     <View style={{width: "50%"}}>
-                        <Input inputStyle={styles.inputStyle} onFocus={onFocus} labelStyle={styles.labelStyle} label="Gift" placeholder="Select Gift" value={getQuantityOrNameOfSelectedGift(selectedGift, gifts)} />
+                        <TouchableOpacity onPress={showGifts}>
+                            <Input editable={false} pointerEvents="none" inputStyle={styles.inputStyle} labelStyle={styles.labelStyle} label="Gift" placeholder="Select Gift" value={getQuantityOrNameOfSelectedGift(selectedGift, gifts)} />
+                        </TouchableOpacity>
                     </View>
                     <View style={{width: "50%"}}>
-                        <Input inputStyle={styles.inputStyle} onFocus={onFocus} labelStyle={styles.labelStyle} label="Quantity" placeholder="Quantity" value={`${getQuantityOrNameOfSelectedGift(selectedGift, gifts, 'qty')}`} />
+                        <TouchableOpacity onPress={showGifts}>
+                            <Input editable={false} pointerEvents="none" inputStyle={styles.inputStyle} labelStyle={styles.labelStyle} label="Quantity" placeholder="Quantity" value={`${getQuantityOrNameOfSelectedGift(selectedGift, gifts, 'qty')}`} />
+                        </TouchableOpacity>
                     </View>
                 </View>
             </View>

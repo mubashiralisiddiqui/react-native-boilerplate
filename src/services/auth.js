@@ -5,7 +5,8 @@ import { getDoctorByEmployeeId } from './doctor';
 export const loginUser = (params, onSuccess, onFailure) => {
     return dispatch => {
         dispatch(login())
-        return post('loginUser', params).then(response => {
+        post('loginUser', params).then(response => {
+
             if(response.length > 0) {
                 let user = response[0];
                 user.FullName = userFullName(user).replace('.', '');
@@ -16,7 +17,7 @@ export const loginUser = (params, onSuccess, onFailure) => {
             }
             dispatch(loginFailure())
             onFailure();
-        }).catch(error => dispatch(loginFailure()))
+        }).catch(error => alert(error + '') || dispatch(loginFailure()))
     }
 }
 

@@ -24,6 +24,7 @@ import {
     Expense,
     Training,
     ActivityRequest,
+    PettyCash,
 } from '../containers';
 import DrawerContent from './drawercontent'
 
@@ -54,6 +55,10 @@ const ActivityRequestStack = createStackNavigator({
     ActivityRequest,
 })
 
+const PettyCashStack = createStackNavigator({
+    PettyCash,
+})
+
 
 const SamplesStack = createStackNavigator({
     Samples,
@@ -71,6 +76,7 @@ const RootStack = createDrawerNavigator({
     Training: TrainingPortalStack,
     Planner: CallPlannerStack,
     Activity: ActivityRequestStack,
+    PettyCash: PettyCashStack,
 },
     // drawer component mean we are using our custom drawer if we dont use it by defautl 
     // drawer path will be shown in side menu like Main which is current in drawer

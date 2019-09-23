@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, ScrollView } from 'react-native'
+import { View, ScrollView, Alert } from 'react-native'
 import { CallPlanHeader } from '../../components/Headers'
 import { navigationOption, brandColors, parse, stringify, getToken, RFValue, validate, getDistance } from '../../constants'
 import { FontAwesomeIcon } from '../../components/Icons';
@@ -44,6 +44,7 @@ class CallExecutionUnplanned extends Component {
     )
     state = {
         doctor_history: [],
+        history_loaded: false,
         overlay: false,
         giftsOverlay: false,
         selectedProductId: 0, // This will be only set while opening the overlay, and unset while closing the overlay
@@ -228,17 +229,15 @@ class CallExecutionUnplanned extends Component {
     
  
     componentDidMount() {
-        // InteractionManager.runAfterInteractions(() => {
-            this.context.hideRefresh();
-            this.props.location()
-            let dailyCall = parse(stringify(callExecution));
-            dailyCall.jsonDailyCall.DeviceDateTime = moment().format('YYYY-MM-DD hh:mm:ss')
-            dailyCall.EmployeeId = this.props.user.EmployeeId
-    
-            this.setState({
-                form_data: dailyCall,
-            })
-        // })
+        this.context.hideRefresh();
+        this.props.location()
+        let dailyCall = parse(stringify(callExecution));
+        dailyCall.jsonDailyCall.DeviceDateTime = moment().format('YYYY-MM-DD hh:mm:ss')
+        dailyCall.EmployeeId = this.props.user.EmployeeId
+
+        this.setState({
+            form_data: dailyCall,
+        })
     }
 
     onChangeAdditionalInfoAttributes = (field, value) => {
@@ -283,8 +282,10 @@ class CallExecutionUnplanned extends Component {
         const [errors, shouldSubmit] = validate(this.state.validations, dailyCall.jsonDailyCall);
         if(shouldSubmit) {
             if(this.context.state.isInternetReachable) {
-                this.props.submitCallSingle(parse(stringify(dailyCall))).then(response => {
-                    if(response == 1) {
+                this.props.submitCallSingle(
+                    parse(stringify(dailyCall)),
+                    () => {
+                        DropDownHolder.show(alertData.call.onlineUnplannedSuccess)
                         this.props.getUnplannedCalls({
                             EmployeeId: this.props.user.EmployeeId,
                             Token: getToken,
@@ -293,13 +294,9 @@ class CallExecutionUnplanned extends Component {
                             EmployeeId: this.props.user.EmployeeId,
                             Token: getToken,
                         }, true)
-                        DropDownHolder.show(alertData.call.onlineUnplannedSuccess)
                         this.props.navigation.goBack();
                     }
-                }).catch(error => {
-                    this.submitOffline(dailyCall)
-                    console.log(error)
-                })
+                    )
             } else {
                 this.submitOffline(dailyCall).then(response => {
                     console.log(response)
@@ -424,14 +421,32 @@ class CallExecutionUnplanned extends Component {
             EmployeeId: this.props.user.EmployeeId,
         });
         this.setState({
-            form_data
+            form_data,
+            history_loaded: true,
         })
+    }
+
+    confirmSubmit = () => {
+        Alert.alert(
+            'Unplanned Call Execution',
+            'Are you sure you wan to execute this unplanned call?',
+            [
+            {
+                text: 'No',
+                style: 'cancel',
+            },
+            {
+                text: 'Yes',
+                onPress: () => this.submitCall()
+            },
+            ],
+        );
     }
 
     render() {
         return (        
             <ImageBackgroundWrapper>
-                <CallExecutionButton disabled={this.props.submitLoader} onPress={this.submitCall}/>
+                <CallExecutionButton disabled={this.props.submitLoader} onPress={this.confirmSubmit}/>
                 {(this.props.submitLoader == true || this.props.doctor_loading == true) && <ScreenLoader /> }
                 <View style={styles.InputContainer}>
                     <ScrollView
@@ -480,7 +495,7 @@ class CallExecutionUnplanned extends Component {
                                 }
                             />
                                 {
-                                    this.props.history.length > 0 &&
+                                    this.state.history_loaded && this.props.history.length > 0 &&
                                     <Collapse
                                         shouldBeCollapsed={false}
                                         title="Doctor Visit History"

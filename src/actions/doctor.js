@@ -282,7 +282,8 @@ export function submitDoctorChangeLocationRequestFailure () {
  * @returns {Object}
  */
 export function getCallsDoctors (calls) {
-    const doctors = _.concat(..._.map(calls, call => call.Doctor.DoctorCode))
+    console.log(calls)
+    const doctors = _.concat(..._.map(calls, call => call.Doctor && call.Doctor.DoctorCode))
     return {
         type: GET_CALLS_DOCTORS,
         doctors,
@@ -301,7 +302,7 @@ export function getCallsDoctors (calls) {
  * @returns {Object}
  */
 export function getUnplannedCallsDoctors (calls) {
-    const doctors = _.concat(..._.map(calls, call => call.Doctor.DoctorCode))
+    const doctors = _.concat(..._.map(calls, call => call.Doctor && call.Doctor.DoctorCode))
     return {
         type: GET_UNPLANNED_CALLS_DOCTORS,
         doctors,

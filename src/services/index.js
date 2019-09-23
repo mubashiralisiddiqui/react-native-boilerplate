@@ -23,13 +23,6 @@ export const responseInterceptor = response => {
             uri => console.log("Image saved to", uri) || CameraRoll.saveToCameraRoll(uri),
             error => console.error("Oops, snapshot failed", error)
         ), 1500)
-        // captureScreen({
-        //     format: "jpg",
-        //     quality: 0.8
-        // }).then(
-        //     uri => console.log("Image saved to", uri) || CameraRoll.saveToCameraRoll(uri),
-        //     error => console.error("Oops, snapshot failed", error)
-        // );
         return null
     }
     return response

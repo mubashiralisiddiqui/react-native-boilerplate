@@ -32,7 +32,7 @@ export const getTodayCalls = (params, refresh = false) => {
                     dispatch(getCallsDoctors(response))
                     dispatch(getCallsSuccess(response))
                 } else {
-                    DropDownHolder.show('info', 'No Planned Calls Found', 'You do not have any planned calls for today.')
+                    DropDownHolder.show(alertData.call.noCalls)
                     dispatch(getCallsSuccess([]))
                 }
             }).catch(error => {
@@ -79,7 +79,6 @@ export const submitCallSingle = (params, callback = () => null) => dispatch => {
         .then(async (response) => {
             if(response == 1) {
                 dispatch(submitCallSuccess(params))
-                DropDownHolder.show(alertData.call.onlineSuccess)
                 callback();
                 const allCalls = await updateCallStatus(jsonParams.DailyCallId, false);
                 dispatch(getCallsSuccess(allCalls))

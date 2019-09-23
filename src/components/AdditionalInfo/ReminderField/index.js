@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useCallback } from 'react';
 import {
-    View, Keyboard, NativeModules
+    View, TouchableOpacity
 } from 'react-native';
 import { Input } from 'react-native-elements';
 import FieldHeader from '../FieldHeader';
@@ -14,13 +14,11 @@ const ReminderField = ({
     selectedSamples,
     showSamples,
 }) => {
-    const onFocus = (selectedProduct, position, type = 'product') => {
-        NativeModules.KeyboardFunctionalities.hideKeyboard()
-        Keyboard.dismiss();
+    const onFocus = useCallback((selectedProduct, position, type = 'product') => {
         type == 'product'
         ? showProducts(selectedProduct, position, 'reminder')
         : showSamples(selectedProduct, position, 'reminder');
-    }
+    })
     return (
         <View style={styles.container}>
             {
@@ -35,13 +33,19 @@ const ReminderField = ({
                                 isFirst={ key === 0 ? true : false }
                                 onRemove={onRemove}
                             />
-                            <Input inputStyle={styles.inputStyle} onFocus={() => onFocus(product.ProductId || null, key + 1)} labelStyle={styles.labelStyle} label={`Reminder ${key+1}`} placeholder="Product Name" value={product.name || ''} />
+                            <TouchableOpacity onPress={() => onFocus(product.ProductId || null, key + 1)}>
+                                <Input editable={false} inputStyle={styles.inputStyle} labelStyle={styles.labelStyle} label={`Reminder ${key+1}`} placeholder="Product Name" value={product.name || ''} />
+                            </TouchableOpacity>
                             <View key={ RandomInteger() } style={{flex:1, flexDirection: 'row'}}>
                                 <View key={ RandomInteger() } style={{width: "50%"}}>
-                                    <Input inputStyle={styles.inputStyle} editable={!_.isEmpty(product)} onFocus={() => onFocus( product.ProductId || null, key + 1, 'sample')} labelStyle={styles.labelStyle} key={ key + RandomInteger() } label={`Sample ${key + 1}`} placeholder="Sample Name" value={getNameFromSelectedSamples(selectedSamples, product.ProductId)} />
+                                    <TouchableOpacity onPress={() => onFocus( product.ProductId || null, key + 1, 'sample')}>
+                                        <Input inputStyle={styles.inputStyle} editable={false} labelStyle={styles.labelStyle} key={ key + RandomInteger() } label={`Sample ${key + 1}`} placeholder="Sample Name" value={getNameFromSelectedSamples(selectedSamples, product.ProductId)} />
+                                    </TouchableOpacity>
                                 </View>
                                 <View key={ RandomInteger() } style={{width: "50%"}}>
-                                    <Input inputStyle={styles.inputStyle} editable={!_.isEmpty(product)} onFocus={() => onFocus(product.ProductId || null, key + 1, 'sample')} labelStyle={styles.labelStyle} key={ RandomInteger() } label="Quantity" placeholder="Quantity" value={`${getQuantityOfTheSelectedSamples(selectedSamples, product.ProductId)}`} />
+                                    <TouchableOpacity onPress={() => onFocus( product.ProductId || null, key + 1, 'sample')}>
+                                        <Input inputStyle={styles.inputStyle} editable={false} labelStyle={styles.labelStyle} key={ RandomInteger() } label="Quantity" placeholder="Quantity" value={`${getQuantityOfTheSelectedSamples(selectedSamples, product.ProductId)}`} />
+                                    </TouchableOpacity>
                                 </View>
                             </View>
                         </View>

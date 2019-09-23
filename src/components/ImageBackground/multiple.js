@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { ImageBackground, View, ScrollView, Dimensions, Image } from 'react-native';
 import { useInterval } from '../../hooks/useInterval'
 import { useSelector } from 'react-redux';
@@ -11,39 +11,38 @@ const MultipleImageBackgroundWrapper = ({
     images = [],
     children,
 }) => {
-
     let _scrollView = null;
+    const [width, setWidth] = useState(Dimensions.get('screen').width)
     const numOfBackground = images.length;
     let scrollValue = 0, scrolled = 0;
-    // if(images.length > 0) {
-        console.log('gotcha')
-        useInterval(function () {
-            scrolled++;
-            if(scrolled < numOfBackground)
-                scrollValue = scrollValue + width;
-            else{
-                scrollValue = 0;
-                scrolled = 0
-            }
-            _scrollView && _scrollView.scrollTo({ x: scrollValue, animated: false })
-        }, 3500);
-    // }
+    useInterval(function () {
+        scrolled++;
+        if(scrolled < numOfBackground)
+            scrollValue = scrollValue + width;
+        else{
+            scrollValue = 0;
+            scrolled = 0
+        }
+        _scrollView && _scrollView.scrollTo({ x: scrollValue, animated: false })
+    }, 3500);
 
-    // useInterval(() => {
-    //     setImage(_.nth(images, _.random(0, images.length)))
-    // }, 4000)
+    const onLayout = (e) => {
+        setWidth(Dimensions.get('screen').width)
+    }
 
-    return (
-        <View>
+    return (    
+        <View onLayout={onLayout}>
             <ScrollView 
                 ref={(scrollView) => { _scrollView = scrollView; }}
                 horizontal={true} pagingEnabled={true} 
             >
                 {
-                    images.map(image => console.log(`${baseMediaURL}${image.FileName}`) || <Image key={`${RandomInteger()}`} source={{ uri: `${baseMediaURL}${image.FileName}`}} resizeMode={'cover'} style={{height, width}} />)
+                    images.length > 0
+                    ? images.map(image => <Image key={`${RandomInteger()}`} source={{ uri: `${baseMediaURL}${image.FileName}`}} resizeMode={'cover'} style={{height, width}} />)
+                    : <Image source={require('../../assets/images/background.png')} resizeMode={'cover'} style={{height, width}}/>
                 }
             </ScrollView>
-            <View style={{width: '100%', display: 'flex', position: 'absolute', top: '20%', alignContent: 'center', alignItems: 'center'}}>
+            <View style={{width: '100%', display: 'flex', position: 'absolute', top: '25%', alignContent: 'center', alignItems: 'center'}}>
                 { children }
             </View>
         </View>

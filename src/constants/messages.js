@@ -25,7 +25,7 @@ export const alertData = {
         doctorRequestFailure: {
             type: 'error',
             title: 'Request Failed',
-            message: 'Phone number already exists.',
+            message: 'Phone number or email address already exists.',
         },
     },
     call: {
@@ -58,6 +58,11 @@ export const alertData = {
             type: 'success',
             title: 'Calls syncing completed',
             message: 'All calls have been synced successfully.',
+        },
+        noCalls: {
+            type: 'info',
+            title: 'No Daily Calls',
+            message: 'No daily calls found for today'
         }
     },
     media: {
