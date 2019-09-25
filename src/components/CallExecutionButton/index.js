@@ -3,6 +3,7 @@ import {Button} from 'react-native-elements';
 import { brandColors, RFValue } from '../../constants';
 import PropTypes from 'prop-types'
 import { MaterialIcon } from '../Icons'
+import LinearGradient from 'react-native-linear-gradient';
 
 const CallExecutionButton = ({
     onPress,
@@ -10,6 +11,8 @@ const CallExecutionButton = ({
 }) => {
     return (
         <Button
+            ViewComponent={LinearGradient}
+            linearGradientProps={brandColors.linearGradientSettings}
             raised
             buttonStyle={{
             width: RFValue(75),

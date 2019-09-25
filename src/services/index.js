@@ -1,6 +1,8 @@
 import {
     parse,
     Axios,
+    get,
+    showAppUpdateAlert,
 } from '../constants';
 import * as authService from "./auth";
 import * as callService from "./callServices";
@@ -10,6 +12,7 @@ import * as historyService from "./historyService";
 import { captureScreen } from "react-native-view-shot";
 import { CameraRoll } from 'react-native'
 import DropDownHolder from '../classes/Dropdown';
+import { checkAppVersion, checkAppVersionSuccess, checkAppVersionFailure } from '../actions/app';
 
 export const responseInterceptor = response => {
     response = parse(response.data && response.data.d)
@@ -26,6 +29,15 @@ export const responseInterceptor = response => {
         return null
     }
     return response
+}
+
+export const getAppVersion = () => dispatch => {
+    dispatch(checkAppVersion())
+    get('GetApplicationVersion', {}).then(response => {
+        const version = response[0] && response[0].ApplicationVersion
+        showAppUpdateAlert(version)
+        dispatch(checkAppVersionSuccess({version}))
+    }).catch(error => dispatch(checkAppVersionFailure(error)))
 }
 
 export const errorInterceptor = error => {

@@ -3,6 +3,8 @@ package com.hudsonpharma;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.BV.LinearGradient.LinearGradientPackage;
+import io.xogus.reactnative.versioncheck.RNVersionCheckPackage;
 import fr.greweb.reactnativeviewshot.RNViewShotPackage;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
 import com.brentvatne.react.ReactVideoPackage;
@@ -34,6 +36,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new LinearGradientPackage(),
+            new RNVersionCheckPackage(),
             new RNViewShotPackage(),
             new RNCWebViewPackage(),
           new ReactVideoPackage(),

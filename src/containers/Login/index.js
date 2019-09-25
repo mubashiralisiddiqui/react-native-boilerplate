@@ -9,7 +9,7 @@ import { getLoginLoding, getLoginError, backgroundImages } from '../../reducers/
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
 import { NetworkContext } from '../../components/NetworkProvider';
-import { View, ScrollView, Keyboard } from 'react-native'
+import { View, ScrollView } from 'react-native'
 import { Text, Card } from 'react-native-elements';
 
 class Login extends Component {
@@ -65,7 +65,6 @@ class Login extends Component {
             })
             return;
         }
-        alert('validations')
         this.setState({ errors })
     }
 

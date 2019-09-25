@@ -9,6 +9,7 @@ import { doctorReducer } from '../src/reducers/doctorReducer';
 import { cityReducer } from '../src/reducers/cityReducer';
 import { createLogger } from 'redux-logger';
 import { locationReducer } from '../src/reducers/locationReducer';
+import { appReducer } from '../src/reducers/appReducer';
 
 const rootReducer = combineReducers({
     auth: authReducer,
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
     doctor: doctorReducer,
     cities: cityReducer,
     location: locationReducer,
+    app: appReducer,
 });
 
 const reduxLogger = createLogger();

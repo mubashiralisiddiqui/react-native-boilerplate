@@ -31,57 +31,75 @@ import DrawerContent from './drawercontent'
 // this is the Application stack which is wrapped in createstackNavigator
 // and it shuold be a stacknavigator  there can be different ways but I use like this
 
-const CallPlansStack = createStackNavigator({
+// const CallPlansStack = createStackNavigator({
+//     CallPlans,
+//     CallExecution,
+//     CallExecutionUnplanned,
+// })
+
+// const AddNewDoctorStack = createStackNavigator({
+//     NewDoctor,
+// })
+
+// const CallPlannerStack = createStackNavigator({
+//     Planner,
+// })
+// const ExpenseManagerStack = createStackNavigator({
+//     Expense,
+// })
+// const TrainingPortalStack = createStackNavigator({
+//     Training,
+// })
+
+// const ActivityRequestStack = createStackNavigator({
+//     ActivityRequest,
+// })
+
+// const PettyCashStack = createStackNavigator({
+//     PettyCash,
+// })
+
+
+// const SamplesStack = createStackNavigator({
+//     Samples,
+// })
+// const AppStack = createStackNavigator({
+//     DoctorLocation,
+// })
+
+const MainStack = createStackNavigator({
     CallPlans,
     CallExecution,
     CallExecutionUnplanned,
-})
-
-const AddNewDoctorStack = createStackNavigator({
-    NewDoctor,
-})
-
-const CallPlannerStack = createStackNavigator({
-    Planner,
-})
-const ExpenseManagerStack = createStackNavigator({
-    Expense,
-})
-const TrainingPortalStack = createStackNavigator({
-    Training,
-})
-
-const ActivityRequestStack = createStackNavigator({
-    ActivityRequest,
-})
-
-const PettyCashStack = createStackNavigator({
-    PettyCash,
-})
-
-
-const SamplesStack = createStackNavigator({
-    Samples,
-})
-const AppStack = createStackNavigator({
     DoctorLocation,
+    Samples,
+    NewDoctor,
+    Planner,
+    Expense,
+    Training,
+    ActivityRequest,
+    PettyCash
+
+    // CallPlans: CallPlansStack,
+    // NewDoct: AddNewDoctorStack,
+    // Samples: SamplesStack,
+    // Main: AppStack,
+    // Expense: ExpenseManagerStack,
+    // Training: TrainingPortalStack,
+    // Planner: CallPlannerStack,
+    // Activity: ActivityRequestStack,
+    // PettyCash: PettyCashStack,
+}, {
+    initialRouteName: 'CallPlans'
 })
 // drawer stack passing Appstack in drawe so that all can be accessible in our  drawerstack
-const RootStack = createDrawerNavigator({
-    CallPlans: CallPlansStack,
-    NewDoct: AddNewDoctorStack,
-    Samples: SamplesStack,
-    Main: AppStack,
-    Expense: ExpenseManagerStack,
-    Training: TrainingPortalStack,
-    Planner: CallPlannerStack,
-    Activity: ActivityRequestStack,
-    PettyCash: PettyCashStack,
-},
+const RootStack = createDrawerNavigator(
+    {Main: MainStack},
     // drawer component mean we are using our custom drawer if we dont use it by defautl 
     // drawer path will be shown in side menu like Main which is current in drawer
     {
         unmountInactiveRoutes: true,
+        edgeWidth: 50,
         contentComponent: DrawerContent,
         contentOptions: {
             activeTintColor: '#fff',

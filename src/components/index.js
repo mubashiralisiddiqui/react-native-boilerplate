@@ -30,6 +30,8 @@ import CallList from './CallList'
 import MultipleImageBackgroundWrapper from './ImageBackground/multiple'
 import SearchDesignations from './SearchDesignations'
 import SearchSpecialities from './SearchSpecialities'
+import Checkbox from './Checkbox'
+import DrawerElement from './DrawerElement'
 
 export {
     TextInput,
@@ -59,4 +61,6 @@ export {
     MultipleImageBackgroundWrapper,
     SearchDesignations,
     SearchSpecialities,
+    Checkbox,
+    DrawerElement,
 }

@@ -122,7 +122,7 @@ const NewDoctorForm = ({
                     inputStyle={styles.inputStyle}
                     labelStyle={styles.labelStyle}
                     placeholder="Enter Doctor email address"
-                    keyboardType='email-address'
+                    keyboasrdType='email-address'
                     value={data.Email}
                     onChangeText={(value) => setField('Email', value)}
                     errorMessage={data.errors.Email || ''}

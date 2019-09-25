@@ -122,7 +122,7 @@ class CallPlans extends PureComponent {
                     <CallPlanHeader />
                     { this.shouldShowLoader() ? <ScreenLoader /> : null }
                     <CallPlansListHeader />
-                    <ScrollView showsVerticalScrollIndicator={false} style={{ width: '99%' }}>
+                    <ScrollView showsVerticalScrollIndicator={false} style={{ width: '100%' }}>
                         <CallList onPress={this.onPress} />
                         <CallList type="unplanned" />
                     </ScrollView>

@@ -19,6 +19,7 @@ const AdditionalInfo = ({
     allGifts,
     existingCall,
     showSamples,
+    callRemarks
 }) => {
     const [reminderFieldsCount, setReminderFieldsCount] = useState(3);
     
@@ -59,7 +60,7 @@ const AdditionalInfo = ({
                 onPress={() => setReminderFieldsCount(reminderFieldsCount + 1) }
             /> */}
             <GiftField showGifts={showGifts} selectedGift={selectedGift} gifts={allGifts}/>
-            <CallRemarksField onChangeCallRemarks={onChangeCallRemarks}/>
+            <CallRemarksField onChangeCallRemarks={onChangeCallRemarks} selectedValue={callRemarks}/>
             <NotesField onChangeAdditionalNotes={onChangeAdditionalNotes} />
         </View>
     )

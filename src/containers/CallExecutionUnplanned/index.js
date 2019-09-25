@@ -472,6 +472,7 @@ class CallExecutionUnplanned extends Component {
                                         files={this.state.selectedFiles}
                                         data={this.state.form_data.jsonDailyCall}
                                         errors={this.state.errors}
+                                        selelctedReason={this.state.form_data.jsonDailyCall.CallReason}
                                     />}  
                                 HeaderIcon={<FontAwesomeIcon name="info-circle" size={RFValue(40)} color={brandColors.lightGreen} />} />
                             <Collapse

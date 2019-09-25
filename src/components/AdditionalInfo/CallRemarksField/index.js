@@ -1,36 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View } from 'react-native';
 import FieldHeader from '../FieldHeader';
-import { styles, brandColors, RFValue } from '../../../constants';
-import { CheckBox } from 'react-native-elements';
+import { styles } from '../../../constants';
 import { propTypes } from './defaultPropTypesValues'
+import { Checkbox } from '../../index'
  
 const CallRemarksField = ({
-    onChangeCallRemarks
+    onChangeCallRemarks,
+    selectedValue,
 }) => {
-    const [neutral, setNeutral] = useState(true);
-    const [positive, setPositive] = useState(false);
-    const [negative, setNegative] = useState(false);
-    const onchange = ( state ) => {
-        if(state === 'neutral') {
-            onChangeCallRemarks('Remarks', 'Neutral')
-            setNeutral(true);
-            setNegative(false);
-            setPositive(false);
-            return;
-        }
-        if(state === 'positive') {
-            setPositive(true);
-            onChangeCallRemarks('Remarks', 'Positive')
-            setNeutral(false);
-            setNegative(false);
-            return;
-        }
-        setNegative(true);
-        onChangeCallRemarks('Remarks', 'Negative')
-        setNeutral(false);
-        setPositive(false);
-    }
     return (
         <View style={styles.container}>
             <View style={{width: "95%"}}>
@@ -40,36 +18,24 @@ const CallRemarksField = ({
                 />
                 <View style={{width: '100%', flex: 1, flexDirection: 'row'}}>    
                     <View style={{width: '33%'}}>
-                    <CheckBox
-                        containerStyle={{ backgroundColor: 'transparent'}}
-                        textStyle={{color: brandColors.darkBrown, fontFamily: 'Lato-BoldItalic', fontSize: RFValue(18)}}
-                        checkedColor={brandColors.lightGreen}
-                        title='Positive'
-                        checked={positive}
-                        size={RFValue(22)}
-                        onPress={() => onchange('positive')}
-                    />
-                    </View>
-                    <View style={{width: '33%'}}>
-                        <CheckBox
-                            containerStyle={{ backgroundColor: 'transparent'}}
-                            textStyle={{color: brandColors.darkBrown, fontFamily: 'Lato-BoldItalic', fontSize: RFValue(18)}}
-                            checkedColor={brandColors.lightGreen}
-                            title='Negative'
-                            checked={negative}
-                            size={RFValue(22)}
-                            onPress={() => onchange('negative')}
+                        <Checkbox
+                            title='Positive'
+                            checked={selectedValue === 'Positive'}
+                            onCheckedCallback={() => onChangeCallRemarks('Remarks', 'Positive')}
                         />
                     </View>
                     <View style={{width: '33%'}}>
-                        <CheckBox
-                            containerStyle={{ backgroundColor: 'transparent'}}
-                            textStyle={{color: brandColors.darkBrown, fontFamily: 'Lato-BoldItalic', fontSize: RFValue(18)}}
-                            checkedColor={brandColors.lightGreen}
+                        <Checkbox
+                            title='Negative'
+                            checked={selectedValue === 'Negative'}
+                            onCheckedCallback={() => onChangeCallRemarks('Remarks', 'Negative')}
+                        />
+                    </View>
+                    <View style={{width: '33%'}}>
+                        <Checkbox
                             title='Neutral'
-                            checked={neutral}
-                            size={RFValue(22)}
-                            onPress={() => onchange('neutral')}
+                            checked={selectedValue === 'Neutral'}
+                            onCheckedCallback={() => onChangeCallRemarks('Remarks', 'Neutral')}
                         />
                     </View>
                 </View>

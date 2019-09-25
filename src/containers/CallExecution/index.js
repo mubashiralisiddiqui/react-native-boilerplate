@@ -544,6 +544,7 @@ class CallExecution extends Component {
                                         updateDetailingSeconds={this.updateDetailingSeconds}
                                         existingCall={true}
                                         onCallReasonChange={this.onChangeAdditionalInfoAttributes}
+                                        selectedReason={this.state.form_data.jsonDailyCall.CallReason}
                                         navigate={this.props.navigation}
                                         files={this.state.selectedFiles}
                                     />}  
@@ -566,12 +567,13 @@ class CallExecution extends Component {
                                         selectedSample={this.state.selectedProduct}
                                         navigate={this.props.navigation}
                                         selectedGift={this.state.form_data.jsonGiftDetail}
+                                        callRemarks={this.state.form_data.jsonDailyCall.Remarks}
                                         allGifts={this.props.gifts}
                                     />
                                 }
                             />
                                 {
-                                    !!this.props.history &&
+                                    this.props.history.length > 0 &&
                                     <Collapse
                                         shouldBeCollapsed={false}
                                         title="Doctor Visit History"

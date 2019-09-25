@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Dimensions } from 'react-native';
 import { Card, Button, Badge } from 'react-native-elements'
 import { brandColors, RandomInteger, RFValue } from '../../constants';
+import LinearGradient from 'react-native-linear-gradient';
 
 const ItemCard = ({
     name,
@@ -30,10 +31,11 @@ const ItemCard = ({
     return (
         <Card key={RandomInteger()}
             containerStyle={styles.cardContainer}
+            // wrapperStyle={{borderRadius: 5}}
         >
             <View onLayout={onLayout} key={RandomInteger()} style={styles.viewContainer}> 
                 <View key={RandomInteger()} style={styles.itemFirst}>
-                    <Text key={RandomInteger()} style={styles.text}> { name }</Text>
+                    <Text key={RandomInteger()} style={[styles.text, {fontFamily: 'Lato-MediumItalic'}]}> { name }</Text>
                 </View>
                 <View key={RandomInteger()} style={styles.itemSecond}>
                     { (status === true && isOffline === true)
@@ -49,16 +51,18 @@ const ItemCard = ({
                 <View key={RandomInteger()} style={styles.item}>
                     <Text key={RandomInteger()} style={styles.text}>{ category }</Text>
                 </View>
-                <Button 
+                <Button
                     buttonStyle={{
-                        backgroundColor: brandColors.lightGreen
+                        borderRadius: 40, backgroundColor: brandColors.lightGreen
                     }}
+                    ViewComponent={LinearGradient}
+                    linearGradientProps={brandColors.linearGradientSettings}
                     title="Execute"
                     containerStyle={{ marginRight: RFValue(5), width: RFValue(80) }}
                     titleStyle={{ fontSize: RFValue(14), fontFamily: 'Lato-BoldItalic' }}
                     onPress={onPress}
                     disabled={status}
-                    raised
+                    // raised
                     loading={loading}
                 />
             </View>
@@ -90,7 +94,7 @@ const getStyles = (status, width) => {
             marginLeft: 10,
             alignItems: 'center',
             padding: 10,
-            width: width/8
+            width: width/10
         },
         item: {
             height: RFValue(35),
@@ -105,19 +109,14 @@ const getStyles = (status, width) => {
             fontSize: RFValue(16),
             color: !status ? brandColors.darkBrown : '#aaa',
             fontFamily: 'Lato-Regular',
+            textAlign: 'left',
             textAlign: 'center'
         },
         cardContainer: {
             backgroundColor: 'transparent',
-            // paddingLeft: 2,
-            // paddingRight: 5,
-            shadowColor: brandColors.lightGreen,
-            borderRadius: 2,
-            borderColor: '#86af49',
-            borderBottomWidth: 0,
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.8,
-            shadowRadius: 4,
+            borderWidth: 2,
+            borderRadius: RFValue(15),
+            borderTopColor: brandColors.linearGradientSettings.colors[0],
         }
     }
 }

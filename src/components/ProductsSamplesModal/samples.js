@@ -5,6 +5,7 @@ import { ImageBackgroundWrapper } from '..';
 import { brandColors, RandomInteger, RFValue } from '../../constants';
 import { useSelector } from 'react-redux';
 import Counter from 'react-native-counters'
+import LinearGradient from 'react-native-linear-gradient';
 
 const SamplesModal = ({
     isVisible = false,
@@ -54,14 +55,14 @@ const SamplesModal = ({
     return (
         <Overlay
             overlayBackgroundColor="#ddd"
-            borderRadius={15}
+            borderRadius={20}
             width="75%"
             height="50%"
             onBackdropPress={_closeAndUnselect}
             isVisible={isVisible}
             children={
                 <ImageBackgroundWrapper>
-                    <View style={{width:'100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-around'}}>
+                    <View style={{ width:'100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-around'}}>
                         <View style={styles.flatList}>
                             <Text style={styles.listTitle}>Select Sample</Text>
                             <FlatList
@@ -82,13 +83,21 @@ const SamplesModal = ({
                                 </View> */}
                                 <View style={styles.buttonContainer}>
                                     <Button
+                                        ViewComponent={LinearGradient}
+                                        linearGradientProps={brandColors.linearGradientSettings}
                                         buttonStyle={styles.button}
                                         onPress={_closeAndUnselect}
                                         title="Unselect"
                                     />
                                 </View>
                                 <View style={styles.buttonContainer}>
-                                    <Button buttonStyle={styles.button} onPress={_close} title="Done" />
+                                    <Button
+                                        ViewComponent={LinearGradient}
+                                        linearGradientProps={brandColors.linearGradientSettings}
+                                        buttonStyle={styles.button}
+                                        onPress={_close}
+                                        title="Done"
+                                    />
                                 </View>
                             </View>
                         }
@@ -104,6 +113,7 @@ const SamplesModal = ({
 const styles = {
     button: {
         marginVertical: 5,
+        borderRadius: 33,
         width: '100%',
         backgroundColor: brandColors.lightGreen,
         position: 'relative'

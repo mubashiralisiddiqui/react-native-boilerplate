@@ -6,11 +6,12 @@ import React from 'react'
 import { Icon, Button } from 'react-native-elements';
 import moment from 'moment';
 import axios from 'axios';
-import { Dimensions, View } from 'react-native'
+import { Dimensions, View, Alert, Linking } from 'react-native'
 import { loginSuccess } from '../actions/auth'
-import { services } from '../services'
 import AsyncStorage from '@react-native-community/async-storage';
 import RNFetchBlob from 'rn-fetch-blob';
+import VersionCheck from 'react-native-version-check';
+import LinearGradient from 'react-native-linear-gradient';
 
 /* 
 * Theme colors as designed in the logo composition. All the colors used in the application are derived from here.
@@ -21,6 +22,11 @@ export const brandColors = {
     green: '#11B14C',
     lightGreen: '#92C83E',
     overlayColor: 'rgba(81,72,53,.7)',
+    linearGradientSettings: {
+        colors: ['#92C83E', '#12c053'],
+        locations: [0.1,0.99],
+        useAngle: true, angle: 0.25, angleCenter: { x: 0.5, y: 0.5}
+    }
 }
 
 export const ceil = value => Math.ceil(value);
@@ -148,10 +154,10 @@ export const navigationOption = (navigation, title) => {
             fontSize: RFValue(15),
             textAlign: 'center',
             flex: 1,
-            marginRight: RFValue(50),
+            marginRight: RFValue(70),
             fontWeight: 'normal'
         },
-        headerRight: <View style={{marginHorizontal:RFValue(100)}}></View>,
+        headerRight: <View style={{marginHorizontal:RFValue(150)}}></View>,
         headerLeft: <Button
             type='clear'
             onPress={navigation.openDrawer}
@@ -471,3 +477,26 @@ export const jsCodeForWebViews = ({LoginId, Password}) => `
     document.getElementById('txtPassword').value = '${Password}';
     document.getElementById('btnLogin').click();
 `
+
+export const showAppUpdateAlert = (version) => {
+    const installedVersion = VersionCheck.getCurrentVersion();
+    if(version > installedVersion) {
+        Alert.alert(
+            'Application update Required',
+            'You are running the older version of the application, please update the app to make sure the app performs smoother.',
+            [
+            {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+            },
+            {
+                text: 'Update',
+                onPress: () => {
+                    Linking.openURL("market://details?id=com.hudsonpharma");
+                }
+            },
+            ],
+        );
+    }
+};

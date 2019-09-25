@@ -1,48 +1,28 @@
 import React, { useState } from 'react';
 import { View } from 'react-native'
-import { Text, CheckBox} from 'react-native-elements';
+import { Text } from 'react-native-elements';
 import { brandColors, RFValue } from '../../constants'
+import { Checkbox } from '..'
 
 const CallReason = ({
-    onCallReasonChange
+    onCallReasonChange,
+    selectedValue
 }) => {
-    const [ closed, setClosed ] = useState(false)
-    const [ noReason, setNoReason ] = useState(true)
-
-    const onChange = (type) => {
-        if(type === 'N\\A') {
-            onCallReasonChange(type)
-            setNoReason(true);
-            setClosed(false)
-            return;
-        }
-        onCallReasonChange(type);
-        setClosed(true);
-        setNoReason(false);
-    }
     return (
         <View style={{width: '100%', flex: 1, flexDirection: 'row'}}>
             <Text style={{fontSize: RFValue(14), color: brandColors.darkBrown, fontWeight: 'bold', paddingLeft: 10}}>Reason</Text>
             <View style={{width: '50%'}}>
-                <CheckBox
-                    containerStyle={{ backgroundColor: 'transparent'}}
-                    textStyle={{color: brandColors.darkBrown, fontFamily: 'Lato-BoldItalic', fontSize: RFValue(18)}}
-                    checkedColor={brandColors.lightGreen}
-                    title='Clinic Closed'
-                    checked={closed}
-                    size={RFValue(22)}
-                    onPress={() => onChange('Clinic Closed')}
+                <Checkbox
+                    title="Clinic Closed"
+                    checked={selectedValue === 'Clinic Closed'}
+                    onCheckedCallback={() => onCallReasonChange('CallReason', 'Clinic Closed')}
                 />
             </View>
             <View style={{width: '50%'}}>
-                <CheckBox
-                    containerStyle={{ backgroundColor: 'transparent'}}
-                    textStyle={{color: brandColors.darkBrown, fontFamily: 'Lato-BoldItalic', fontSize: RFValue(18)}}
-                    checkedColor={brandColors.lightGreen}
-                    title='N/A'
-                    checked={noReason}
-                    size={RFValue(18)}
-                    onPress={() => onChange('N\\A')}
+                <Checkbox
+                    title="N/A"
+                    checked={selectedValue === 'N/A'}
+                    onCheckedCallback={() => onCallReasonChange('CallReason', 'N/A')}
                 />
             </View>
         </View>

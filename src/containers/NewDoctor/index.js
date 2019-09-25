@@ -15,6 +15,7 @@ import { getUser } from '../../reducers/authReducer';
 import { NetworkContext } from '../../components/NetworkProvider'
 import { createDoctorRequest } from '../../services/doctor';
 import { newDoctor } from '../../defaults'
+import LinearGradient from 'react-native-linear-gradient';
 
 /**
  * @class NewDoctor
@@ -157,7 +158,7 @@ class NewDoctor extends Component {
                 },
                 button: {
                     backgroundColor: brandColors.lightGreen,
-                    borderWidth: 2,
+                    // borderWidth: 2,
                     borderRadius: 33,
                     borderColor: brandColors.lightGreen,
                     width: '100%'
@@ -222,6 +223,8 @@ class NewDoctor extends Component {
                             />
                             <View style={{width: '100%', display: 'flex', flex:1, justifyContent:'flex-end' }}>
                                 <Button
+                                    ViewComponent={LinearGradient}
+                                    linearGradientProps={brandColors.linearGradientSettings}
                                     loading={this.props.loading}
                                     disabled={this.props.loading}
                                     onPress={this.onSubmit}

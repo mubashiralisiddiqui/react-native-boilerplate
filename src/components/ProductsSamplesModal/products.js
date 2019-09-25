@@ -4,6 +4,7 @@ import { Button, Text, Overlay, ListItem, Badge } from 'react-native-elements';
 import { ImageBackgroundWrapper } from '..';
 import { brandColors, RandomInteger, RFValue } from '../../constants';
 import { useSelector } from 'react-redux';
+import LinearGradient from 'react-native-linear-gradient';
 // import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 const ProductsModal = ({
@@ -72,6 +73,8 @@ const ProductsModal = ({
                                 selectedProductId > 0 &&
                                 <View style={styles.buttonContainer}>
                                     <Button
+                                        ViewComponent={LinearGradient}
+                                        linearGradientProps={brandColors.linearGradientSettings}
                                         buttonStyle={styles.button}
                                         onPress={_closeAndUnselect}
                                         title="Unselect"
@@ -91,6 +94,7 @@ const ProductsModal = ({
 const styles = {
     button: {
         marginVertical: 5,
+        borderRadius: 33,
         width: '100%',
         backgroundColor: brandColors.lightGreen,
         position: 'relative'

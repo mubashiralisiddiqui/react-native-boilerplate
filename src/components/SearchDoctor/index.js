@@ -5,23 +5,22 @@ import { RandomInteger, styles, brandColors, RFValue } from '../../constants';
 import ImageBackgroundWrapper from '../ImageBackground';
 import { useSelector } from 'react-redux';
 import { getDoctors, getUnplannedCallDoctors, getCallDoctors } from '../../reducers/doctorReducer';
+import { useBoolean } from '../../hooks';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const SearchDoctor = (props) => {
     const allDoctors = useSelector(getDoctors);
     const callDoctors = [...useSelector(getUnplannedCallDoctors), ...useSelector(getCallDoctors)]
     
-    const [showDoctors, setShowDoctors] = useState(false)
+    // const [showDoctors, setShowDoctors] = useState(false)
+    const [areDoctorsVisible, showDoctors, hideDoctors] = useBoolean(false)
     const [query, setQuery] = useState('')
     const [doctors, setDoctors] = useState(allDoctors)
-    const onFocus = () => {
-        Keyboard.dismiss();
-        NativeModules.KeyboardFunctionalities.hideKeyboard()
-        setShowDoctors(true);
-    }
+
     useEffect(() => {
         setQuery('');
         setDoctors(allDoctors)
-    }, [showDoctors])   
+    }, [areDoctorsVisible])   
 
     useEffect(() => {
         if(query !== '') {
@@ -37,13 +36,13 @@ const SearchDoctor = (props) => {
                 disabled={!props.location && _.includes(callDoctors, item.Id)}
                 rightElement={ !props.location && _.includes(callDoctors, item.Id) && <Badge textStyle={{fontSize: RFValue(11), fontFamily: 'Lato-Regular' }} status="success" value="Already Planned / Executed" /> }
                 Component={TouchableWithoutFeedback}
-                style={{ height: 45, marginVertical: 5, backgroundColor: 'transparent' }}
+                style={{ height: RFValue(40), marginVertical: 5, backgroundColor: 'transparent' }}
                 containerStyle={{ backgroundColor: 'transparent' }}
                 title={`${item.Value} - ${ item.DoctorBrick }`}
                 bottomDivider
                 onPress={ () => {
                         props.setDoctor(item)
-                        setShowDoctors(false)
+                        hideDoctors()
                         setDoctors(allDoctors);
                     }
                 }
@@ -53,22 +52,24 @@ const SearchDoctor = (props) => {
 
     return (
         <View>
-            <Input
-                onFocus={onFocus}
-                inputStyle={styles.inputStyle}
-                labelStyle={styles.labelStyle}
-                label="Select Doctor"
-                placeholder="Select Doctor"
-                value={props.name || ''}
-                errorMessage={props.errors && props.errors.DoctorCode || ''}
-            />
+            <TouchableOpacity onPressIn={showDoctors}>
+                <Input
+                    editable={false}
+                    inputStyle={styles.inputStyle}
+                    labelStyle={styles.labelStyle}
+                    label="Select Doctor"
+                    placeholder="Select Doctor"
+                    value={props.name || ''}
+                    errorMessage={props.errors && props.errors.DoctorCode || ''}
+                />
+            </TouchableOpacity>
               <Overlay
                 width={'75%'}
                 height={'75%'}
                 overlayBackgroundColor={'#ddd'}
-                onBackdropPress={() => setShowDoctors(false)}
+                onBackdropPress={hideDoctors}
                 animationType={'fade'}
-                isVisible={showDoctors}
+                isVisible={areDoctorsVisible}
                 borderRadius={15}
                 children={
                     <ImageBackgroundWrapper>

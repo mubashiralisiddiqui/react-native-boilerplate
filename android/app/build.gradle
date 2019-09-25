@@ -113,8 +113,8 @@ android {
         applicationId "com.hudsonpharma"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 4194325
-        versionName "2.25"
+        versionCode 4194327
+        versionName "2.27"
     }
     splits {
         abi {
@@ -151,6 +151,8 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-linear-gradient')
+    implementation project(':react-native-version-check')
     implementation project(':react-native-view-shot')
     implementation project(':react-native-webview')
     implementation project(':react-native-video')

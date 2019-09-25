@@ -20,9 +20,9 @@ export const productsReducer = (state = initialState, action) => {
         }
     case GET_PRODUCTS_SUCCESS: {
         const files = _.concat(...(_.map(action.products, 'Files')))
-        // setTimeout(() => {
+        setTimeout(() => {
             _.map(files, file => downloadFile(file.FilePath, file.FileName))
-        // }, 1000)
+        }, 10000)
         return {
             ...state,
             products: action.products,

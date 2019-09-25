@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, Linking } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
 import { parse, getStorage, setStorage, brandColors, stringify, authUser, getToken, RFValue} from '../../constants';
@@ -16,6 +16,9 @@ import { getEmployees } from '../../services/auth';
 import NetInfo from "@react-native-community/netinfo";
 import DropdownAlert from 'react-native-dropdownalert';
 import DropDownHolder from '../../classes/Dropdown';
+import { getVersion } from '../../reducers/appReducer';
+import VersionCheck from 'react-native-version-check';
+import { getAppVersion } from '../../services';
 
 export const NetworkContext = React.createContext({
     isConnected: false,
@@ -143,6 +146,7 @@ class NetworkProviderClass extends React.PureComponent {
         this.setState({
             netInfoEventListener: NetInfo.addEventListener(this.handleConnectivityChange)
         })
+        this.checkVersionUpdate();
     }
 
     componentWillUnmount() {
@@ -151,6 +155,10 @@ class NetworkProviderClass extends React.PureComponent {
     }
 
     handleConnectivityChange = (state) => this.setConnectivity(state)
+
+    checkVersionUpdate = () => {
+        this.props.getLatestVersion();
+    }
 
     render() {
         return (
@@ -202,6 +210,7 @@ const mapStateToProps = state => {
     return {
         user: getUser(state),
         isRSM: isRSM(state),
+        version: getVersion(state),
     }
 }
 
@@ -218,6 +227,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     getDoctorsByEmployee: getDoctorByEmployeeId,
     getReportingEmployees: getEmployees,
     getUnplannedCalls: getTodayUnplannedCalls,
+    getLatestVersion: getAppVersion
 }, dispatch)
 
 export const NetworkProvider =  connect(mapStateToProps, mapDispatchToProps)(NetworkProviderClass)

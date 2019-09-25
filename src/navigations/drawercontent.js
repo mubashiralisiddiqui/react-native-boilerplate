@@ -2,13 +2,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
     View,
-    Text,
     StyleSheet,
     TouchableOpacity,
     Alert,
     ScrollView,
 } from 'react-native';
-import { ImageHeader } from '../components';
+import { ImageHeader, DrawerElement } from '../components';
 import { navigationOptions, brandColors, RFValue } from '../constants'
 import { FontAwesome5Icon, MaterialCommunityIcon, AntDesignIcon, FontAwesomeIcon } from '../components/Icons'
 import AsyncStorage from '@react-native-community/async-storage';
@@ -16,9 +15,6 @@ import { getUser } from '../reducers/authReducer';
 import { connect } from 'react-redux';
 
 class NavigationMenu extends Component {
-    state = {
-        activeTab: 'CallPlans',
-    };
 
     logout = () => {
         Alert.alert(
@@ -70,7 +66,6 @@ class NavigationMenu extends Component {
     }
 
     navigateIt = (to) => requestAnimationFrame( () => {
-        this.setState({ activeTab: to}, () => console.log(this.state, this.props.navigation.state))
         switch(to) {
             case 'Login': {
                 this.logout()
@@ -96,7 +91,6 @@ class NavigationMenu extends Component {
 
 
     render() {
-        const CustomIcon = this.getIcon;
         return (
             <View style={styles.container}>
                 <ScrollView style={{ marginTop: 0, width: '100%' }}>
@@ -111,16 +105,15 @@ class NavigationMenu extends Component {
                             const focused = activeRoute.routeName && activeRoute.routeName == option.navigateTo
                             return option.visibleTo.includes(this.props.user.RoleId)
                             && (
-                            <TouchableOpacity key={index}
-                                onPress={() => this.navigateIt(option.navigateTo)}
-                                style={ focused ? [styles.section, styles.activeSection] : styles.section}
-                            >
-                                <CustomIcon isActive={focused}  icon={ option.icon || '' } type={option.iconType || ''} />
-                                {/* <Icon key={RandomInteger()} name='schedule' color={brandColors.darkBrown} /> */}
-                                <View key={index} style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 5 }}>
-                                    <Text key={index} style={styles.sectionHeadingStyle}>{option.label}</Text>
-                                </View>
-                            </TouchableOpacity>)
+                                <DrawerElement
+                                    focused={focused}
+                                    styles={styles}
+                                    navigate={this.navigateIt}
+                                    index={index}
+                                    option={option}
+                                    CustomIcon={this.getIcon}
+                                />
+                            )
                         })
                     }
                 </ScrollView>

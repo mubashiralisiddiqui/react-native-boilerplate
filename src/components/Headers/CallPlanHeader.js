@@ -8,7 +8,7 @@ const ImageHeader = () => {
     return (
             <View style={styles.container}>
                 <Image
-                    style={{ width: RFValue(250), resizeMode: 'contain', height: RFValue(125) }}
+                    style={{ width: RFValue(240), resizeMode: 'contain', height: RFValue(120) }}
                     source={ require('../../assets/images/HPLogo.png') }
                 />
                 <UserInfo />

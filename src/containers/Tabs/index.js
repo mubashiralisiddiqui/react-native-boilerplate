@@ -4,6 +4,7 @@ import { TabView, TabBar} from 'react-native-tab-view';
 import { KeyCallInfo, EDetailing } from '../../components'
 import KeyCallInfoUnplanned from '../../components/KeyCallInfo/unplanned'
 import { brandColors, RFValue } from '../../constants';
+import LinearGradient from 'react-native-linear-gradient';
 
 export default class Tab extends Component {
   
@@ -16,8 +17,8 @@ export default class Tab extends Component {
     switch (route.key) {
       case 'callingformation':
         return this.props.existingCall
-        ? <KeyCallInfo handleDatePicked={this.props.handleDatePicked && this.props.handleDatePicked} showTimePicker={showTimePicker} existingCall={this.props.existingCall} info={info} onCallReasonChange={this.props.onCallReasonChange} />
-        : <KeyCallInfoUnplanned doctors={this.props.doctors} errors={this.props.errors} setDoctor={this.props.setDoctor} setMio={this.props.setMio} handleDatePicked={this.props.handleDatePicked && this.props.handleDatePicked} showTimePicker={showTimePicker} existingCall={this.props.existingCall} info={info} onCallReasonChange={this.props.onCallReasonChange} />
+        ? <KeyCallInfo selectedReason={this.props.selectedReason} handleDatePicked={this.props.handleDatePicked && this.props.handleDatePicked} showTimePicker={showTimePicker} existingCall={this.props.existingCall} info={info} onCallReasonChange={this.props.onCallReasonChange} />
+        : <KeyCallInfoUnplanned selectedReason={this.props.selectedReason} doctors={this.props.doctors} errors={this.props.errors} setDoctor={this.props.setDoctor} setMio={this.props.setMio} handleDatePicked={this.props.handleDatePicked && this.props.handleDatePicked} showTimePicker={showTimePicker} existingCall={this.props.existingCall} info={info} onCallReasonChange={this.props.onCallReasonChange} />
       case 'edetailing': 
         return <EDetailing onCloseFile={this.props.updateDetailingSeconds} files={this.props.files}/>
       default:
@@ -44,15 +45,22 @@ export default class Tab extends Component {
         swipeEnabled={true}
         removeClippedSubviews={true}
         sceneContainerStyle={{ marginVertical: 10 }}
-        renderTabBar={props =>
-          <TabBar
-            onTabPress={({ route }) => this.setState({ index: _.findIndex(this.state.routes, ['key', route.key])})}
-            onTabLongPress={({ route }) => this.setState({ index: _.findIndex(this.state.routes, ['key', route.key])})}
-            {...props}
-            indicatorStyle={{ backgroundColor: brandColors.darkBrown }}
-            style={{ backgroundColor: brandColors.lightGreen }}
-            labelStyle={{ fontFamily: 'Lato-SemiboldItalic', fontSize: RFValue(18) }}
-          />
+        renderTabBar={props =>(
+          <LinearGradient
+            colors={brandColors.linearGradientSettings.colors}
+            locations={brandColors.linearGradientSettings.locations}
+            useAngle={brandColors.linearGradientSettings.useAngle}
+          >
+            <TabBar
+              onTabPress={({ route }) => this.setState({ index: _.findIndex(this.state.routes, ['key', route.key])})}
+              onTabLongPress={({ route }) => this.setState({ index: _.findIndex(this.state.routes, ['key', route.key])})}
+              {...props}
+              indicatorStyle={{ backgroundColor: brandColors.darkBrown }}
+              style={{ backgroundColor: 'transparent' }}
+              labelStyle={{ fontFamily: 'Lato-SemiboldItalic', fontSize: RFValue(18) }}
+            />
+          </LinearGradient>
+          )
         }
       />
     );

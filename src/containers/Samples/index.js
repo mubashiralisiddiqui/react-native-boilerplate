@@ -137,7 +137,7 @@ const getStyles = () => {
         },
         text: {
             fontSize: RFValue(16),
-            fontFamily: 'Lato-Regular',
+            fontFamily: 'Lato-MediumItalic',
             color: brandColors.darkBrown,
         },
         cardContainer: {
@@ -156,8 +156,9 @@ const getStyles = () => {
         },
         listCardContainer: {
             backgroundColor: 'transparent',
-            // shadowColor: brandColors.lightGreen,
-            borderRadius: 1,
+            borderColor: brandColors.lightGreen,
+            shadowColor: brandColors.darkBrown,
+            borderRadius: 10,
             width: '60%',
             flex: 1,
             alignItems: 'center',
