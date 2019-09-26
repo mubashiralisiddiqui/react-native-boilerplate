@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
     inputContainer: {
         // flexDirection: 'row',
         justifyContent: 'center',
-        height: 50,
+        height: 55,
         alignItems: 'center',
         borderRadius: 33,
         borderWidth: 1,
@@ -27,7 +27,7 @@ export const styles = StyleSheet.create({
         paddingRight: 20,
         paddingBottom: 10,
         paddingLeft: 20,
-        color: 'white',
+        color: brandColors.darkBrown,
         borderBottomWidth: 0
     },
     errorStyle: {

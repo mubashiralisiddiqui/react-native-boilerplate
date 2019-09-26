@@ -1,11 +1,9 @@
-import React, { useState, useMemo } from 'react';
-import { ImageBackground, View, ScrollView, Dimensions, Image } from 'react-native';
+import React, { useState } from 'react';
+import { View, ScrollView, Dimensions, Image } from 'react-native';
 import { useInterval } from '../../hooks/useInterval'
-import { useSelector } from 'react-redux';
-import { backgroundImages } from '../../reducers/authReducer';
 import { baseMediaURL, RandomInteger } from '../../constants';
 
-const { width, height } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 
 const MultipleImageBackgroundWrapper = ({
     images = [],
@@ -32,14 +30,16 @@ const MultipleImageBackgroundWrapper = ({
 
     return (    
         <View onLayout={onLayout}>
-            <ScrollView 
+            <ScrollView
+                scrollEnabled={false}
+                onLayout={onLayout}
                 ref={(scrollView) => { _scrollView = scrollView; }}
                 horizontal={true} pagingEnabled={true} 
             >
                 {
                     images.length > 0
                     ? images.map(image => <Image key={`${RandomInteger()}`} source={{ uri: `${baseMediaURL}${image.FileName}`}} resizeMode={'cover'} style={{height, width}} />)
-                    : <Image source={require('../../assets/images/background.png')} resizeMode={'cover'} style={{height, width}}/>
+                    : <Image onLayout={onLayout} source={require('../../assets/images/background.png')} resizeMode={'cover'} style={{height, width}}/>
                 }
             </ScrollView>
             <View style={{width: '100%', display: 'flex', position: 'absolute', top: '25%', alignContent: 'center', alignItems: 'center'}}>

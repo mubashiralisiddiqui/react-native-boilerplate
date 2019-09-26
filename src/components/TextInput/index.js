@@ -24,6 +24,7 @@ const InputText = (
                 style={styles.inputContainer}
             >
                 <Input
+                    labelStyle={{ fontFamily: 'Lato-MediumItalic', color: brandColors.darkBrown }}
                     style={styles.input}
                     placeholder={placeholder}
                     secureTextEntry={secureTextEntry}

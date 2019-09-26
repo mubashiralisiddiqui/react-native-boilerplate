@@ -43,7 +43,7 @@ const Button = (props) => {
                 onPress={onPress}
                 style={getButtonStylings()}
             >
-                <Text style={{ textAlign: 'left', color: 'white', fontSize: RFValue(18), fontFamily: 'Lato-MediumItalic' }}>
+                <Text style={{ textAlign: 'left', color: 'white', fontSize: RFValue(18), fontFamily: 'Lato-BoldItalic' }}>
                         {Title}
                 </Text>
                 {loading && <ActivityIndicator color="white" /> }

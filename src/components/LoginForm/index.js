@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '../Icons';
 import { TextInput, Button } from '../../components';
 import LoginHoc from '../../containers/LoginHoc';
 import { brandColors, RFValue } from '../../constants';
-import { View } from 'react-native'
+import { View, KeyboardAvoidingView } from 'react-native'
 
 class LoginForm extends Component {
     render() {
@@ -22,8 +22,8 @@ class LoginForm extends Component {
             errors,
         } = this.props;
         return (
-            <View style={{ width: '150%'}}>
-                {/* <Text style={styles.heading}>Login</Text> */}
+            <KeyboardAvoidingView style={{ width: '150%'}}>
+
                 <TextInput
                     placeholder="Login ID"
                     keyboardType="email-address"
@@ -64,7 +64,10 @@ class LoginForm extends Component {
                     onPress={(e) => onSubmit(e)}
                     rounded={true}
                 />
-            </View>
+            </KeyboardAvoidingView>
+            // <View style={{ width: '150%'}}>
+                // {/* <Text style={styles.heading}>Login</Text> */}
+            // </View>
         )
     }
 

@@ -100,6 +100,7 @@ const getStyles = () => {
             width: '100%',
             height: 15,
             paddingLeft: 0,
+            backgroundColor: 'transparent'
         },
         itemHead: {
             height: 15,
@@ -144,25 +145,30 @@ const getStyles = () => {
             backgroundColor: brandColors.darkBrown,
             shadowColor: brandColors.lightGreen,
             borderRadius: 10,
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.8,
-            shadowRadius: 4,
-            width: '60%',
+            // shadowOffset: { width: 0, height: 4 },
+            // shadowOpacity: 0.8,
+            // shadowRadius: 4,
+            width: '70%',
             justifyContent: 'center',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            flexDirection: 'column'
+            flexDirection: 'column',
+            elevation: 0,
+            borderColor: brandColors.lightGreen,
+            borderWidth: 1
         },
         listCardContainer: {
             backgroundColor: 'transparent',
             borderColor: brandColors.lightGreen,
             shadowColor: brandColors.darkBrown,
             borderRadius: 10,
-            width: '60%',
+            width: '70%',
             flex: 1,
             alignItems: 'center',
             justifyContent: 'center',
+            elevation: 0,
+            borderColor: brandColors.lightGreen,
         }
     }
 }

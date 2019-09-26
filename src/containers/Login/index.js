@@ -85,10 +85,10 @@ class Login extends Component {
             <MultipleImageBackgroundWrapper images={this.props.images}>
                 <ScrollView keyboardShouldPersistTaps={'always'} contentContainerStyle={styles.InputContainer}>
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                        <Card containerStyle={{ borderRadius: 15, width: '75%', justifyContent: 'center', alignItems: 'center', opacity: 0.8 }}>
+                        <Card containerStyle={{ borderRadius: 15, width: '90%', justifyContent: 'center', alignItems: 'center', opacity: 0.9 }}>
                             <ImageHeader
                             />
-                            <Text style={{opacity: 1, textAlign: 'center', fontFamily: 'Lato-HeavyItalic', fontSize: RFValue(30) }}>Login</Text>
+                            <Text style={{color: brandColors.darkBrown , opacity: 1, textAlign: 'center', fontFamily: 'Lato-HeavyItalic', fontSize: RFValue(30) }}>Login</Text>
                             <LoginForm
                                 onKeyUp={this.onKeyEvent}
                                 email={this.state.LoginId}

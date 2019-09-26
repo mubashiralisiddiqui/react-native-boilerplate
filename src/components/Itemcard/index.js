@@ -74,11 +74,13 @@ export default ItemCard;
 const getStyles = (status, width) => {
     return {
         viewContainer: {
-            display: 'flex',
+            // display: 'flex',
+            elevation: 1,
             justifyContent: 'flex-start',
             flexDirection: 'row',
             height: RFValue(35),
             paddingLeft: 0,
+            backgroundColor: 'transparent'
         },
         itemFirst: {
             height: RFValue(35),
@@ -114,9 +116,12 @@ const getStyles = (status, width) => {
         },
         cardContainer: {
             backgroundColor: 'transparent',
-            borderWidth: 2,
+            borderWidth: 0,
+            borderWidth: 1,
+            borderColor: brandColors.lightGreen,
             borderRadius: RFValue(15),
-            borderTopColor: brandColors.linearGradientSettings.colors[0],
+            elevation: 0,
+            // borderTopColor: brandColors.linearGradientSettings.colors[0],
         }
     }
 }
