@@ -25,6 +25,9 @@
     SUBMIT_CHANGE_DOCTOR_LOCATION_REQUEST_SUCCESS,
     GET_CALLS_DOCTORS,
     GET_UNPLANNED_CALLS_DOCTORS,
+    UPDATE_DOCTOR_REQUEST,
+    UPDATE_DOCTOR_REQUEST_SUCCESS,
+    UPDATE_DOCTOR_REQUEST_FAILURE,
  } from './types'
 
 /**
@@ -306,5 +309,22 @@ export function getUnplannedCallsDoctors (calls) {
     return {
         type: GET_UNPLANNED_CALLS_DOCTORS,
         doctors,
+    }
+}
+
+export function updateDoctorInfo (payload) {
+    return {
+        type: UPDATE_DOCTOR_REQUEST,
+        payload,
+    }
+}
+export function updateDoctorInfoSuccess () {
+    return {
+        type: UPDATE_DOCTOR_REQUEST_SUCCESS,
+    }
+}
+export function updateDoctorInfoFailure () {
+    return {
+        type: UPDATE_DOCTOR_REQUEST_FAILURE,
     }
 }

@@ -17,19 +17,6 @@ class Samples extends PureComponent {
         width: Dimensions.get('screen').width,
     }
 
-    onPressHead = (index) => {
-        this.setState({
-            selected: index == this.state.selected ? '' : Number(index)
-        })
-    }
-
-    componentDidMount() {
-        this.context.hideRefresh();
-    }
-    componentWillUnMount() {
-        this.context.showRefresh();
-    }
-
     onLayout = (e) => {
         this.setState({
             width: Dimensions.get('screen').width
@@ -58,7 +45,10 @@ class Samples extends PureComponent {
                             </View>
                         </Card>
                         {
-                            this.props.samples.map(sample => <_render key={RandomInteger()} item={sample} />)
+                            this.props.samples.map(sample => (
+                                    <_render key={RandomInteger()} item={sample} />
+                                )
+                            )
                         }
                     </ScrollView>
             </ImageBackgroundWrapper>

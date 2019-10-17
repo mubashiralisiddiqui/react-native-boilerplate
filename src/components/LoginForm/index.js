@@ -21,6 +21,8 @@ class LoginForm extends Component {
             passwordIconColor,
             errors,
         } = this.props;
+    console.log(this.props)
+
         return (
             <KeyboardAvoidingView style={{ width: '150%'}}>
 

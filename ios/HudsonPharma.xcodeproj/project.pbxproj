@@ -89,6 +89,9 @@
 		55D24C5F36AE4BBBB86BEC23 /* libRNCWebView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D81AAD8150C4445CA47A0E2C /* libRNCWebView.a */; };
 		31F90FD990E34C568DC8871C /* libRNViewShot.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 342AD4AE06124716B64A80BB /* libRNViewShot.a */; };
 		F0F47F2411E040F6BF1E315F /* libRNVersionCheck.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FBC6DEA574AC4DBF911C9893 /* libRNVersionCheck.a */; };
+		946DC00E2E7B476DA2A64FFA /* libRNShimmer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C7FC97465831423FA94579FB /* libRNShimmer.a */; };
+		5DED9E1E1F6F4C2ABE40259A /* libRNSVG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A360A2501374D7B9CCE237F /* libRNSVG.a */; };
+		6A9BC103F1E44FC8ACEAC904 /* libRNSVG-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6ADDBF2DA3CC4BE4A1214A0D /* libRNSVG-tvOS.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -488,6 +491,11 @@
 		342AD4AE06124716B64A80BB /* libRNViewShot.a */ = {isa = PBXFileReference; name = "libRNViewShot.a"; path = "libRNViewShot.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		04731675C1CC4667A61E7695 /* RNVersionCheck.xcodeproj */ = {isa = PBXFileReference; name = "RNVersionCheck.xcodeproj"; path = "../node_modules/react-native-version-check/ios/RNVersionCheck.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		FBC6DEA574AC4DBF911C9893 /* libRNVersionCheck.a */ = {isa = PBXFileReference; name = "libRNVersionCheck.a"; path = "libRNVersionCheck.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		900687B843184A25897E4BA8 /* RNShimmer.xcodeproj */ = {isa = PBXFileReference; name = "RNShimmer.xcodeproj"; path = "../node_modules/react-native-shimmer/ios/RNShimmer.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		C7FC97465831423FA94579FB /* libRNShimmer.a */ = {isa = PBXFileReference; name = "libRNShimmer.a"; path = "libRNShimmer.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		A6576B777AA641A482B3CF2F /* RNSVG.xcodeproj */ = {isa = PBXFileReference; name = "RNSVG.xcodeproj"; path = "../node_modules/react-native-svg/ios/RNSVG.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		4A360A2501374D7B9CCE237F /* libRNSVG.a */ = {isa = PBXFileReference; name = "libRNSVG.a"; path = "libRNSVG.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		6ADDBF2DA3CC4BE4A1214A0D /* libRNSVG-tvOS.a */ = {isa = PBXFileReference; name = "libRNSVG-tvOS.a"; path = "libRNSVG-tvOS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -529,6 +537,8 @@
 				55D24C5F36AE4BBBB86BEC23 /* libRNCWebView.a in Frameworks */,
 				31F90FD990E34C568DC8871C /* libRNViewShot.a in Frameworks */,
 				F0F47F2411E040F6BF1E315F /* libRNVersionCheck.a in Frameworks */,
+				946DC00E2E7B476DA2A64FFA /* libRNShimmer.a in Frameworks */,
+				5DED9E1E1F6F4C2ABE40259A /* libRNSVG.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -549,6 +559,7 @@
 				4BF6FA4A73D54FEEBC5F341C /* libRNGestureHandler-tvOS.a in Frameworks */,
 				1C3359D80A0C4147B0C2137F /* libRNReanimated-tvOS.a in Frameworks */,
 				2931E460BD1342F58EC6C254 /* libRNCNetInfo-tvOS.a in Frameworks */,
+				6A9BC103F1E44FC8ACEAC904 /* libRNSVG-tvOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -804,6 +815,8 @@
 				EA04BF257983472B88EA8103 /* RNCWebView.xcodeproj */,
 				26948E71AEA14E75A4D83EB9 /* RNViewShot.xcodeproj */,
 				04731675C1CC4667A61E7695 /* RNVersionCheck.xcodeproj */,
+				900687B843184A25897E4BA8 /* RNShimmer.xcodeproj */,
+				A6576B777AA641A482B3CF2F /* RNSVG.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1509,12 +1522,17 @@
 					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
 					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
 					"$(SRCROOT)\..\node_modules\react-native-version-check\ios",
+					"$(SRCROOT)\..\node_modules\react-native-shimmer\ios",
+					"$(SRCROOT)\..\node_modules\react-native-svg\ios/**",
 				);
 				INFOPLIST_FILE = HudsonPharmaTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1550,12 +1568,17 @@
 					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
 					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
 					"$(SRCROOT)\..\node_modules\react-native-version-check\ios",
+					"$(SRCROOT)\..\node_modules\react-native-shimmer\ios",
+					"$(SRCROOT)\..\node_modules\react-native-svg\ios/**",
 				);
 				INFOPLIST_FILE = HudsonPharmaTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1594,6 +1617,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
 					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
 					"$(SRCROOT)\..\node_modules\react-native-version-check\ios",
+					"$(SRCROOT)\..\node_modules\react-native-shimmer\ios",
+					"$(SRCROOT)\..\node_modules\react-native-svg\ios/**",
 				);
 				INFOPLIST_FILE = HudsonPharma/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1631,6 +1656,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
 					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
 					"$(SRCROOT)\..\node_modules\react-native-version-check\ios",
+					"$(SRCROOT)\..\node_modules\react-native-shimmer\ios",
+					"$(SRCROOT)\..\node_modules\react-native-svg\ios/**",
 				);
 				INFOPLIST_FILE = HudsonPharma/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1673,11 +1700,16 @@
 					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
 					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
 					"$(SRCROOT)\..\node_modules\react-native-version-check\ios",
+					"$(SRCROOT)\..\node_modules\react-native-shimmer\ios",
+					"$(SRCROOT)\..\node_modules\react-native-svg\ios/**",
 				);
 				INFOPLIST_FILE = "HudsonPharma-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1722,11 +1754,16 @@
 					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
 					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
 					"$(SRCROOT)\..\node_modules\react-native-version-check\ios",
+					"$(SRCROOT)\..\node_modules\react-native-shimmer\ios",
+					"$(SRCROOT)\..\node_modules\react-native-svg\ios/**",
 				);
 				INFOPLIST_FILE = "HudsonPharma-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1770,11 +1807,16 @@
 					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
 					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
 					"$(SRCROOT)\..\node_modules\react-native-version-check\ios",
+					"$(SRCROOT)\..\node_modules\react-native-shimmer\ios",
+					"$(SRCROOT)\..\node_modules\react-native-svg\ios/**",
 				);
 				INFOPLIST_FILE = "HudsonPharma-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1818,11 +1860,16 @@
 					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
 					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
 					"$(SRCROOT)\..\node_modules\react-native-version-check\ios",
+					"$(SRCROOT)\..\node_modules\react-native-shimmer\ios",
+					"$(SRCROOT)\..\node_modules\react-native-svg\ios/**",
 				);
 				INFOPLIST_FILE = "HudsonPharma-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",

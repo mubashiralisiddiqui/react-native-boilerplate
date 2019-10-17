@@ -59,6 +59,7 @@ const SearchSpecialities = (props) => {
                 />
             </TouchableOpacity>
             <Overlay
+                animationType={'slide'}
                 overlayBackgroundColor="#ddd"
                 borderRadius={15}
                 isVisible={show}

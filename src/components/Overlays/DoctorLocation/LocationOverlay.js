@@ -6,7 +6,8 @@ export default class LocationOverlay extends Component {
     render() {
         const {isVisible, onChange} = this.props;
         return (            
-            <Overlay 
+            <Overlay
+            animationType={'slide'} 
             isVisible={isVisible}
             onBackdropPress={() => onChange(true)}
             hideModalContentWhileAnimating={true}

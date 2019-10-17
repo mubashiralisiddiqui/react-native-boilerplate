@@ -13,7 +13,7 @@ const HistoryCard = ({
                 key={`${data.DeviceDateTime}-${RandomInteger}`}
                 title={<HistoryCardHeader title={data.DeviceDateTime} />}
                 wrapperStyle={{ width: Dimensions.get('screen').width / 2, borderRadius: 0}}
-                containerStyle={{borderRadius: 8, backgroundColor: 'transparent'}}
+                containerStyle={{borderRadius: 8, backgroundColor: 'transparent', elevation: 0}}
             >
                 <View key={`${data.DeviceDateTime}-${RandomInteger}`} style={{width: '100%', flex: 1, flexDirection: 'row'}}>
                     <View key={`${data.DeviceDateTime}-${RandomInteger}`} style={{width: '25%'}}>

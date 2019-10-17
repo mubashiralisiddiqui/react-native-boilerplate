@@ -56,7 +56,7 @@ const ReportingEmployeeField = (props) => {
                 height={'75%'}
                 overlayBackgroundColor={'#ddd'}
                 onBackdropPress={() => setShowEmployees(false)}
-                animationType={'fade'}
+                animationType={'slide'}
                 isVisible={showEmployees}
                 borderRadius={15}
                 children={

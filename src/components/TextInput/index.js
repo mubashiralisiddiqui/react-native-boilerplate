@@ -35,7 +35,7 @@ const InputText = (
                     rightIcon={leftIcon}
                     inputContainerStyle={{ borderBottomWidth: 0, paddingVertical:15 }}
                     autoCapitalize={'none'}
-                    onKeyPress={(e) => onKeyUp(type === 'password' ? 'Password' : 'LoginId', e)}
+                    onChange={(e) => onKeyUp(type === 'password' ? 'Password' : 'LoginId', e)}
                     errorMessage={error}
                     blurOnSubmit={type !== 'password'}
                     focus={focus && focus}

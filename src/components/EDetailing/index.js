@@ -58,7 +58,6 @@ const EDetailing = ({
                 onPress={() => downloads[item.DetailingFileId] ? showSelectedFile(item) : DropDownHolder.show(alertData.media)}
             />)
     }
-    const [paused, setPaused] = useState(false)
 
     return (
         <View>
@@ -85,11 +84,11 @@ const EDetailing = ({
                     animationType="slide"
                     isVisible={showFile}
                     transparent={true}
-                    animationType={'fade'}
+                    // animationType={'fade'}
                     width="95%"
-                    height="95%"
+                    height="80%"
                     borderRadius={15}
-                    children={ type == 'pdf' ? <PDF onClose={onCloseFileModal} file={selectedFile}/> : <Video onClose={onCloseFileModal} file={selectedFile} setPaused={setPaused} paused={paused} /> }
+                    children={ type == 'pdf' ? <PDF onClose={onCloseFileModal} file={selectedFile}/> : <Video onClose={onCloseFileModal} file={selectedFile} /> }
                     onRequestClose={() => console.log('closed')}
                 />
             </ScrollView>

@@ -69,12 +69,9 @@ class DoctorLocation extends Component {
         this.props.getDoctors({
             EmployeeId: this.props.user.EmployeeId
         })
-
-        this.context.hideRefresh()
     }
     async componentWillUnmount() {
         Location.stopLocating();
-        this.context.showRefresh();
     }
 
     onSubmit = () => {
@@ -110,7 +107,7 @@ class DoctorLocation extends Component {
                         <Input errorMessage={this.state.errors.Reason && this.state.errors.Reason } labelStyle={styles.labelStyle} label="Reason" value={this.state.form_data.Reason} onChangeText={(text) => this.setStateVal('Reason', text) } placeholder="Why do you wish to change location?" numberOfLines={2}/>
                         <Button
                             ViewComponent={LinearGradient}
-                            linearGradientProps={brandColors.linearGradientSettings}
+                            linearGradientProps={(this.props.loading || this.props.isFetching) ? brandColors.linearGradientDisabledSettings : brandColors.linearGradientSettings}
                             loading={this.props.loading}
                             disabled={this.props.loading || this.props.isFetching}
                             onPress={this.onSubmit}

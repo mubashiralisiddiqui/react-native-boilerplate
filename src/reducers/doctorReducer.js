@@ -16,6 +16,9 @@ import {
     SUBMIT_CHANGE_DOCTOR_LOCATION_REQUEST_SUCCESS,
     GET_CALLS_DOCTORS,
     GET_UNPLANNED_CALLS_DOCTORS,
+    UPDATE_DOCTOR_REQUEST,
+    UPDATE_DOCTOR_REQUEST_SUCCESS,
+    UPDATE_DOCTOR_REQUEST_FAILURE,
  } from '../actions/types'
 
 const initialState = {
@@ -27,6 +30,8 @@ const initialState = {
     doctors: [], // Doctors by employee
     calls_doctors: [], // Doctors from daily planned calls
     unplanned_calls_doctors: [], // Doctors from daily calls
+    update_doctor_payload: {},
+    update_doctor_loader: false,
 }
 
 export const doctorReducer = (state = initialState, action) => {
@@ -131,6 +136,27 @@ export const doctorReducer = (state = initialState, action) => {
           unplanned_calls_doctors: action.doctors
         }
       }
+      
+      case UPDATE_DOCTOR_REQUEST: {
+        return {
+          ...state,
+          update_doctor_loader: true,
+          update_doctor_payload: action.payload
+        }
+      }
+      case UPDATE_DOCTOR_REQUEST_SUCCESS: {
+        return {
+          ...state,
+          update_doctor_loader: false,
+        }
+      }
+      case UPDATE_DOCTOR_REQUEST_FAILURE: {
+        return {
+          ...state,
+          update_doctor_loader: false,
+        }
+      }
+
       default:
         return state;
     }
@@ -143,3 +169,4 @@ export const getDoctors = state => state.doctor.doctors
 export const getError = state => state.doctor.error
 export const getCallDoctors = state => state.doctor.calls_doctors;
 export const getUnplannedCallDoctors = state => state.doctor.unplanned_calls_doctors;
+export const getUpdateDoctorLoader = state => state.doctor.update_doctor_loader;

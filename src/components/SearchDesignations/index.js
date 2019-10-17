@@ -14,7 +14,6 @@ const SearchDesignations = (props) => {
     const [designations, setDesignations] = useState(allDesignations)
 
     useEffect(() => {
-        console.log(show, 'asd')
         setQuery('');
         setDesignations(allDesignations)
     }, [show])
@@ -59,6 +58,7 @@ const SearchDesignations = (props) => {
                 />
             </TouchableOpacity>
             <Overlay
+                animationType={'slide'}
                 overlayBackgroundColor="#ddd"
                 borderRadius={15}
                 isVisible={show}

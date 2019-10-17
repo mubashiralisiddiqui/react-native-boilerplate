@@ -56,7 +56,7 @@ const ItemCard = ({
                         borderRadius: 40, backgroundColor: brandColors.lightGreen
                     }}
                     ViewComponent={LinearGradient}
-                    linearGradientProps={brandColors.linearGradientSettings}
+                    linearGradientProps={status ? brandColors.linearGradientDisabledSettings : brandColors.linearGradientSettings}
                     title="Execute"
                     containerStyle={{ marginRight: RFValue(5), width: RFValue(80) }}
                     titleStyle={{ fontSize: RFValue(14), fontFamily: 'Lato-BoldItalic' }}

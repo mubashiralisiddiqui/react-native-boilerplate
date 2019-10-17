@@ -5,7 +5,7 @@
 import React, { PureComponent } from 'react';
 import { View, ScrollView } from 'react-native';
 import { CallPlanHeader } from '../../components/Headers';
-import { ImageBackgroundWrapper, ScreenLoader, CallList } from '../../components';
+import { ImageBackgroundWrapper, ScreenLoader, CallList, Refresh } from '../../components';
 import { navigationOption, authUser, getToken } from '../../constants'
 import { getProductsWithSamples } from '../../services/productService'
 import { getTodayCalls, getTodayUnplannedCalls } from '../../services/callServices'
@@ -77,7 +77,6 @@ class CallPlans extends PureComponent {
         this.props.isRSM
         ? this.props.getReportingEmployees(userDataPayload)
         : this.props.getDoctorsByEmployee(userDataPayload)
-        this.context.showRefresh()
     }
 
     /**
@@ -89,7 +88,7 @@ class CallPlans extends PureComponent {
      * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
      */
     shouldShowLoader = () => {
-        return this.props.loading || this.state.isLoading;
+        return this.props.loading;
     }
     /**
      * @name onPress
@@ -118,9 +117,10 @@ class CallPlans extends PureComponent {
     render() {
         return (
             <View style={styles.InputContainer}>
+                <Refresh />
                 <ImageBackgroundWrapper>
                     <CallPlanHeader />
-                    { this.shouldShowLoader() ? <ScreenLoader /> : null }
+                    { this.shouldShowLoader() && <ScreenLoader /> }
                     <CallPlansListHeader />
                     <ScrollView showsVerticalScrollIndicator={false} style={{ width: '100%' }}>
                         <CallList onPress={this.onPress} />
@@ -142,7 +142,6 @@ class CallPlans extends PureComponent {
  */
 const mapStateToProps = state => {
     return {
-        calls: getCalls(state),
         loading: getCallsLoading(state),
         user: getUser(state),   
         isRSM: isRSM(state),

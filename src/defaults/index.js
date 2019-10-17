@@ -25,7 +25,7 @@ export const callExecution = {
         DeviceDateTime: moment().toLocaleString(),
         FeedBack: '',
         JVEmployeeId: 0,
-        CallStartTime: todayDate('YYYY-MM-DD hh:mm:ss'),
+        CallStartTime: moment().format('YYYY-MM-DD hh:mm:ss'),
         CallEndTime: moment().add(15, 'minute').format('YYYY-MM-DD hh:mm:ss'),
         Remarks: 'Neutral',
         CallReason: 'N/A',
@@ -63,6 +63,7 @@ export const callExecution = {
     EmployeeId: 1,
     Token: getToken,
     DailyCallId: 0,
+    isUpdateRequired: false,
 }
 
 export const newDoctor = {

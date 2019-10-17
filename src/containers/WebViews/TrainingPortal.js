@@ -18,9 +18,6 @@ class Web extends Component {
     getUrl = () => {
         return 'http://portal.hudsonpharma.com/Login.aspx?ReturnURL=/Pages/TrainingPortal/TrainingPortal.aspx'
     }
-    componentDidMount() {
-        this.context.hideRefresh();
-    }
     render() {
         let string = jsCodeForWebViews(this.props.user);
         return (

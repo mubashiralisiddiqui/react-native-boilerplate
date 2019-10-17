@@ -68,7 +68,7 @@ const SearchDoctor = (props) => {
                 height={'75%'}
                 overlayBackgroundColor={'#ddd'}
                 onBackdropPress={hideDoctors}
-                animationType={'fade'}
+                animationType={'slide'}
                 isVisible={areDoctorsVisible}
                 borderRadius={15}
                 children={

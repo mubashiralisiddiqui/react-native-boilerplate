@@ -6,12 +6,13 @@ import React from 'react'
 import { Icon, Button } from 'react-native-elements';
 import moment from 'moment';
 import axios from 'axios';
-import { Dimensions, View, Alert, Linking } from 'react-native'
+import { Dimensions, View, Alert, Linking, CameraRoll } from 'react-native'
 import { loginSuccess } from '../actions/auth'
 import AsyncStorage from '@react-native-community/async-storage';
 import RNFetchBlob from 'rn-fetch-blob';
 import VersionCheck from 'react-native-version-check';
-import LinearGradient from 'react-native-linear-gradient';
+import DropDownHolder from '../classes/Dropdown';
+import { captureScreen } from 'react-native-view-shot';
 
 /* 
 * Theme colors as designed in the logo composition. All the colors used in the application are derived from here.
@@ -24,7 +25,12 @@ export const brandColors = {
     overlayColor: 'rgba(81,72,53,.7)',
     linearGradientSettings: {
         colors: ['#92C83E', '#12c053'],
-        locations: [0.1,0.99],
+        locations: [0.2,0.9],
+        useAngle: true, angle: 0.25, angleCenter: { x: 0.5, y: 0.5}
+    },
+    linearGradientDisabledSettings: {
+        colors: ['#dcdcdc', '#989898'],
+        locations: [0.2,0.9],
         useAngle: true, angle: 0.25, angleCenter: { x: 0.5, y: 0.5}
     }
 }
@@ -117,7 +123,7 @@ export const navigationOptions = [
     },{
         name: 'activity_request',
         label: 'Activity Request',
-        navigateTo: 'Activity',
+        navigateTo: 'ActivityRequest',
         icon: 'edit',
         visibleTo: [RSM_ROLE_ID],
         iconType: 'FontAwesome'
@@ -355,14 +361,6 @@ export const validate = (rules, values) => {
                     }
                     return;
                 }
-                case 'email': {
-                    if(! /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(values[field].trim())) {
-                        errors[field] = errors[field] != undefined
-                        ? errors[field]
-                        : `Please provide the valid Email`
-                    }
-                    return;
-                }
                 case 'required_if': {
                     let checkValues = rulesToCheck.required_if
                     if(values[field] == '' && values[checkValues[0]] == checkValues[1]) {
@@ -374,13 +372,23 @@ export const validate = (rules, values) => {
                     }
                     return;
                 }
+                case 'email': {
+                    if(! /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(values[field].trim()) && values[field].trim() != '') {
+                        errors[field] = ! _.isEmpty(errors[field]) 
+                        ? errors[field]
+                        : `Please provide the valid Email`
+                    }
+                    return;
+                }
                 case 'length': {
                     let checkValues = rulesToCheck.length
-                    if(values[field].length < checkValues.min ) {
-                        errors[field] = `${field} must have at least ${checkValues.min} characters`;
-                    }
-                    if(values[field].length > checkValues.max ) {
-                        errors[field] = `${field} must have maximum of ${checkValues.max} characters`;
+                    if(values[field] !== '') {
+                        if(values[field].length < checkValues.min ) {
+                            errors[field] = `${field} must have at least ${checkValues.min} characters`;
+                        }
+                        if(values[field].length > checkValues.max ) {
+                            errors[field] = `${field} must have maximum of ${checkValues.max} characters`;
+                        }
                     }
                     return;
                 }

@@ -7,7 +7,7 @@ import { brandColors, RFValue } from '../../constants';
 import LinearGradient from 'react-native-linear-gradient';
 
 export default class Tab extends Component {
-  
+  static whyDidYouRender = true;
   renderScene = ({ route }) => {
     const info = this.props.existingCall ? this.props.navigate.getParam('call_info')
     : this.props.data

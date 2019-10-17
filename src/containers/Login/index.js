@@ -9,8 +9,9 @@ import { getLoginLoding, getLoginError, backgroundImages } from '../../reducers/
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
 import { NetworkContext } from '../../components/NetworkProvider';
-import { View, ScrollView } from 'react-native'
+import { View, KeyboardAvoidingView  } from 'react-native'
 import { Text, Card } from 'react-native-elements';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 class Login extends Component {
     static navigationOptions = {
@@ -38,23 +39,27 @@ class Login extends Component {
         }
     }
     onChange = (key, value) => {
-        this.setState({ [key]: value })
+        // this.setState({ [key]: value })
     }
     onKeyEvent = (field, event) => {
-        if (field == 'LoginId' && event.nativeEvent.key === '@' && !this.state.LoginId.includes('hudsonpharma-sales.com')) {
+        const { nativeEvent: { text } } = event
+        if (field == 'LoginId' && text[text.length - 1] === '@' && !this.state.LoginId.includes('hudsonpharma-sales.com')) {
             this.setState({
-                LoginId: `${this.state.LoginId}hudsonpharma-sales.com`
+                LoginId: `${this.state.LoginId}@hudsonpharma-sales.com`
+            })
+        }
+        else {
+            this.setState({
+                [field]: text
             })
         }
 
     }
 
     onSubmit = () => {
-        // alert('clicked')
         const { LoginId, Password } = this.state
         const [errors, shouldSubmit] = validate(this.state.validations, { LoginId, Password })
         if(shouldSubmit) {
-            // alert('logging')
             this.props.loginUser({
                 LoginId,
                 Password,
@@ -76,15 +81,14 @@ class Login extends Component {
     }
 
     componentDidMount() {
-        this.context.hideRefresh();
         this.props.getBackgroundImages()
     }
 
     render() {
         return (
             <MultipleImageBackgroundWrapper images={this.props.images}>
-                <ScrollView keyboardShouldPersistTaps={'always'} contentContainerStyle={styles.InputContainer}>
-                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <KeyboardAwareScrollView keyboardShouldPersistTaps={'always'} contentContainerStyle={styles.InputContainer}>
+                    <KeyboardAvoidingView  style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                         <Card containerStyle={{ borderRadius: 15, width: '90%', justifyContent: 'center', alignItems: 'center', opacity: 0.9 }}>
                             <ImageHeader
                             />
@@ -102,8 +106,8 @@ class Login extends Component {
                                 errors={this.state.errors}
                             />
                         </Card>
-                    </View>
-                </ScrollView >
+                    </KeyboardAvoidingView >
+                </KeyboardAwareScrollView >
             </MultipleImageBackgroundWrapper>
         )
     }

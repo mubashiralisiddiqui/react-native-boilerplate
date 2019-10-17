@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { View, ScrollView, Alert } from 'react-native'
 import { CallPlanHeader } from '../../components/Headers'
 import { navigationOption, brandColors, parse, stringify, getToken, RFValue, validate, getDistance } from '../../constants'
@@ -12,6 +12,7 @@ import {
     LocationStatus,
     ScreenLoader,
     CallExecutionButton,
+    DoctorInfoPanel,
 } from '../../components';
 import { getDocHistory } from '../../services/historyService';
 import { submitCallSingle, getTodayCalls, submitOfflineCall, getTodayUnplannedCalls } from '../../services/callServices';
@@ -27,7 +28,7 @@ import { getSubmitData, getSubmitLoader } from '../../reducers/callsReducers';
 import { NetworkContext } from '../../components/NetworkProvider'
 import GiftsModal from '../../components/GiftsModal';
 import { ProductsModal, SamplesModal } from '../../components/ProductsSamplesModal';
-import { getDoctorByEmployeeId } from '../../services/doctor';
+import { getDoctorByEmployeeId, updateDoctorRequest } from '../../services/doctor';
 import { getDoctors, getDoctorRequestLoader } from '../../reducers/doctorReducer';
 import { getEmployees } from '../../services/auth';
 import { getProductsWithSamples } from '../../services/productService';
@@ -36,14 +37,14 @@ import { isFetching, getLat, getLong } from '../../reducers/locationReducer';
 import Location from '../../classes/Location';
 import { alertData } from '../../constants/messages';
 import { getHistorys } from '../../reducers/historyReducer';
+import BaseCallExecution from '../CallExecution/BaseCallExecution';
 
-class CallExecutionUnplanned extends Component {
+class CallExecutionUnplanned extends BaseCallExecution {
     static contextType = NetworkContext
     static navigationOptions = ({ navigation }) => (
         navigationOption(navigation, 'Unplanned Call Details')
     )
     state = {
-        doctor_history: [],
         history_loaded: false,
         overlay: false,
         giftsOverlay: false,
@@ -89,147 +90,10 @@ class CallExecutionUnplanned extends Component {
         position: 0,
         samplesOverlay: false,
         isReminder: false,
-    }
-
-    onClickProduct = (productTemplateId) => {
-        let { selectedProducts, position, isReminder, selectedSamples, selectedFiles } = this.state
-        let oldSelected = _.findIndex(selectedProducts, {position, IsReminder: isReminder})
-        if(oldSelected > 0) {
-            delete selectedProducts[oldSelected]
-            delete selectedSamples[oldSelected]
-            selectedFiles = _.dropWhile(selectedFiles, ['ProductId', oldSelected])
-        }
-
-        const product = _.find(this.props.products, ['ProductTemplateId', productTemplateId])
-        selectedProducts[productTemplateId] = {
-            ProductId: product.ProductTemplateId,
-            name: product.ProductTemplateName,
-            DetailingSeconds: 0,
-            IsReminder: this.state.isReminder,
-            position
-        }
-        selectedFiles = _.concat(selectedFiles, product.Files)
-        this.setState({
-            selectedFiles,
-            selectedProducts,
-            selectedProductId: productTemplateId,
-            overlay: false,
-        })
-    }
-    onClickSample = (productId) => {
-        const selectedProduct = _.find(this.props.samples, ['ProductId', productId]);
-        const productTemplate = _.find(this.props.products, ['ProductTemplateId', selectedProduct.ProductTemplateId]);
-
-        let { selectedSamples } = this.state;
-
-        selectedSamples[productTemplate.ProductTemplateId] = {
-            IsReminder: this.state.isReminder,
-            ProductId: productId,
-            name: selectedProduct.ProductName,
-            SampleQty: 0,
-            ProductTemplateId: productTemplate.ProductTemplateId
-        }
-        this.setState({
-            selectedSamples
-        }, () => console.log(this.state.selectedSamples)
-        )
-    }
-
-    handleOverlayClose = (unselect = false) => {
-        if(unselect) {
-            let selectedSamples = this.state.selectedSamples;
-            const {selectedProductId, reminderPosition} = this.state
-            if(selectedProductId != 0) {
-                delete selectedSamples[selectedProductId];
-            }
-            this.setState({
-                selectedSamples,
-                overlay: false,
-                selectedProductId: 0,
-            })
-            return;
-        }
-        this.setState({
-            overlay: false,
-            selectedProductId: 0,
-        }
-        // , () => console.log(this.state.selectedProducts, this.state.selectedFiles, this.state.selectedSamples)
-        )
-    }
-
-    setSampleCount = (number, type, productTemplateId) => {
-        let allSamples = this.state.selectedSamples;
-        let sample = allSamples[productTemplateId];
-        sample.SampleQty = number;
-        allSamples[productTemplateId] = sample;
-        this.setState({
-            selectedSamples: allSamples,
-        })
-    }
-
-    showProductsOverlay = (selectedProduct, position, type = 'planned') => {
-        this.setState({
-            overlay: true,
-            position: position,
-            selectedProductId: selectedProduct,
-            isReminder: type != 'planned'
-        }, () => console.log(this.state))
-    }
-    hideProductsOverlay = (unselect = false) => {
-        if(unselect) {
-            let { selectedProducts, selectedSamples, selectedProductId, eDetailing, selectedFiles } = this.state
-            const fileIds = _.map(_.filter(this.props.files, file => file.ProductId == selectedProductId), 'DetailingFileId')
-            eDetailing = eDetailing.filter(detail => !fileIds.includes(detail.DetailingFileId))
-            selectedFiles = selectedFiles.filter(file => file.ProductId != selectedProductId)
-            delete selectedProducts[selectedProductId];
-            delete selectedSamples[selectedProductId];
-            return this.setState({
-                selectedProducts,
-                selectedSamples,
-                eDetailing,
-                selectedFiles,
-                overlay: false,
-                position: 0,
-                selectedProductId: 0,
-                isReminder: false
-            })
-        }
-        this.setState({
-            overlay: false,
-            position: 0,
-            selectedProductId: 0,
-            isReminder: false
-        })
-    }
-    showSamplesOverlay = (selectedProduct, position) => {
-        this.setState({
-            samplesOverlay: true,
-            position,
-            selectedProductId: selectedProduct
-        })
-    }
-
-    handleSampleOverlayClose = (unselect = false) => {
-        if(unselect) {
-            let { selectedSamples, selectedProductId } = this.state
-            delete selectedSamples[selectedProductId];
-            this.setState({
-                selectedSamples,
-                samplesOverlay: false,
-                position: 0,
-                selectedProductId: 0,
-            });
-        }
-        this.setState({
-            samplesOverlay: false,
-            position: 0,
-            selectedProductId: 0,
-        })
+        showDocInfoPanel: false,
     }
     
- 
     componentDidMount() {
-        this.context.hideRefresh();
         this.props.location()
         let dailyCall = parse(stringify(callExecution));
         dailyCall.jsonDailyCall.DeviceDateTime = moment().format('YYYY-MM-DD hh:mm:ss')
@@ -240,17 +104,8 @@ class CallExecutionUnplanned extends Component {
         })
     }
 
-    onChangeAdditionalInfoAttributes = (field, value) => {
-        let dailyCall = this.state.form_data
-        dailyCall.jsonDailyCall[field] = value
-        this.setState({
-            form_data: dailyCall
-        })
-    }
-
     componentWillUnmount = () => {
         Location.stopLocating();
-        this.context.showRefresh();
      }
 
     submitCall = async () => {
@@ -318,61 +173,6 @@ class CallExecutionUnplanned extends Component {
         })
     }
 
-    onClickGift = (giftId, number = 0) => {
-        let dailyCall = this.state.form_data
-        const selected = dailyCall.jsonGiftDetail
-        selected[0] = {
-            GiftId: giftId, 
-            GiftQty: number
-        }
-        dailyCall.jsonGiftDetail = selected
-        this.setState({
-            form_data: dailyCall
-        })
-    }
-
-    showGifts = () => {
-        this.setState({
-            giftsOverlay: true
-        })
-    }
-
-    hideGifts = (unselect = false) => {
-        if(unselect) {
-            let dailyCall = this.state.form_data;
-            let giftDetail = dailyCall.jsonGiftDetail;
-            giftDetail[0] = {
-                GiftId: 0,
-                GiftQty: 0
-            }
-            dailyCall.jsonGiftDetail = giftDetail
-            this.setState({
-                form_data: dailyCall
-            })
-        }
-        this.setState({
-            giftsOverlay: false
-        })
-    }
-
-    updateDetailingSeconds = (fileId, seconds) => {
-        const { eDetailing } = this.state
-        if(eDetailing[fileId] == undefined) {
-            eDetailing[fileId] = {
-                DetailingFileId: fileId,
-                Duration: seconds
-            }
-        } else {
-            eDetailing[fileId].Duration = eDetailing[fileId].Duration == 0
-            ? seconds
-            : eDetailing[fileId].Duration + seconds;
-        }
-        this.setState({
-            eDetailing
-        }
-        // , () => console.log('detailing seconds updated', this.state.eDetailing[fileId])
-        );
-    }
     showDateTimePicker = () => {
         this.setState({ isDateTimePickerVisible: true });
     };
@@ -413,8 +213,11 @@ class CallExecutionUnplanned extends Component {
         form_data.jsonDailyCall.DoctorCode = doctor.DoctorCode;
         form_data.jsonDailyCall.SelectedDoctorName = doctor.DoctorName;
         form_data.jsonDailyCall.SelectedDoctorAddress = doctor.DoctorAddress;
-        form_data.jsonDailyCall.DoctorLat = doctor.Latitude
-        form_data.jsonDailyCall.DoctorLong = doctor.Longitude
+        form_data.jsonDailyCall.DoctorLat = doctor.Latitude;
+        form_data.jsonDailyCall.DoctorLong = doctor.Longitude;
+        form_data.jsonDailyCall.Email = doctor.Email;
+        form_data.jsonDailyCall.PhoneNumber = doctor.PhoneNumber;
+        form_data.isUpdateRequired = doctor.IsUpdateRequired;
         this.props.getDocHistory({
             Token: getToken,
             DoctorCode: doctor.DoctorCode,
@@ -444,9 +247,9 @@ class CallExecutionUnplanned extends Component {
     }
 
     render() {
-        return (        
+        return (
             <ImageBackgroundWrapper>
-                <CallExecutionButton disabled={this.props.submitLoader} onPress={this.confirmSubmit}/>
+                <CallExecutionButton disabled={this.props.submitLoader} onPress={this.initiateCallExecution}/>
                 {(this.props.submitLoader == true || this.props.doctor_loading == true) && <ScreenLoader /> }
                 <View style={styles.InputContainer}>
                     <ScrollView
@@ -472,7 +275,7 @@ class CallExecutionUnplanned extends Component {
                                         files={this.state.selectedFiles}
                                         data={this.state.form_data.jsonDailyCall}
                                         errors={this.state.errors}
-                                        selelctedReason={this.state.form_data.jsonDailyCall.CallReason}
+                                        selectedReason={this.state.form_data.jsonDailyCall.CallReason}
                                     />}  
                                 HeaderIcon={<FontAwesomeIcon name="info-circle" size={RFValue(40)} color={brandColors.lightGreen} />} />
                             <Collapse
@@ -492,6 +295,7 @@ class CallExecutionUnplanned extends Component {
                                         navigate={this.props.navigation}
                                         selectedGift={this.state.form_data.jsonGiftDetail}
                                         allGifts={this.props.gifts}
+                                        callRemarks={this.state.form_data.jsonDailyCall.Remarks}
                                     />
                                 }
                             />
@@ -539,6 +343,13 @@ class CallExecutionUnplanned extends Component {
                             onPressGiftHandler={this.onClickGift}
                         />
                     }
+                    <DoctorInfoPanel
+                        submitHandler={this.updateDoctorInfo}
+                        visible={this.state.showDocInfoPanel}
+                        Email={this.state.form_data.jsonDailyCall.Email}
+                        Phone={this.state.form_data.jsonDailyCall.PhoneNumber}
+                        toggleVisiblity={this.hideDocInfoPanel}
+                    />
                 </View >
             </ImageBackgroundWrapper>
         )
@@ -573,6 +384,7 @@ const mapDispatchToProps = dispatch => ({
         getReportingEmployees: getEmployees,
         getUnplannedCalls: getTodayUnplannedCalls,
         getAllProducts: getProductsWithSamples,
+        updateDoctor: updateDoctorRequest,
       },
       dispatch,
     ),

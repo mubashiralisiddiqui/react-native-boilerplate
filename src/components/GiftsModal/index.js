@@ -29,6 +29,7 @@ const GiftsModal = ({
     }
     return (
         <Overlay
+            animationType={'slide'}
             overlayBackgroundColor="#ddd"
             borderRadius={15}
             width={'75%'}

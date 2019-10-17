@@ -27,6 +27,9 @@ import {
     getDoctorsByEmployeeSuccess,
     getDoctorsByEmployeeFailure,
     submitDoctorChangeLocationRequest,
+    updateDoctorInfo,
+    updateDoctorInfoSuccess,
+    updateDoctorInfoFailure,
  } from '../actions/doctor'
 import { removeOldStorageEnteries } from './callServices';
 import DropDownHolder from '../classes/Dropdown';
@@ -114,6 +117,21 @@ export const changeDoctorLocation = (payload) => dispatch => {
             dispatch(submitDoctorRequestFailure())
             return response;
         }
+    })
+    .catch(console.log)
+}
+
+export const updateDoctorRequest = (payload, onSuccess, onFailure) => dispatch => {
+    dispatch(updateDoctorInfo(payload))
+    post('UpdateDoctorInfoByCode', payload)
+    .then(response => {
+        if(response == 1) {
+            dispatch(updateDoctorInfoSuccess())
+            onSuccess();
+            return;
+        }
+        dispatch(updateDoctorInfoFailure())
+        onFailure();
     })
     .catch(console.log)
 }

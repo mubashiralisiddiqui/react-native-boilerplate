@@ -19,9 +19,6 @@ class Web extends Component {
         ? 'http://portal.hudsonpharma.com/Login.aspx?ReturnURL=/Pages/Planningportal/PlanningPortal_Managers.aspx'
         : 'http://portal.hudsonpharma.com/Login.aspx?ReturnURL=/Pages/Planningportal/planningportal.aspx'
     }
-    componentDidMount() {
-        this.context.hideRefresh();
-    }
     render() {
         let string = jsCodeForWebViews(this.props.user);
         return (

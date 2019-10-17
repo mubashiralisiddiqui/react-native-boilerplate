@@ -32,6 +32,9 @@ import SearchDesignations from './SearchDesignations'
 import SearchSpecialities from './SearchSpecialities'
 import Checkbox from './Checkbox'
 import DrawerElement from './DrawerElement'
+import AppVersion from './AppVersion'
+import DoctorInfoPanel from './DoctorInfo'
+import Refresh from './RefreshApp';
 
 export {
     TextInput,
@@ -63,4 +66,7 @@ export {
     SearchSpecialities,
     Checkbox,
     DrawerElement,
+    AppVersion,
+    DoctorInfoPanel,
+    Refresh,
 }

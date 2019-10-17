@@ -113,8 +113,8 @@ android {
         applicationId "com.hudsonpharma"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 4194329
-        versionName "2.29"
+        versionCode 4194334
+        versionName "2.34"
     }
     splits {
         abi {
@@ -151,6 +151,8 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-svg')
+    implementation project(':react-native-shimmer')
     implementation project(':react-native-linear-gradient')
     implementation project(':react-native-version-check')
     implementation project(':react-native-view-shot')

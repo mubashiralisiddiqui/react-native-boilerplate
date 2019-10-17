@@ -12,6 +12,7 @@ const DoctorHistory = () => {
     return (
         <ScrollView horizontal={true}
             decelerationRate={0}
+            showsHorizontalScrollIndicator={false}
             // snapToInterval={width}
         >
             <View style={{ width: '100%', flex: 1, flexDirection: 'row', alignItems: 'center'}}>

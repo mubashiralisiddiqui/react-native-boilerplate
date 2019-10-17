@@ -54,6 +54,7 @@ const CitiesModal = ({
 
     return (
         <Overlay
+            animationType={'slide'}
             overlayBackgroundColor="#ddd"
             borderRadius={15}
             isVisible={isVisible}

@@ -17,9 +17,6 @@ class PettyCash extends Component {
     getUrl = () => {
         return 'http://portal.hudsonpharma.com/Login.aspx?ReturnURL=/Pages/PettyCash/PettyCashPortal.aspx'
     }
-    componentDidMount() {
-        this.context.hideRefresh();
-    }
     render() {
         let string = jsCodeForWebViews(this.props.user);
         return (

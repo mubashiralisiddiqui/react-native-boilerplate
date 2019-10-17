@@ -5,8 +5,10 @@ import {
     createAppContainer,
     createSwitchNavigator,
     createStackNavigator,
-    createDrawerNavigator
+    // createDrawerNavigator
 } from 'react-navigation';
+
+import { createDrawerNavigator } from 'react-navigation-drawer';
 
 // All views 
 
@@ -67,31 +69,23 @@ import DrawerContent from './drawercontent'
 //     DoctorLocation,
 // })
 
-const MainStack = createStackNavigator({
-    CallPlans,
-    CallExecution,
-    CallExecutionUnplanned,
-    DoctorLocation,
-    Samples,
-    NewDoctor,
-    Planner,
-    Expense,
-    Training,
-    ActivityRequest,
-    PettyCash
-
-    // CallPlans: CallPlansStack,
-    // NewDoct: AddNewDoctorStack,
-    // Samples: SamplesStack,
-    // Main: AppStack,
-    // Expense: ExpenseManagerStack,
-    // Training: TrainingPortalStack,
-    // Planner: CallPlannerStack,
-    // Activity: ActivityRequestStack,
-    // PettyCash: PettyCashStack,
-}, {
-    initialRouteName: 'CallPlans'
-})
+const MainStack = createStackNavigator(
+    {
+        CallPlans,
+        CallExecution,
+        CallExecutionUnplanned,
+        DoctorLocation,
+        Samples,
+        NewDoctor,
+        Planner,
+        Expense,
+        Training,
+        ActivityRequest,
+        PettyCash,
+    }, {
+        initialRouteName: 'CallPlans'
+    }
+)
 // drawer stack passing Appstack in drawe so that all can be accessible in our  drawerstack
 const RootStack = createDrawerNavigator(
     {Main: MainStack},

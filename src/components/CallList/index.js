@@ -13,7 +13,7 @@ export default function ({
     
     return (
         calls.map((call, i) => {
-            return (
+            return call.Doctor && (
                 <Itemcard
                     call={call}
                     key={i}

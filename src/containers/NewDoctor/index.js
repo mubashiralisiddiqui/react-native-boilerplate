@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { CallPlanHeader } from '../../components/Headers';
 import { NewDoctorForm, ImageBackgroundWrapper } from '../../components';
-import { View, Animated, ScrollView } from 'react-native';
+import { View, Animated, ScrollView, Easing, Dimensions } from 'react-native';
 import { Button } from 'react-native-elements';
 import { navigationOption, brandColors, stringify, validate } from '../../constants';
 import { bindActionCreators } from 'redux'
@@ -38,6 +38,7 @@ class NewDoctor extends Component {
      * @memberof NewDoctor
      */
     static navigationOptions = ({ navigation }) => (navigationOption(navigation, 'Add New Doctor'))
+    animated = new Animated.Value(0);
     state = {
         ...newDoctor,
         CityId: '',
@@ -76,7 +77,6 @@ class NewDoctor extends Component {
             Email: '',
             Phone: '',
         },
-        fadeAnim: new Animated.Value(0)
     }
 
 
@@ -161,7 +161,7 @@ class NewDoctor extends Component {
                     // borderWidth: 2,
                     borderRadius: 33,
                     borderColor: brandColors.lightGreen,
-                    width: '100%'
+                    width: '75%'
                 },
                 buttonContainer: {
                     flex: 1,
@@ -184,17 +184,19 @@ class NewDoctor extends Component {
      * @memberof NewDoctor
      */
     componentDidMount() {
-        Animated.timing(                  // Animate over time
-            this.state.fadeAnim,            // The animated value to drive
-            {
-                toValue: 1,                   // Animate to opacity: 1 (opaque)
-                duration: 2000,              // Make it take a while
-            }
-        ).start();
+        setTimeout(() => {
+            Animated.timing(                  // Animate over time
+                this.animated,            // The animated value to drive
+                {
+                    toValue: 1,                   // Animate to opacity: 1 (opaque)
+                    duration: 800,
+                    easing: Easing.inOut(Easing.ease)
+                }
+            ).start();
+        }, 500)
         this.setState({
             CreatedBy: this.props.user.EmployeeId
         })
-        this.context.hideRefresh()
 
     }
 
@@ -208,15 +210,23 @@ class NewDoctor extends Component {
      */
     render() {
         const { styles } = this.styles();
+
+        const { height } = Dimensions.get('window')
+
+        const translateY = this.animated.interpolate({
+            inputRange: [0, 1],
+            outputRange: [height, 0]
+        })
+
         return (
-            <Animated.View style={{...styles.container, opacity: this.state.fadeAnim}}>
+            <View style={styles.container}>
                 <ImageBackgroundWrapper>
                     <ScrollView
                         style={styles.scrollContainer}
                         showsVerticalScrollIndicator={false}
                     >
                         <CallPlanHeader />
-                        <View style={{width: '85%', display: 'flex', alignSelf: 'center'}}>
+                        <Animated.View style={{width: '85%', display: 'flex', alignSelf: 'center', transform: [{ translateY }] }}>
                             <NewDoctorForm
                                 data={this.state}
                                 setField={this.setField}
@@ -224,7 +234,7 @@ class NewDoctor extends Component {
                             <View style={{width: '100%', display: 'flex', flex:1, justifyContent:'flex-end' }}>
                                 <Button
                                     ViewComponent={LinearGradient}
-                                    linearGradientProps={brandColors.linearGradientSettings}
+                                    linearGradientProps={this.props.loading ? brandColors.linearGradientDisabledSettings : brandColors.linearGradientSettings}
                                     loading={this.props.loading}
                                     disabled={this.props.loading}
                                     onPress={this.onSubmit}
@@ -233,10 +243,10 @@ class NewDoctor extends Component {
                                     titleStyle={styles.buttonTitle}
                                     title="Add" />
                             </View>
-                        </View>
+                        </Animated.View>
                     </ScrollView>
                 </ImageBackgroundWrapper>
-            </Animated.View>
+            </View>
         )
     }
 }

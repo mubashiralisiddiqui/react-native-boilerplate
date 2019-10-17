@@ -7,15 +7,12 @@ import {
     Alert,
     ScrollView,
 } from 'react-native';
-import { ImageHeader, DrawerElement } from '../components';
-import { navigationOptions, brandColors, RFValue } from '../constants'
+import { ImageHeader, DrawerElement, AppVersion } from '../components';
+import { navigationOptions, brandColors, RFValue, RandomInteger } from '../constants'
 import { FontAwesome5Icon, MaterialCommunityIcon, AntDesignIcon, FontAwesomeIcon } from '../components/Icons'
 import AsyncStorage from '@react-native-community/async-storage';
-import { getUser } from '../reducers/authReducer';
-import { connect } from 'react-redux';
 
 class NavigationMenu extends Component {
-
     logout = () => {
         Alert.alert(
             'Are you sure?',
@@ -94,18 +91,16 @@ class NavigationMenu extends Component {
         return (
             <View style={styles.container}>
                 <ScrollView style={{ marginTop: 0, width: '100%' }}>
-                    {/* <View style={{ alignItems: 'center' }}> */}
-                        <ImageHeader
-                            verticalHeight={0}
-                        />
-                    {/* </View> */}
+                    <ImageHeader
+                        verticalHeight={0}
+                    />
                     {
                         navigationOptions.map((option, index) => {
                             const activeRoute = this.getActiveRoute(this.props.navigation.state)
                             const focused = activeRoute.routeName && activeRoute.routeName == option.navigateTo
-                            return option.visibleTo.includes(this.props.user.RoleId)
-                            && (
+                            return (
                                 <DrawerElement
+                                    key={`${RandomInteger()}`}
                                     focused={focused}
                                     styles={styles}
                                     navigate={this.navigateIt}
@@ -117,9 +112,12 @@ class NavigationMenu extends Component {
                         })
                     }
                 </ScrollView>
-                <TouchableOpacity
+                <TouchableOpacity key={'asd'}
                     style={{ width: '90%', marginTop: 10 }}>
                 </TouchableOpacity>
+                <View style={{ display: 'flex', flex: 1, justifyContent: 'flex-end', alignContent: 'center', marginHorizontal: 10, marginVertical: 10,}}>
+                    <AppVersion />
+                </View>
             </View>
         );
     }
@@ -131,7 +129,8 @@ const styles = new StyleSheet.create({
         // flex: 1,
         // justifyContent: 'space-between',
         // alignItems: 'center',
-        width: '100%'
+        width: '100%',
+        height: '100%'
     },
 
     sectionHeadingStyle: {
@@ -160,11 +159,4 @@ const styles = new StyleSheet.create({
 NavigationMenu.propTypes = {
     navigation: PropTypes.object
 };
-
-const mapStateToProps = (state) => {
-    return {
-        user: getUser(state)
-    }
-};
-
-export default connect(mapStateToProps)(NavigationMenu)
+export default NavigationMenu

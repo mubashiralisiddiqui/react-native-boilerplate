@@ -42,7 +42,7 @@ export default class Location {
                     }
                     console.log(error, this.getCoords())
                 },
-                { enableHighAccuracy: true, timeout: 300000, maximumAge: 300000 }
+                { enableHighAccuracy: true, timeout: 3e5, maximumAge: 3e5 }
         );
         this.watchID = navigator.geolocation.watchPosition((position) => {
             this.setLong(JSON.stringify(position.coords.longitude));

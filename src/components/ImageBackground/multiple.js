@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, ScrollView, Dimensions, Image } from 'react-native';
+import { KeyboardAvoidingView, View, ScrollView, Dimensions, Image } from 'react-native';
 import { useInterval } from '../../hooks/useInterval'
 import { baseMediaURL, RandomInteger } from '../../constants';
 
@@ -29,12 +29,13 @@ const MultipleImageBackgroundWrapper = ({
     }
 
     return (    
-        <View onLayout={onLayout}>
+        <KeyboardAvoidingView onLayout={onLayout}>
             <ScrollView
                 scrollEnabled={false}
                 onLayout={onLayout}
                 ref={(scrollView) => { _scrollView = scrollView; }}
                 horizontal={true} pagingEnabled={true} 
+                showsHorizontalScrollIndicator={false}
             >
                 {
                     images.length > 0
@@ -45,7 +46,7 @@ const MultipleImageBackgroundWrapper = ({
             <View style={{width: '100%', display: 'flex', position: 'absolute', top: '25%', alignContent: 'center', alignItems: 'center'}}>
                 { children }
             </View>
-        </View>
+        </KeyboardAvoidingView>
     );
 }
 

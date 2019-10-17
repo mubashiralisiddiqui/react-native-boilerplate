@@ -54,6 +54,7 @@ const SamplesModal = ({
 
     return (
         <Overlay
+            animationType={'slide'}
             overlayBackgroundColor="#ddd"
             borderRadius={20}
             width="75%"

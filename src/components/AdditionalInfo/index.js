@@ -66,4 +66,6 @@ const AdditionalInfo = ({
     )
 }
 
+AdditionalInfo.whyDidYouRender = true
+
 export default AdditionalInfo;

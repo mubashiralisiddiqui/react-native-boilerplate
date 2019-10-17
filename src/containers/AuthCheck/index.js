@@ -4,7 +4,9 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
 import { authUser } from '../../constants'
 import { ScreenLoader } from '../../components';
-import { getBackgroundImages } from '../../services/auth';
+import { getBackgroundImages, updateUserAppVersion } from '../../services/auth';
+import VersionCheck from 'react-native-version-check';
+
 
 class AuthCheck extends Component {
     state = {
@@ -15,14 +17,20 @@ class AuthCheck extends Component {
 
     async componentDidMount() {
         const user = await this.props.authUser();
-        // this.props.getBackgroundImages();
-        this.navigateNow(! _.isEmpty(user))
+        this.navigateNow(! _.isEmpty(user), user)
     }
 
-    navigateNow = (verified = true) => {
-        verified 
-        ? this.props.navigation.navigate('CallPlans')
-        : this.props.navigation.navigate('Login')
+    navigateNow = (verified = true, user) => {
+        if(verified) {
+            const version = VersionCheck.getCurrentVersion();
+            this.props.updateAppVersion({
+                AppVersion: version,
+                EmployeeId: user.EmployeeId
+            })
+            this.props.navigation.navigate('CallPlans')
+            return;
+        }
+        this.props.navigation.navigate('Login')
     }
     render() {
         return (
@@ -45,6 +53,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     authUser: authUser,
+    updateAppVersion: updateUserAppVersion,
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(AuthCheck)

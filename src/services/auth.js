@@ -1,6 +1,7 @@
 import { post, setStorage, userFullName, getStorage, todayDate, get, getToken } from '../constants';
 import { login, loginSuccess, loginFailure, getReportingEmployees, getReportingEmployeesSuccess, getReportingEmployeesFailure, getBackgroundImagesSuccess, getBackgroundImagesFailure } from '../actions/auth'
 import { getDoctorByEmployeeId } from './doctor';
+import { updateUserAppVersionToServerSuccess, updateUserAppVersionToServer, updateUserAppVersionToServerFailure } from '../actions/app';
 
 export const loginUser = (params, onSuccess, onFailure) => {
     return dispatch => {
@@ -47,4 +48,15 @@ export const getBackgroundImages = () => async (dispatch) => {
         dispatch(getBackgroundImagesSuccess(response))
     })
     // .catch(error => console.log(error) || dispatch(getBackgroundImagesFailure()))
+}
+
+export const updateUserAppVersion = (params) => (dispatch) => {
+    dispatch(updateUserAppVersionToServer(params))
+    post('UpdateAppVersion', params)
+    .then(response => {
+        dispatch(updateUserAppVersionToServerSuccess())
+    })
+    .catch(error => {
+        dispatch(updateUserAppVersionToServerFailure())
+    })
 }

@@ -1,30 +1,19 @@
 import React from 'react';
-import { View, Linking } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
-import { parse, getStorage, setStorage, brandColors, stringify, authUser, getToken, RFValue} from '../../constants';
+import { parse, getStorage, setStorage, brandColors, stringify, RFValue} from '../../constants';
 import { alertData } from '../../constants/messages'
-import { syncCall, getTodayCalls, updateCallStatus, updatedCalls, getTodayUnplannedCalls } from '../../services/callServices';
-import { Button } from 'react-native-elements';
-import { FontAwesomeIcon } from '../Icons'
-import { getAllGifts } from '../../services/giftService';
-import { getProductsWithSamples } from '../../services/productService';
-import { getAllCities } from '../../services/city';
-import { getAllDesignations, getAllSpecialities, getDoctorByEmployeeId } from '../../services/doctor';
-import { getUser, isRSM } from '../../reducers/authReducer';
-import { getEmployees } from '../../services/auth';
+import { syncCall, updateCallStatus, updatedCalls} from '../../services/callServices';
 import NetInfo from "@react-native-community/netinfo";
 import DropdownAlert from 'react-native-dropdownalert';
 import DropDownHolder from '../../classes/Dropdown';
 import { getVersion } from '../../reducers/appReducer';
-import VersionCheck from 'react-native-version-check';
 import { getAppVersion } from '../../services';
 
 export const NetworkContext = React.createContext({
     isConnected: false,
     type: 'unknown',
     isInternetReachable: false,
-    showRefresh: false,
     isRefreshing: false,
     isSyncing: false,
 });
@@ -35,7 +24,6 @@ class NetworkProviderClass extends React.PureComponent {
         type: 'unknown',
         isInternetReachable: false,
         details: null,
-        showRefresh: false,
         isRefreshing: false,
         netInfoEventListener: () => null,
         isSyncing: false,
@@ -96,49 +84,6 @@ class NetworkProviderClass extends React.PureComponent {
         }
     }
 
-    showRefresh = () => {
-        this.setState({
-            showRefresh: true
-        })
-    }
-    hideRefresh = () => {
-        this.setState({
-            showRefresh: false
-        })
-    }
-
-    handleRefresh = () => {
-        this.setState({
-            isRefreshing: true
-        })
-        this.SyncApp();
-    }
-
-    SyncApp = () => {
-        const payload = {
-            Token: getToken,
-            EmployeeId: this.props.user.EmployeeId
-        }
-        DropDownHolder.show(alertData.refresh.init)
-        Promise.all([
-            this.props.getTodayCalls(payload, true),
-            this.props.getProductsWithSamples(payload, true),
-            this.props.getAllGifts({}, true),
-            this.props.getCities(true),
-            this.props.getDesignations(true),
-            this.props.getSpecialities(true),
-            this.props.getUnplannedCalls(payload, true),
-            this.props.isRSM
-            ? this.props.getReportingEmployees(payload, true)
-            : this.props.getDoctorsByEmployee(payload, true)
-        ]).then(response => {
-            DropDownHolder.show(alertData.refresh.success)
-            this.setState({
-                isRefreshing: false,
-            })
-        })
-    }
-
     async componentDidMount() {
         const {details, isConnected, isInternetReachable, type} = await NetInfo.fetch();
 
@@ -151,7 +96,6 @@ class NetworkProviderClass extends React.PureComponent {
 
     componentWillUnmount() {
         this.state.netInfoEventListener();
-        // NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectivityChange);
     }
 
     handleConnectivityChange = (state) => this.setConnectivity(state)
@@ -162,23 +106,8 @@ class NetworkProviderClass extends React.PureComponent {
 
     render() {
         return (
-            <NetworkContext.Provider value={{state: this.state, hideRefresh: this.hideRefresh, showRefresh: this.showRefresh}}>
+            <NetworkContext.Provider value={{state: this.state }}>
                 {this.props.children}
-                {
-                    this.state.showRefresh &&
-                    <View style={{position: 'absolute', top: 60, right: 10, display: 'flex', flexDirection: 'row', justifyContent: 'flex-end'}}>
-                        <Button
-                            loading={this.state.isRefreshing}
-                            loadingProps={{ color: brandColors.lightGreen }}
-                            type="clear"
-                            disabled={!this.state.isConnected}
-                            title="Refresh"
-                            onPress={this.handleRefresh}
-                            titleStyle={{color: brandColors.lightGreen, fontSize: RFValue(14)}}
-                            icon={<FontAwesomeIcon name="refresh" size={RFValue(18)} color={brandColors.lightGreen} />}
-                        />
-                    </View>
-                }
                 <DropdownAlert
                     messageStyle={{
                         fontSize: RFValue(15),
@@ -208,25 +137,13 @@ class NetworkProviderClass extends React.PureComponent {
 
 const mapStateToProps = state => {
     return {
-        user: getUser(state),
-        isRSM: isRSM(state),
         version: getVersion(state),
     }
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     syncCall: syncCall,
-    getTodayCalls: getTodayCalls,
-    getProductsWithSamples: getProductsWithSamples,
-    getAllGifts: getAllGifts,
-    getAuthUser: authUser,
     updateCalls: updatedCalls,
-    getCities: getAllCities,
-    getDesignations: getAllDesignations,
-    getSpecialities: getAllSpecialities,
-    getDoctorsByEmployee: getDoctorByEmployeeId,
-    getReportingEmployees: getEmployees,
-    getUnplannedCalls: getTodayUnplannedCalls,
     getLatestVersion: getAppVersion
 }, dispatch)
 

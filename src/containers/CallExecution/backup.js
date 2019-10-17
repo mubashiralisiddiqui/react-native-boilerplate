@@ -286,7 +286,6 @@ class CallExecution extends Component {
      * @inheritdoc
      */
     async componentDidMount() {
-        this.context.hideRefresh();
         let dailyCall = parse(stringify(callExecution));
         const callData = this.props.navigation.getParam('call_info')
         let selectedProducts = [];
@@ -388,7 +387,6 @@ class CallExecution extends Component {
      */
     componentWillUnmount = () => {
         navigator.geolocation.clearWatch(this.watchID);
-        this.context.showRefresh();
      }
 
     /**
