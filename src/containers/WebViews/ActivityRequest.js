@@ -18,9 +18,6 @@ class ActivityRequest extends Component {
     getUrl = () => {
         return 'http://portal.hudsonpharma.com/Login.aspx?ReturnURL=/Pages/HusonSSR/ActivityRequest.aspx'
     }
-    componentDidMount() {
-        this.context.hideRefresh();
-    }
     render() {
         let string = jsCodeForWebViews(this.props.user);
         return (

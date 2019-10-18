@@ -42,7 +42,8 @@ export default class BaseCallExecution extends Component {
         }
         this.setState({
             selectedSamples
-        }, () => console.log(this.state.selectedSamples)
+        }
+        // , () => console.log(this.state.selectedSamples)
         )
     }
 
@@ -206,7 +207,7 @@ export default class BaseCallExecution extends Component {
         this.setState({
             eDetailing
         }
-        , () => console.log('detailing seconds updated', this.state.eDetailing[fileId])
+        // , () => console.log('detailing seconds updated', this.state.eDetailing[fileId])
         );
     }
 
