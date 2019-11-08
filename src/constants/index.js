@@ -80,11 +80,11 @@ export const navigationOptions = [
         iconType: 'FontAwesome5'
     },{
         name: 'add_doctor',
-        label: 'Add New Doctor',
+        label: 'Doctors Management',
         navigateTo: 'NewDoctor',
-        icon: 'clinic-medical',
+        icon: 'doctor',
         visibleTo: [SPO_ROLE_ID, RSM_ROLE_ID],
-        iconType: 'FontAwesome5'
+        iconType: 'MaterialCommunityIcon'
     },{
         name: 'sample_details',
         label: 'Sample Details',
@@ -98,6 +98,13 @@ export const navigationOptions = [
         navigateTo: 'DoctorLocation',
         icon: 'location-arrow',
         visibleTo: [SPO_ROLE_ID, RSM_ROLE_ID],
+        iconType: 'FontAwesome5'
+    },{
+        name: 'territory_manager',
+        label: 'Territory Manager',
+        navigateTo: 'Bricks',
+        icon: 'boxes',
+        visibleTo: [RSM_ROLE_ID],
         iconType: 'FontAwesome5'
     },{
         name: 'rsm_planner',
@@ -433,10 +440,19 @@ export function RFValue(fontSize) {
     return Math.round(heightPercent);
 }
 
+export function RHValue(containerHeightPercent = 75) {
+    // guideline height for standard 5" device screen
+    const { height, width } = Dimensions.get('screen')
+    const multiplier = width > height ? 0.7 : 0.8;
+    return Math.round((height * (containerHeightPercent / 100)) * ((containerHeightPercent * multiplier) / 100))
+}
+
 export const downloadFile = async (url, name) => {
     const exists = await doesFileExist(name)
+    console.log(mediaStoragePath, 'asd')
     // console.log(exists, url, name)
     if(!exists) {
+        new RNFetchBlob.polyfill.Fetch({}).build()
         RNFetchBlob
         .config({
             // fileCache: true,
@@ -444,7 +460,7 @@ export const downloadFile = async (url, name) => {
                 useDownloadManager: true,
                 notification: true,
                 path: `${mediaStoragePath}/${name}`,
-                description: 'asdasd'
+                description: 'E-Detailing file'
               },
           // response data will be saved to this path if it has access right.
           path : `${mediaStoragePath}/${name}`
@@ -468,8 +484,6 @@ export const doesFileExist = async (name) => {
 
 export const jsCodeForWebViews = ({LoginId, Password}) => `
     if(document.cookie != '' && !document.cookie.includes('${LoginId}')){
-        // setCookie('RoleId', null, -1);
-        // setCookie('UserId', null, -1);
         let cookies = document.cookie.split(';')
         for (let i = 0; i < cookies.length; i++) {
             let cookie = cookies[i];

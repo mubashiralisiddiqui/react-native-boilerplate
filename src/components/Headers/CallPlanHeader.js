@@ -2,7 +2,7 @@
 import React from 'react';
 import { View, Image } from 'react-native';
 import { brandColors, RFValue } from '../../constants';
-import  UserInfo  from '../UserInfo';
+import  { LoggedInUserInfo }  from '..';
 
 const ImageHeader = () => {
     return (
@@ -11,7 +11,7 @@ const ImageHeader = () => {
                     style={{ width: RFValue(240), resizeMode: 'contain', height: RFValue(120) }}
                     source={ require('../../assets/images/HPLogo.png') }
                 />
-                <UserInfo />
+                <LoggedInUserInfo />
             </View>
     )
 }

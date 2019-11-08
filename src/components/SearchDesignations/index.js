@@ -80,7 +80,6 @@ const SearchDesignations = (props) => {
                             round
                             cancelButtonProps={{buttonTextStyle: { fontFamily:"Lato-RegularItalic", fontSize: RFValue(14), color: brandColors.lightGreen, fontFamily: 'Lato-MediumItalic' }}}
                         />
-                        {/* <Input label="Search" placeholder={`Search for more ${fieldToSelect}s`} onChangeText={searchDesignation} /> */}
                         <ScrollView style={{ borderRadius: 10, }} behavior="padding">
                             <View style={{width:'100%', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
                                 <View style={{ width: '98%', marginHorizontal: 5}}>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { createContext } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
 import { parse, getStorage, setStorage, brandColors, stringify, RFValue} from '../../constants';
@@ -10,7 +10,7 @@ import DropDownHolder from '../../classes/Dropdown';
 import { getVersion } from '../../reducers/appReducer';
 import { getAppVersion } from '../../services';
 
-export const NetworkContext = React.createContext({
+export const NetworkContext = createContext({
     isConnected: false,
     type: 'unknown',
     isInternetReachable: false,
@@ -38,7 +38,7 @@ class NetworkProviderClass extends React.PureComponent {
         }
     }
 
-    setConnectivity = ({details, isConnected, isInternetReachable, type}) => {
+    setConnectivity = async ({details, isConnected, isInternetReachable, type}) => {
         this.showDropdown(isConnected, isInternetReachable)
         
         this.setState({
@@ -47,6 +47,7 @@ class NetworkProviderClass extends React.PureComponent {
             isConnected,
             details,
         })
+
         if(isInternetReachable && this.state.isSyncing == false) this.syncCalls();
     }
 
@@ -57,9 +58,11 @@ class NetworkProviderClass extends React.PureComponent {
         const jsonParamsArray = ['jsonDailyCall', 'jsonDailyCallDetail', 'jsonGiftDetail', 'jsonSampleDetail']
         let calls = await getStorage('offlineCalls');
 
-        if(! _.isEmpty(parse(calls))) {
+        calls = parse(calls)
+
+        if(! _.isEmpty(calls)) {
             DropDownHolder.show(alertData.call.syncing)
-            calls = parse(calls);
+
             Object.keys(calls).map(call => {
                 Object.keys(calls[call]).map(single => {
                     if(jsonParamsArray.includes(single) && typeof parse(calls[call][single]) == 'string') {

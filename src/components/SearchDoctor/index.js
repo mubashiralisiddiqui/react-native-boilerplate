@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, NativeModules, Keyboard, FlatList, ScrollView, TouchableWithoutFeedback } from 'react-native';
 import { Input, Overlay, Text, ListItem, SearchBar, Badge } from 'react-native-elements';
 import { RandomInteger, styles, brandColors, RFValue } from '../../constants';
@@ -10,9 +10,10 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const SearchDoctor = (props) => {
     const allDoctors = useSelector(getDoctors);
-    const callDoctors = [...useSelector(getUnplannedCallDoctors), ...useSelector(getCallDoctors)]
+    const callDoctors = useSelector(getCallDoctors);
+    const unplannedCallDoctors = useSelector(getUnplannedCallDoctors);
+    const allCallDoctors = useCallback(() => _.concat(callDoctors, unplannedCallDoctors))
     
-    // const [showDoctors, setShowDoctors] = useState(false)
     const [areDoctorsVisible, showDoctors, hideDoctors] = useBoolean(false)
     const [query, setQuery] = useState('')
     const [doctors, setDoctors] = useState(allDoctors)
@@ -33,8 +34,8 @@ const SearchDoctor = (props) => {
     const _render = ({item}) => {
         return (
             <ListItem
-                disabled={!props.location && _.includes(callDoctors, item.Id)}
-                rightElement={ !props.location && _.includes(callDoctors, item.Id) && <Badge textStyle={{fontSize: RFValue(11), fontFamily: 'Lato-Regular' }} status="success" value="Already Planned / Executed" /> }
+                disabled={!props.location && _.includes(allCallDoctors, item.Id)}
+                rightElement={ !props.location && _.includes(allCallDoctors, item.Id) && <Badge textStyle={{fontSize: RFValue(11), fontFamily: 'Lato-Regular' }} status="success" value="Already Planned / Executed" /> }
                 Component={TouchableWithoutFeedback}
                 style={{ height: RFValue(40), marginVertical: 5, backgroundColor: 'transparent' }}
                 containerStyle={{ backgroundColor: 'transparent' }}

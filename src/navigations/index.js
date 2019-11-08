@@ -27,6 +27,7 @@ import {
     Training,
     ActivityRequest,
     PettyCash,
+    Bricks,
 } from '../containers';
 import DrawerContent from './drawercontent'
 
@@ -82,6 +83,7 @@ const MainStack = createStackNavigator(
         Training,
         ActivityRequest,
         PettyCash,
+        Bricks,
     }, {
         initialRouteName: 'CallPlans'
     }

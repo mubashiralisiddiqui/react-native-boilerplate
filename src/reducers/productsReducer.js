@@ -1,10 +1,10 @@
 import { GET_PRODUCTS, GET_PRODUCTS_FAILURE, GET_PRODUCTS_SUCCESS } from '../actions/types';
 import { downloadFile } from '../constants';
+import Permissions from '../classes/Permission';
+import { createSelector, createSelectorCreator, defaultMemoize } from 'reselect'
 
 const initialState = {
-  products: [],
-  samples: [],
-  files: [],
+  products: []
 };
 
 export const productsReducer = (state = initialState, action) => {
@@ -21,13 +21,15 @@ export const productsReducer = (state = initialState, action) => {
     case GET_PRODUCTS_SUCCESS: {
         const files = _.concat(...(_.map(action.products, 'Files')))
         setTimeout(() => {
-            _.map(files, file => downloadFile(file.FilePath, file.FileName))
+            Permissions.checkStorageAccess().then(permitted => {
+                if(permitted === true) {
+                    _.map(files, file => downloadFile(file.FilePath, file.FileName))
+                }
+            })
         }, 10000)
         return {
             ...state,
             products: action.products,
-            samples: _.concat(...(_.map(action.products, 'Products'))),
-            files: files,
         }
     }
     default:
@@ -36,6 +38,12 @@ export const productsReducer = (state = initialState, action) => {
 }
 
 // export const getCallsLoading = state => state.loading;
+// create a "selector creator" that uses lodash.isEqual instead of ===
+const createDeepEqualSelector = createSelectorCreator(
+    defaultMemoize,
+    isEqual
+)
 export const getProducts = state => state.products.products;
-export const getSamples = state => state.products.samples;
-export const getFiles = state => state.products.files;
+export const getSamples = createSelector(getProducts, products => _.concat(...(_.map(products, 'Products'))))
+export const getSamplesFor = createSelector(getProducts, (samples, prop) => samples.filter(sample => sample.ProductTemplateId == prop))
+export const getFiles = createSelector(getProducts, products => _.concat(...(_.map(products, 'Files'))));

@@ -2,6 +2,7 @@ import Permissions from "../Permission";
 import store from '../../../store';
 import { getLocation, getLocationSuccess, getLocationFailure } from "../../actions/location";
 import { getLocationError } from "../../reducers/locationReducer";
+import Geocoder from 'react-native-geocoding'
 
 export default class Location {
     static lat;
@@ -29,6 +30,7 @@ export default class Location {
                 this.setLong(JSON.stringify(position.coords.longitude));
                 //getting the Longitude from the location json
                 this.setLat(JSON.stringify(position.coords.latitude));
+
                 dispatch(getLocationSuccess(this.getCoords()))
                 },
                 (error) => {
@@ -40,6 +42,7 @@ export default class Location {
                         alert('We are unable to capture your location, please make sure your internet is working for higher accuracy.')
                         dispatch(getLocationFailure(error))
                     }
+                    
                     console.log(error, this.getCoords())
                 },
                 { enableHighAccuracy: true, timeout: 3e5, maximumAge: 3e5 }

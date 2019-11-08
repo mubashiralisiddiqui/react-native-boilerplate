@@ -12,11 +12,11 @@ import {
     AdditionalInfo,
     DoctorHistory,
     ImageBackgroundWrapper,
-    ConnectivityStatus,
     LocationStatus,
     ScreenLoader,
     CallExecutionButton,
     DoctorInfoPanel,
+    InternetConnectivityStatus,
 } from '../../components';
 import { getDocHistory } from '../../services/historyService';
 import { submitCallSingle, getTodayCalls, submitOfflineCall, getTodayUnplannedCalls } from '../../services/callServices';
@@ -30,8 +30,7 @@ import { getGifts } from '../../reducers/giftsReducer';
 import { getUser } from '../../reducers/authReducer';
 import { getSubmitData, getSubmitLoader } from '../../reducers/callsReducers';
 import { NetworkContext } from '../../components/NetworkProvider'
-import GiftsModal from '../../components/GiftsModal';
-import { ProductsModal, SamplesModal } from '../../components/ProductsSamplesModal';
+import { ProductsModal, SamplesModal, GiftsModal } from '../../components';
 import { getProductsWithSamples } from '../../services/productService';
 import DropDownHolder from '../../classes/Dropdown';
 import { alertData } from '../../constants/messages';
@@ -259,7 +258,7 @@ class CallExecution extends BaseCallExecution {
                         <CallPlanHeader />
                         <View style={{ flex: 1}}>
                             <View style={{width: '100%', height: 30, flexDirection: 'row', justifyContent: 'flex-end'}}>
-                                <ConnectivityStatus />
+                                <InternetConnectivityStatus />
                                 <LocationStatus isFetching={this.props.isFetching} />
                             </View>
                             <Collapse

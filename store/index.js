@@ -10,6 +10,7 @@ import { cityReducer } from '../src/reducers/cityReducer';
 import { createLogger } from 'redux-logger';
 import { locationReducer } from '../src/reducers/locationReducer';
 import { appReducer } from '../src/reducers/appReducer';
+import { bricksReducer } from '../src/components/Bricks/reducer';
 
 const rootReducer = combineReducers({
     auth: authReducer,
@@ -21,6 +22,7 @@ const rootReducer = combineReducers({
     cities: cityReducer,
     location: locationReducer,
     app: appReducer,
+    bricks: bricksReducer,
 });
 
 const reduxLogger = createLogger();

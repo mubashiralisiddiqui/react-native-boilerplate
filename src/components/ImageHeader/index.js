@@ -19,21 +19,9 @@ const ImageHeader = ({ verticalHeight = 30 }) => {
 }
 const containerStyle = (height) => {
     return {
-        // flex: 1,
         display: 'flex',
         justifyContent: 'center',
-        // marginHorizontal: 30,
-        // marginVertical: height,
         alignItems: 'center',
     }
 }
 export default ImageHeader;
-// const styles = {
-//     container: {
-//         display: 'flex',
-//         justifyContent: 'center',
-//         marginHorizontal: 30,
-//         marginVertical: 50,
-//         alignItems: 'center',
-//     },
-// }

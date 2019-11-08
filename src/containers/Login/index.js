@@ -90,8 +90,7 @@ class Login extends Component {
                 <KeyboardAwareScrollView keyboardShouldPersistTaps={'always'} contentContainerStyle={styles.InputContainer}>
                     <KeyboardAvoidingView  style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                         <Card containerStyle={{ borderRadius: 15, width: '90%', justifyContent: 'center', alignItems: 'center', opacity: 0.9 }}>
-                            <ImageHeader
-                            />
+                            <ImageHeader />
                             <Text style={{color: brandColors.darkBrown , opacity: 1, textAlign: 'center', fontFamily: 'Lato-HeavyItalic', fontSize: RFValue(30) }}>Login</Text>
                             <LoginForm
                                 onKeyUp={this.onKeyEvent}

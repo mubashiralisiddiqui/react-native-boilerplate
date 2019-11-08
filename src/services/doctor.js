@@ -11,7 +11,6 @@ import {
     RSM_ROLE_ID,
     SPO_ROLE_ID,
     dateFormatRegexDoctorsByEmployee,
-    NEW_DOCTOR_REQUEST_FAILURE, 
 } from '../constants'
 import { 
     getDesignations,
@@ -63,19 +62,6 @@ import { alertData } from '../constants/messages';
         dataFromStorage = parse(dataFromStorage)
         dispatch(getSpecialitiesSuccess(dataFromStorage));
     }
-}
-
-export const createDoctorRequest = (params) => async (dispatch) => {
-    dispatch(submitDoctorRequest())
-    const response = await post('InsertDoctorRequest', params);
-    if(response == 1) {
-        DropDownHolder.show(alertData.doctor.doctorRequestSuccess)
-        dispatch(submitDoctorRequestSuccess(params))
-    } else {
-        DropDownHolder.show(alertData.doctor.doctorRequestFailure)
-        dispatch(submitDoctorRequestFailure(NEW_DOCTOR_REQUEST_FAILURE))
-    }
-    return response;
 }
 
 export const getDoctorByEmployeeId = (params, refresh = false) => async (dispatch, getState) => {

@@ -8,7 +8,7 @@ import {
     AdditionalInfo,
     DoctorHistory,
     ImageBackgroundWrapper,
-    ConnectivityStatus,
+    InternetConnectivityStatus,
     LocationStatus,
     ScreenLoader,
     CallExecutionButton,
@@ -26,8 +26,7 @@ import { getGifts } from '../../reducers/giftsReducer';
 import { getUser } from '../../reducers/authReducer';
 import { getSubmitData, getSubmitLoader } from '../../reducers/callsReducers';
 import { NetworkContext } from '../../components/NetworkProvider'
-import GiftsModal from '../../components/GiftsModal';
-import { ProductsModal, SamplesModal } from '../../components/ProductsSamplesModal';
+import { ProductsModal, SamplesModal, GiftsModal } from '../../components';
 import { getDoctorByEmployeeId, updateDoctorRequest } from '../../services/doctor';
 import { getDoctors, getDoctorRequestLoader } from '../../reducers/doctorReducer';
 import { getEmployees } from '../../services/auth';
@@ -257,7 +256,7 @@ class CallExecutionUnplanned extends BaseCallExecution {
                         <CallPlanHeader />
                         <View style={{ flex: 1}}>
                             <View style={{width: '100%', height: 30, flexDirection: 'row', justifyContent: 'flex-end'}}>
-                                <ConnectivityStatus />
+                                <InternetConnectivityStatus />
                                 <LocationStatus isFetching={this.props.isFetching} />
                             </View>
                             <Collapse

@@ -55,4 +55,9 @@ export default class Permissions {
             PermissionsAndroid.PERMISSIONS.CAMERA,
         ])
     }
+
+    static async checkStorageAccess() {
+        const permitted = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE);
+        return permitted;
+    }
 }

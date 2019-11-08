@@ -81,6 +81,18 @@ export const alertData = {
             title: 'Successfully Refreshed',
             message: 'All the data has been refreshed and now up to date. Please contact IT support if you face any problems.',
         }
+    },
+    bricks: {
+        requestSuccess: {
+            type: 'success',
+            title: 'Bricks Mapping Request Success',
+            message: 'Your request for Brick Mapping changes has been received, you will be notified via Slack about the further process',
+        },
+        requestFailure: {
+            type: 'error',
+            title: 'Bricks Mapping Request Failure',
+            message: 'Server error occurred while performing your request, please try again in few minutes.',
+        }
     }
 
 }

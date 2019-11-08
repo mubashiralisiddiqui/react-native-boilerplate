@@ -274,44 +274,6 @@ export function submitDoctorChangeLocationRequestFailure () {
     }
 }
 
-/**
- * Action creator of get doctor codes from daily planned calls.
- * 
- * @function getCallsDoctors
- * @memberof Actions/doctor
- * @author [Muhammad Nauman] <muhammad.nauman@hudsonpharma.com>
- * @export
- * @param {Array} calls
- * @returns {Object}
- */
-export function getCallsDoctors (calls) {
-    console.log(calls)
-    const doctors = _.concat(..._.map(calls, call => call.Doctor && call.Doctor.DoctorCode))
-    return {
-        type: GET_CALLS_DOCTORS,
-        doctors,
-    }
-}
-
-
-/**
- * Action creator of get Doctor codes from daily unplanned calls doctors.
- * 
- * @function getUnplannedCallsDoctors
- * @memberof Actions/doctor
- * @author [Muhammad Nauman] <muhammad.nauman@hudsonpharma.com>
- * @export
- * @param {Array} calls
- * @returns {Object}
- */
-export function getUnplannedCallsDoctors (calls) {
-    const doctors = _.concat(..._.map(calls, call => call.Doctor && call.Doctor.DoctorCode))
-    return {
-        type: GET_UNPLANNED_CALLS_DOCTORS,
-        doctors,
-    }
-}
-
 export function updateDoctorInfo (payload) {
     return {
         type: UPDATE_DOCTOR_REQUEST,
