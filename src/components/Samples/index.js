@@ -40,6 +40,12 @@ class Samples extends PureComponent {
                                     <Text key={RandomInteger()} style={styles.textTitle}>Sample Name</Text>
                                 </View>
                                 <View  key={RandomInteger()} style={styles.itemLast}>
+                                    <Text key={RandomInteger()} style={styles.textTitle}>Issued This Month</Text>
+                                </View>
+                                <View  key={RandomInteger()} style={styles.itemLast}>
+                                    <Text key={RandomInteger()} style={styles.textTitle}>Distributed This Month</Text>
+                                </View>
+                                <View  key={RandomInteger()} style={styles.itemLast}>
                                     <Text key={RandomInteger()} style={styles.textTitle}>On Hand Quantity</Text>
                                 </View>
                             </View>
@@ -107,18 +113,19 @@ const getStyles = () => {
             height: 15,
             justifyContent: 'center',
             alignItems: 'center',
-            width: '50%'
+            width: '30%'
         },
         itemLast: {
             height: 12,
             justifyContent: 'center',
             alignItems: 'center',
-            width: '50%'
+            width: '23%'
         },
         textTitle: {
             fontSize: RFValue(18),
             fontFamily: 'Lato-MediumItalic',
             color: brandColors.lightGreen,
+            textAlign: 'center',
         },
         textHead: {
             fontSize: RFValue(16),
@@ -130,15 +137,13 @@ const getStyles = () => {
             fontSize: RFValue(16),
             fontFamily: 'Lato-MediumItalic',
             color: brandColors.darkBrown,
+            textAlign: 'center',
         },
         cardContainer: {
             backgroundColor: brandColors.darkBrown,
             shadowColor: brandColors.lightGreen,
             borderRadius: 10,
-            // shadowOffset: { width: 0, height: 4 },
-            // shadowOpacity: 0.8,
-            // shadowRadius: 4,
-            width: '70%',
+            width: '85%',
             justifyContent: 'center',
             display: 'flex',
             justifyContent: 'center',
@@ -153,7 +158,7 @@ const getStyles = () => {
             borderColor: brandColors.lightGreen,
             shadowColor: brandColors.darkBrown,
             borderRadius: 10,
-            width: '70%',
+            width: '85%',
             flex: 1,
             alignItems: 'center',
             justifyContent: 'center',
@@ -172,6 +177,12 @@ _render = ({ item }) => {
             <View onLayout={this.onLayout} key={`${item.ProductId}${RandomInteger()}`} style={styles.viewContainer}> 
                 <View key={`${item.ProductId}${RandomInteger()}`} style={styles.itemSecondLast}>
                     <Text key={`${item.ProductId}${RandomInteger()}`} style={styles.text}>{item.ProductName}</Text>
+                </View>
+                <View  key={`${item.ProductId}${RandomInteger()}`} style={styles.itemLast}>
+                    <Text key={`${item.ProductId}${RandomInteger()}`} style={styles.text}>{item.TotalIssuedQtyInMonth}</Text>
+                </View>
+                <View  key={`${item.ProductId}${RandomInteger()}`} style={styles.itemLast}>
+                    <Text key={`${item.ProductId}${RandomInteger()}`} style={styles.text}>{item.DistributedInMonth}</Text>
                 </View>
                 <View  key={`${item.ProductId}${RandomInteger()}`} style={styles.itemLast}>
                     <Text key={`${item.ProductId}${RandomInteger()}`} style={styles.text}>{item.OnHandQty}</Text>

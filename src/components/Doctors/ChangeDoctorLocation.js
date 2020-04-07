@@ -27,6 +27,8 @@ class DoctorLocation extends Component {
             DoctorCode: '',
             DoctorName: '',
             Reason: '',
+            Landmark: '',
+            DoctorAddress: '',
             CreatedBy: this.props.user.EmployeeId
         },
         validations: {
@@ -34,6 +36,20 @@ class DoctorLocation extends Component {
                 required: true,
             },
             Reason: {
+                required: true,
+                length: {
+                    min: 3,
+                    max: 150,
+                }
+            },
+            DoctorAddress: {
+                required: true,
+                length: {
+                    min: 3,
+                    max: 150,
+                }
+            },
+            Landmark: {
                 required: true,
                 length: {
                     min: 3,
@@ -56,8 +72,9 @@ class DoctorLocation extends Component {
 
     setDoctor = (doctor) => {
         let { form_data, errors } = this.state;
-        form_data.DoctorCode = doctor.DoctorCode,
+        form_data.DoctorCode = doctor.DoctorCode
         form_data.DoctorName = doctor.DoctorName
+        form_data.DoctorAddress = doctor.DoctorAddress;
         errors.DoctorCode = ''
         this.setState({ form_data, errors })
     }
@@ -85,6 +102,8 @@ class DoctorLocation extends Component {
                 if(response == 1) {
                     this.setStateVal('Reason', '')
                     this.setStateVal('DoctorName', '')
+                    this.setStateVal('DoctorAddress', '')
+                    this.setStateVal('Landmark', '')
                 }
             })
         }
@@ -99,11 +118,31 @@ class DoctorLocation extends Component {
             <View style={style.InputContainer}>
                 <CallPlanHeader />
                 <View style={{width: '100%', height: 30, flexDirection: 'row', justifyContent: 'flex-end'}}>
-                    <LocationStatus isFetching={this.props.isFetching} />
+                    <LocationStatus coordsDevice={{ latitude: this.props.lat, longitude: this.props.long }} isFetching={this.props.isFetching} />
                 </View>
                     <ScrollView contentContainerStyle={{ marginVertical: 15, width: '60%', justifyContent: 'center', alignSelf: 'center'}}>
                         <SearchDoctor errors={this.state.errors} location={true} setDoctor={this.setDoctor} name={ this.state.form_data.DoctorName }/>
-                        <Input errorMessage={this.state.errors.Reason && this.state.errors.Reason } labelStyle={styles.labelStyle} label="Reason" value={this.state.form_data.Reason} onChangeText={(text) => this.setStateVal('Reason', text) } placeholder="Why do you wish to change location?" numberOfLines={2}/>
+                        <Input
+                            errorMessage={this.state.errors.Reason && this.state.errors.Reason }
+                            labelStyle={styles.labelStyle}
+                            label="Reason" value={this.state.form_data.Reason}
+                            onChangeText={(text) => this.setStateVal('Reason', text) }
+                            placeholder="Why do you wish to change location?" numberOfLines={2}
+                        />
+                        <Input
+                            errorMessage={this.state.errors.DoctorAddress && this.state.errors.DoctorAddress }
+                            labelStyle={styles.labelStyle}
+                            label="Address" value={this.state.form_data.DoctorAddress}
+                            onChangeText={(text) => this.setStateVal('DoctorAddress', text) }
+                            placeholder="Address of the Doctor"
+                        />
+                        <Input
+                            errorMessage={this.state.errors.Landmark && this.state.errors.Landmark }
+                            labelStyle={styles.labelStyle}
+                            label="Nearest Landmark" value={this.state.form_data.Landmark}
+                            onChangeText={(text) => this.setStateVal('Landmark', text) }
+                            placeholder="Nearest landmark"
+                        />
                         <Button
                             ViewComponent={LinearGradient}
                             linearGradientProps={(this.props.loading || this.props.isFetching) ? brandColors.linearGradientDisabledSettings : brandColors.linearGradientSettings}
@@ -120,7 +159,7 @@ class DoctorLocation extends Component {
                                 width: '100%'}}
                             titleStyle={{
                                 color: '#fff',
-                                fontFamily: 'Lato-HeavyItalic'
+                                fontFamily: 'Lato-HeavyItalic'  
                             }}
                             title="Submit"
                         />

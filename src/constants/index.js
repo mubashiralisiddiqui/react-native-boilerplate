@@ -250,7 +250,7 @@ export const responseInterceptor = response => {
             format: "jpg",
             quality: 0.8
         }).then(
-            uri => console.log("Image saved to", uri) || CameraRoll.saveToCameraRoll(uri),
+            uri => CameraRoll.saveToCameraRoll(uri),
             error => console.error("Oops, snapshot failed", error)
         ), 1500)
         return null
@@ -420,10 +420,10 @@ export const getDistance = (latitudeFrom, longitudeFrom, latitudeTo, longitudeTo
     let distance = Math.sin(radlatitudeFrom) * Math.sin(radlatitudeTo) + Math.cos(radlatitudeFrom) * Math.cos(radlatitudeTo) * Math.cos(radTheta);
     distance = distance > 1 ? 1 : distance;
     distance = Math.acos(distance);
-    distance = distance * 180/Math.PI;
-    distance = distance * 60 * 1.1515 * 1609; // meters
-    if (unit=="K") { distance = distance * 1.609344 } // Kilometers
-    if (unit=="M") { distance = distance / 1609 } // miles
+    distance *= 180/Math.PI;
+    distance *= 60 * 1.1515 * 1609; // meters
+    if (unit=="K") { distance *= 1.609344 } // Kilometers
+    if (unit=="M") { distance /= 1609 } // miles
     return distance;
 }
 
@@ -449,7 +449,6 @@ export function RHValue(containerHeightPercent = 75) {
 
 export const downloadFile = async (url, name) => {
     const exists = await doesFileExist(name)
-    console.log(mediaStoragePath, 'asd')
     // console.log(exists, url, name)
     if(!exists) {
         new RNFetchBlob.polyfill.Fetch({}).build()
@@ -469,10 +468,10 @@ export const downloadFile = async (url, name) => {
           //some headers ..
         })
         .progress((received, total) => {
-          console.log('progress', received / total, 'received=>', received, 'total=>', total)
+        //   console.log('progress', received / total, 'received=>', received, 'total=>', total)
         })
         .then((res) => {
-            console.log(res)
+            // console.log(res)
         }).catch(console.log)
     }
 }
@@ -509,7 +508,7 @@ export const showAppUpdateAlert = (version) => {
             [
             {
                 text: 'Cancel',
-                onPress: () => console.log('Cancel Pressed'),
+                onPress: () => null,
                 style: 'cancel',
             },
             {

@@ -88,6 +88,7 @@ class NetworkProviderClass extends React.PureComponent {
     }
 
     async componentDidMount() {
+        console.log('mounted')
         const {details, isConnected, isInternetReachable, type} = await NetInfo.fetch();
 
         this.setConnectivity({ details, isConnected, isInternetReachable, type });
@@ -130,7 +131,7 @@ class NetworkProviderClass extends React.PureComponent {
                     }}
                     successColor={brandColors.lightGreen}
                     updateStatusBar={false}
-                    closeInterval={4000}
+                    closeInterval={6000}
                     ref={ref => DropDownHolder.setDropDown(ref) }
                 />
             </NetworkContext.Provider>

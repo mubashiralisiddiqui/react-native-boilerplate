@@ -39,6 +39,9 @@ import RequestedDoctors from './Doctors/RequestedDoctors'
 import DoctorListHeader from './Doctors/DoctorListHeader'
 import PendingRequestListItem from './Doctors/PendingRequestListItem'
 import PendingRequestsHeader from './Doctors/PendingRequestsHeader'
+import CitiesModal from './Doctors/CitiesModal'
+import SearchDesignations from './Doctors/SearchDesignations'
+import SearchSpecialities from './Doctors/SearchSpecialities'
 // Call Plans
 import CallPlansListHeader from './CallPlans/CallPlansListHeader'
 import CallListItem from './CallPlans/CallListItem';
@@ -52,12 +55,8 @@ import Checkbox from './FormElements/Checkbox'
 import LoginForm from './LoginForm';
 import ImageHeader from './ImageHeader';
 import ImageBackgroundWrapper from './ImageBackground';
-import SearchDoctor from './SearchDoctor';
 import PDF from './PDF';
-import LocationStatus from './LocationStatus';
 import MultipleImageBackgroundWrapper from './ImageBackground/multiple'
-import SearchDesignations from './SearchDesignations'
-import SearchSpecialities from './SearchSpecialities'
 import DrawerElement from './DrawerElement'
 import Refresh from './RefreshApp';
 // Miscellaneous
@@ -68,6 +67,8 @@ import AppVersion from './Misc/AppVersion'
 import NoItemsInTheList from './Misc/NoItemsInTheList'
 import Blink from './Misc/Blink';
 import InternetConnectivityStatus from './Misc/InternetConnectivityStatus';
+import LocationStatus from './Misc/LocationStatus';
+import SearchDoctor from './Misc/SearchDoctor';
 
 export {
     TextInput,
@@ -128,4 +129,5 @@ export {
     PendingRequestListItem,
     PendingRequestsHeader,
     CallPlansListHeader,
+    CitiesModal
 }

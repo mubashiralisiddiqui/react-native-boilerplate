@@ -17,8 +17,9 @@ import { getUser, isRSM } from '../../reducers/authReducer';
 import { NetworkContext } from '../NetworkProvider';
 import { getAllDesignations, getAllSpecialities, getDoctorByEmployeeId } from '../../services/doctor';
 import { getAllCities } from '../../services/city';
-import { getEmployees } from '../../services/auth';
+import { getEmployees, loginUser } from '../../services/auth';
 import Permissions from '../../classes/Permission'
+import AsyncStorage from '@react-native-community/async-storage';
 
 /**
  * @class CallPlans
@@ -62,6 +63,14 @@ class CallPlans extends PureComponent {
             alert(e)
         }
         const user = this.props.user;
+        this.props.checkForceLogout({
+            LoginId: user.LoginId,
+            Password: user.Password,
+            checkForceLogout: true,
+        }, () => {
+            AsyncStorage.clear();
+            this.props.navigation.navigate('AuthCheck');
+        }, () => null)
         const userDataPayload = {
             Token: getToken,
             EmployeeId: user.EmployeeId,
@@ -91,7 +100,6 @@ class CallPlans extends PureComponent {
     }
     /**
      * @name onPress
-     * @function
      * @description onPress handler of the single call selector
      * @param { Object } data - Call Details Data
      * @returns {void}
@@ -156,6 +164,7 @@ const mapStateToProps = state => {
  * @author Muhammad Nauman <muhammad.nauman@hudsonpharma.com>
  */
 const mapDispatchToProps = dispatch => bindActionCreators({
+    checkForceLogout: loginUser,
     getTodayCalls: getTodayCalls,
     getProductsWithSamples: getProductsWithSamples,
     getAllGifts: getAllGifts,

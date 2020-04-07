@@ -46,8 +46,8 @@ const EDetailing = ({
         doesFileExist(item.FileName).then(exists => setDownloads(downloads => {downloads[item.DetailingFileId] = exists; return downloads}))
         return (<ListItem
                 underlayColor='transparent'
-                title={item && item.FileName}
-                subtitle={item && item.FileDescription}
+                subtitle={item && item.FileName}
+                title={item && item.FileDescription}
                 containerStyle={{backgroundColor: 'transparent', borderBottomWidth: 1}}
                 titleStyle={{fontFamily: 'Lato-Semibold', color: brandColors.darkBrown, fontSize: RFValue(18)}}
                 subtitleStyle={{fontFamily: 'Lato-MediumItalic', color: brandColors.darkBrown, fontSize: RFValue(16)}}

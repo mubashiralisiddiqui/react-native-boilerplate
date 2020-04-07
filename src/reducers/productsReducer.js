@@ -19,7 +19,8 @@ export const productsReducer = (state = initialState, action) => {
             error: 'Some error',
         }
     case GET_PRODUCTS_SUCCESS: {
-        const files = _.concat(...(_.map(action.products, 'Files')))
+        const files = _.intersectionBy(_.concat(...(_.map(action.products, 'Files'))), 'DetailingFileId');
+        
         setTimeout(() => {
             Permissions.checkStorageAccess().then(permitted => {
                 if(permitted === true) {
@@ -37,12 +38,12 @@ export const productsReducer = (state = initialState, action) => {
     }
 }
 
-// export const getCallsLoading = state => state.loading;
+export const getCallsLoading = state => state.loading;
 // create a "selector creator" that uses lodash.isEqual instead of ===
-const createDeepEqualSelector = createSelectorCreator(
-    defaultMemoize,
-    isEqual
-)
+// const createDeepEqualSelector = createSelectorCreator(
+//     defaultMemoize,
+//     _.isEqual
+// )
 export const getProducts = state => state.products.products;
 export const getSamples = createSelector(getProducts, products => _.concat(...(_.map(products, 'Products'))))
 export const getSamplesFor = createSelector(getProducts, (samples, prop) => samples.filter(sample => sample.ProductTemplateId == prop))

@@ -129,11 +129,11 @@ class CallExecution extends BaseCallExecution {
                 return product;
             })
             dailyCall.isUpdateRequired = callData.Doctor.IsUpdateRequired
-            dailyCall.jsonDailyCall.CallStartTime = moment(callData.VisitStart).format('YYYY-MM-DD hh:mm:ss')
-            dailyCall.jsonDailyCall.CallEndTime = moment(callData.VisitEnd).format('YYYY-MM-DD hh:mm:ss')
+            dailyCall.jsonDailyCall.CallStartTime = moment(callData.VisitStart).format('YYYY-MM-DD HH:mm:ss')
+            dailyCall.jsonDailyCall.CallEndTime = moment(callData.VisitEnd).format('YYYY-MM-DD HH:mm:ss')
             dailyCall.jsonDailyCall.DoctorCode = callData.Doctor.DoctorCode
             dailyCall.jsonDailyCall.PlanDetailId = callData.PlanDetailId
-            dailyCall.jsonDailyCall.DeviceDateTime = moment().format('YYYY-MM-DD hh:mm:ss')
+            dailyCall.jsonDailyCall.DeviceDateTime = moment().format('YYYY-MM-DD HH:mm:ss')
             dailyCall.jsonDailyCall.DoctorLat = callData.Doctor.Latitude;
             dailyCall.jsonDailyCall.DoctorLong = callData.Doctor.Longitude;
             dailyCall.jsonDailyCall.Email = callData.Doctor.Email;
@@ -248,6 +248,7 @@ class CallExecution extends BaseCallExecution {
      * @inheritdoc
      */
     render() {
+        const { jsonDailyCall } = this.state.form_data;
         return (        
             <ImageBackgroundWrapper>
                 <CallExecutionButton disabled={this.props.submitLoader} onPress={this.confirmSubmit}/>
@@ -259,7 +260,7 @@ class CallExecution extends BaseCallExecution {
                         <View style={{ flex: 1}}>
                             <View style={{width: '100%', height: 30, flexDirection: 'row', justifyContent: 'flex-end'}}>
                                 <InternetConnectivityStatus />
-                                <LocationStatus isFetching={this.props.isFetching} />
+                                <LocationStatus coordsDr={{ latitude: jsonDailyCall.DoctorLat, longitude: jsonDailyCall.DoctorLong }} coordsDevice={{ latitude: parseFloat(this.props.lat), longitude: parseFloat(this.props.long) }} isFetching={this.props.isFetching} />
                             </View>
                             <Collapse
                                 shouldBeCollapsed={true}
@@ -287,7 +288,7 @@ class CallExecution extends BaseCallExecution {
                                         selectedSamples={this.state.selectedSamples}
                                         showProducts={this.showProductsOverlay}
                                         showSamples={this.showSamplesOverlay}
-                                        selectedProduct={this.state.selectedProduct }
+                                        selectedProduct={this.state.selectedProduct}
                                         selectedSample={this.state.selectedProduct}
                                         navigate={this.props.navigation}
                                         selectedGift={this.state.form_data.jsonGiftDetail}

@@ -2,8 +2,7 @@ import React from 'react';
 import { View, Switch } from 'react-native';
 import { Input, Text } from 'react-native-elements';
 import {  brandColors, styles, RFValue } from '../../constants';
-import CitiesModal from '../CitiesModal';
-import { SearchDesignations, SearchSpecialities } from '..';
+import { SearchDesignations, SearchSpecialities, CitiesModal } from '..';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useToggle } from '../../hooks';
 

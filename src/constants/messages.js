@@ -93,6 +93,25 @@ export const alertData = {
             title: 'Bricks Mapping Request Failure',
             message: 'Server error occurred while performing your request, please try again in few minutes.',
         }
+    },
+    CONSGReviews: {
+        reviewSuccess: {
+            type: 'success',
+            title: 'Declining Outlet Review Success',
+            message: 'Your review for the declining outlet has been submitted successfully.'
+        },
+        reviewFailure: {
+            type: 'error',
+            title: 'Declining Outlet Review Failure',
+            message: 'Your request has been failed with some error.'
+        },
+    },
+    auth: {
+        forceLogout: {
+            type: 'error',
+            title: 'Something Went Wrong',
+            message: 'We regret any inconvenience please contact Hudson IT Support for the resolution of this error. Please report your issue using @Support.'
+        }
     }
 
 }

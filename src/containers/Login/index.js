@@ -63,6 +63,7 @@ class Login extends Component {
             this.props.loginUser({
                 LoginId,
                 Password,
+                checkForceLogout: false,
             }, () => {
                 this.props.navigation.navigate('AuthCheck');
             }, () => {

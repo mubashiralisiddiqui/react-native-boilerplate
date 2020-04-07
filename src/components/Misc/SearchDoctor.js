@@ -17,6 +17,7 @@ const SearchDoctor = (props) => {
     const [areDoctorsVisible, showDoctors, hideDoctors] = useBoolean(false)
     const [query, setQuery] = useState('')
     const [doctors, setDoctors] = useState(allDoctors)
+    // console.log(callDoctors, unplannedCallDoctors, 'asd0')
 
     useEffect(() => {
         setQuery('');
@@ -32,10 +33,11 @@ const SearchDoctor = (props) => {
         }
     }, [query])
     const _render = ({item}) => {
+        // console.log(allCallDoctors(), _.includes(allCallDoctors, item.Id))
         return (
             <ListItem
-                disabled={!props.location && _.includes(allCallDoctors, item.Id)}
-                rightElement={ !props.location && _.includes(allCallDoctors, item.Id) && <Badge textStyle={{fontSize: RFValue(11), fontFamily: 'Lato-Regular' }} status="success" value="Already Planned / Executed" /> }
+                disabled={!props.location && _.includes(allCallDoctors(), item.Id)}
+                rightElement={ !props.location && _.includes(allCallDoctors(), item.Id) && <Badge textStyle={{fontSize: RFValue(11), fontFamily: 'Lato-Regular' }} status="success" value="Already Planned / Executed" /> }
                 Component={TouchableWithoutFeedback}
                 style={{ height: RFValue(40), marginVertical: 5, backgroundColor: 'transparent' }}
                 containerStyle={{ backgroundColor: 'transparent' }}

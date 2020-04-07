@@ -1,16 +1,27 @@
 import { post, setStorage, userFullName, getStorage, todayDate, get, getToken } from '../constants';
 import { login, loginSuccess, loginFailure, getReportingEmployees, getReportingEmployeesSuccess, getReportingEmployeesFailure, getBackgroundImagesSuccess, getBackgroundImagesFailure } from '../actions/auth'
-import { getDoctorByEmployeeId } from './doctor';
 import { updateUserAppVersionToServerSuccess, updateUserAppVersionToServer, updateUserAppVersionToServerFailure } from '../actions/app';
+import DropDownHolder from '../classes/Dropdown';
+import { alertData } from '../constants/messages';
 
 export const loginUser = (params, onSuccess, onFailure) => {
     return dispatch => {
         dispatch(login())
         post('loginUser', params).then(response => {
-
             if(response.length > 0) {
                 let user = response[0];
                 user.FullName = userFullName(user).replace('.', '');
+                
+                if(user.ForceLogout === true) {
+                    DropDownHolder.show(alertData.auth.forceLogout);
+                    dispatch(loginFailure())
+                    onSuccess();
+                    return;
+                }
+                if(params.checkForceLogout === true) {
+                    return;
+                }
+
                 dispatch(loginSuccess(user))
                 setStorage('user', JSON.stringify(user))
                 onSuccess();

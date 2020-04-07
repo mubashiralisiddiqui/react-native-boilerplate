@@ -95,7 +95,7 @@ class CallExecutionUnplanned extends BaseCallExecution {
     componentDidMount() {
         this.props.location()
         let dailyCall = parse(stringify(callExecution));
-        dailyCall.jsonDailyCall.DeviceDateTime = moment().format('YYYY-MM-DD hh:mm:ss')
+        dailyCall.jsonDailyCall.DeviceDateTime = moment().format('YYYY-MM-DD HH:mm:ss')
         dailyCall.EmployeeId = this.props.user.EmployeeId
 
         this.setState({
@@ -105,7 +105,7 @@ class CallExecutionUnplanned extends BaseCallExecution {
 
     componentWillUnmount = () => {
         Location.stopLocating();
-     }
+    }
 
     submitCall = async () => {
         if(this.state.selectedProducts.length == 0) {
@@ -161,7 +161,6 @@ class CallExecutionUnplanned extends BaseCallExecution {
                 errors
             })
         }
-        
     }
     
     submitOffline = (params) => {
@@ -182,9 +181,9 @@ class CallExecutionUnplanned extends BaseCallExecution {
 
     handleDatePicked = (date, field, callback) => {
     let callDetails = this.state.form_data
-    callDetails.jsonDailyCall[field] = moment(date).format('YYYY-MM-DD hh:mm:ss')
+    callDetails.jsonDailyCall[field] = moment(date).format('YYYY-MM-DD HH:mm:ss')
     if(field === 'CallStartTime') {
-        callDetails.jsonDailyCall.CallEndTime = moment(date).add(15, 'minute').format('YYYY-MM-DD hh:mm:ss')
+        callDetails.jsonDailyCall.CallEndTime = moment(date).add(15, 'minute').format('YYYY-MM-DD HH:mm:ss')
     }
     this.setState({
         form_data: callDetails
@@ -246,6 +245,7 @@ class CallExecutionUnplanned extends BaseCallExecution {
     }
 
     render() {
+        const { jsonDailyCall } = this.state.form_data;
         return (
             <ImageBackgroundWrapper>
                 <CallExecutionButton disabled={this.props.submitLoader} onPress={this.initiateCallExecution}/>
@@ -257,7 +257,8 @@ class CallExecutionUnplanned extends BaseCallExecution {
                         <View style={{ flex: 1}}>
                             <View style={{width: '100%', height: 30, flexDirection: 'row', justifyContent: 'flex-end'}}>
                                 <InternetConnectivityStatus />
-                                <LocationStatus isFetching={this.props.isFetching} />
+                                {/* <LocationStatus coordsDr={{ latitude: jsonDailyCall.DoctorLat, longitude: jsonDailyCall.DoctorLong }} isFetching={this.props.isFetching} /> */}
+                                <LocationStatus coordsDr={{ latitude: jsonDailyCall.DoctorLat, longitude: jsonDailyCall.DoctorLong }} coordsDevice={{ latitude: parseFloat(this.props.lat), longitude: parseFloat(this.props.long) }} isFetching={this.props.isFetching} />
                             </View>
                             <Collapse
                                 shouldBeCollapsed={true}
